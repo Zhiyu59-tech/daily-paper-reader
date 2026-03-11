@@ -26,31 +26,41 @@ subscriptions:
     diff_threshold_pct: 15
   keyword_recall_mode: or
   intent_profiles:
-    - tag: RL SR
-      description: 强化学习与符号回归相关的学术论文检索
+    - tag: HP PG
+      description: Hopfield神经网络在电力系统与电网中的应用研究
       enabled: true
       keywords:
-        - keyword: reinforcement learning
-          keyword_cn: 强化学习
-          query: reinforcement learning algorithms and frameworks
-        - keyword: symbolic regression
-          keyword_cn: 符号回归
-          query: symbolic regression for mathematical expression discovery
-        - keyword: Monte Carlo Tree Search
-          keyword_cn: 蒙特卡洛树搜索
-          query: MCTS for symbolic regression search space
-        - keyword: transformer
-          keyword_cn: Transformer符号回归
-          query: transformer models for symbolic regression and sequence generation
+        - keyword: Hopfield network
+          keyword_cn: Hopfield神经网络
+          query: Hopfield neural network architecture and theory
+        - keyword: power grid
+          keyword_cn: 电网
+          query: power grid systems and infrastructure
+        - keyword: load forecasting
+          keyword_cn: 负荷预测
+          query: electrical load forecasting with Hopfield models
+        - keyword: fault diagnosis
+          keyword_cn: 故障诊断
+          query: power system fault diagnosis using Hopfield models
       intent_queries:
-        - query: combining deep learning and symbolic regression for scientific discovery
-          query_cn: 结合深度学习与符号回归进行科学发现
+        - query: application of Hopfield neural networks in power system optimization
+          query_cn: Hopfield神经网络在电力系统优化中的应用
           enabled: true
           source: manual
           note: ''
-        - query: discrete optimization in symbolic regression via reinforcement learning
-          query_cn: 通过强化学习进行符号回归中的离散优化
+        - query: power system fault detection using associative memory networks
+          query_cn: 利用联想记忆网络进行电力系统故障检测
           enabled: true
           source: manual
           note: ''
-      updated_at: '2026-03-11T12:22:47.579Z'
+        - query: Hopfield network based load forecasting for electrical grids
+          query_cn: 基于Hopfield网络的电网负荷预测
+          enabled: true
+          source: manual
+          note: ''
+        - query: energy storage management in power grids using Hopfield models
+          query_cn: 利用Hopfield模型进行电网储能管理
+          enabled: true
+          source: manual
+          note: ''
+      updated_at: '2026-03-11T12:38:40.136Z'
