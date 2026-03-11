@@ -25,3 +25,32 @@ subscriptions:
     stage: A
     diff_threshold_pct: 15
   keyword_recall_mode: or
+  intent_profiles:
+    - tag: RL SR
+      description: 强化学习与符号回归相关的学术论文检索
+      enabled: true
+      keywords:
+        - keyword: reinforcement learning
+          keyword_cn: 强化学习
+          query: reinforcement learning algorithms and frameworks
+        - keyword: symbolic regression
+          keyword_cn: 符号回归
+          query: symbolic regression for mathematical expression discovery
+        - keyword: Monte Carlo Tree Search
+          keyword_cn: 蒙特卡洛树搜索
+          query: MCTS for symbolic regression search space
+        - keyword: transformer
+          keyword_cn: Transformer符号回归
+          query: transformer models for symbolic regression and sequence generation
+      intent_queries:
+        - query: combining deep learning and symbolic regression for scientific discovery
+          query_cn: 结合深度学习与符号回归进行科学发现
+          enabled: true
+          source: manual
+          note: ''
+        - query: discrete optimization in symbolic regression via reinforcement learning
+          query_cn: 通过强化学习进行符号回归中的离散优化
+          enabled: true
+          source: manual
+          note: ''
+      updated_at: '2026-03-11T12:22:47.579Z'
