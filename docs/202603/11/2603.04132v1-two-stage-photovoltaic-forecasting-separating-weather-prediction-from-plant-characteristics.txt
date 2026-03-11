@@ -1,0 +1,858 @@
+Title: Two-Stage Photovoltaic Forecasting: Separating Weather Prediction from Plant-Characteristics
+
+URL Source: https://arxiv.org/pdf/2603.04132v1
+
+Published Time: Thu, 05 Mar 2026 02:09:54 GMT
+
+Number of Pages: 12
+
+Markdown Content:
+# Two-Stage Photovoltaic Forecasting: Separating Weather Prediction from Plant-Characteristics 
+
+Philipp Danner 1 a and Hermann de Meer 1 b
+
+> 1
+
+University of Passau, Innstraße 41, Passau, Germany 
+
+{philipp.danner, hermann.demeer }@uni-passau.de 
+
+Keywords: Forecast Error, Photovoltaic System, Numerical Weather Prediction, Site-Specific Model Abstract: Several energy management applications rely on accurate photovoltaic generation forecasts. Common met-rics like mean absolute error or root-mean-square error, omit error-distribution details needed for stochastic optimization. In addition, several approaches use weather forecasts as inputs without analyzing the source of the prediction error. To overcome this gap, we decompose forecasting into a weather forecast model for environmental parameters such as solar irradiance and temperature and a plant characteristic model that cap-tures site-specific parameters like panel orientation, temperature influence, or regular shading. Satellite-based weather observation serves as an intermediate layer. We analyze the error distribution of the high-resolution rapid-refresh numerical weather prediction model that covers the United States as a black-box model for weather forecasting and train an ensemble of neural networks on historical power output data for the plant characteristic model. Results show mean absolute error increases by 11% and 68% for two selected photo-voltaic systems when using weather forecasts instead of satellite-based ground-truth weather observations as a perfect forecast. The generalized hyperbolic and Student’s t distributions adequately fit the forecast errors across lead times. 
+
+## 1 INTRODUCTION 
+
+Many energy-management applications depend crit-ically on accurate day-ahead forecasts of supply and demand. Examples include day-ahead electricity mar-ket bidding, where forecast errors translate directly to imbalance penalties (Yang et al., 2023); microgrid op-eration and islanding strategies that must reserve stor-age capacity under uncertainty (Danner et al., 2024); and building energy management that rely on reliable predictions to schedule flexibility and maximize self-consumption (Danner et al., 2021). In all these set-tings, the probabilistic structure of forecast errors, not only point-wise accuracy, drives risk-aware decisions. Forecasts for weather-dependent energy resources such as Photovoltaic (PV) generation thus require realistic error models. Prior work often assumes Gaussian errors (Hemmati et al., 2020; Antoniadou-Plytaria et al., 2022) or adopts robust (Liu et al., 2017) and distributionally robust formulations (Shi et al., 2019) that use only partial distributional in-formation. While these simplifications facilitate tractable optimization, they may mischaracterize em- 
+
+> a
+
+https://orcid.org/0000-0002-3005-630X  
+
+> b
+
+https://orcid.org/0000-0002-3466-8135 
+
+pirical error structure or induce conservatism (Roald et al., 2015). Moreover, common claims–e.g., that forecast variance monotonically increases with hori-zon (Antoniadou-Plytaria et al., 2022)–are not uni-versally validated. Standard scalar metrics such as Mean Absolute Error (MAE) or Root Means Square Error (RMSE) summarize overall accuracy but dis-card information about skewness, tail behavior, and temporal dependence that are essential for stochastic decision-making. These gaps are addressed by (i) decomposing the forecasting chain into two interpretable components– a weather forecast module (capturing irradiance and temperature uncertainty) and a plant charac-teristic module (mapping weather to site-specific power, including orientation, shading, and tempera-ture effects)–and (ii) empirically characterizing the lead-dependent error distributions and temporal cor-relations relevant for day-ahead planning. Our analy-sis uses High-Resolution Rapid Refresh (HRRR) Nu-merical Weather Prediction (NWP), satellite-derived observations as an intermediate ground truth, and an ensemble of Multi-layer Perceptrons (MLPs) trained on multi-year PV generation data. We quantify the error origin from meteorology and plant modelling, 
+
+> arXiv:2603.04132v1 [cs.LG] 4 Mar 2026
+
+test common parametric families (normal, Student’s t, generalized hyperbolic) against observed errors, and assess lead-wise temporal autocorrelation. Results provide empirically grounded guidance for selecting stochastic models and for post-processing strategies that reduce bias and tail risk in PV forecasts. The remainder of the paper reviews related work (Section 2), presents the two-part forecasting frame-work (Section 3), describes datasets and experimen-tal design (Section 4), reports the numerical analy-sis (Section 5), and concludes with implications for stochastic optimization (Section 6). 
+
+## 2 RELATED WORK 
+
+PV power forecasting is often classified by fore-casting horizon (Das et al., 2018): very short-term (seconds-minutes) for smoothing and dispatch, short-term (hours-days) for operational planning and grid security, medium-term (weeks-month) for mainte-nance/scheduling, and long-term (months-years) for strategic planning and economics. This work focuses on day-ahead (short-term) forecasting. Beyond classical statistical approaches, such as variants of auto regression models (applicable across all time scales), a range of weather-forecasting tech-niques is used for PV power forecasting. For very short horizons, cloud-motion estimation from sky cameras is common; for short-term horizons, satellite imagery and NWP models are widely used (Antonan-zas et al., 2016). Because raw weather forecasts are generally insufficient for PV power forecasting, hy-brid models that combine machine-learning compo-nents with weather predictions are common. Typical machine-learning models include feed-forward neural networks (Markovics and Mayer, 2022; Liu et al., 2015), recurrent architectures such as Elman networks (Chupong and Plangklang, 2011) and long short-term memory networks (Danner et al., 2021; Abdel-Nasser and Mahmoud, 2019), random forest regressors (Almeida et al., 2015), and ensemble learning methods (Rana et al., 2015). Common input features are recent power measurements and various weather parameters (Markovics and Mayer, 2022). Often NWP variables such as irradiance, temperature, humidity, wind, cloud cover and pressure are used as weather input to the machine-learned models. Other work search historical records for analog days (Ding et al., 2011; Liu et al., 2015). These approaches fold weather-forecast error into the overall error without separating it, whereas some authors train on mea-sured on-site weather (a perfect forecast) to isolate the power-mapping model error (Cococcioni et al., 2011). Performance evaluations typically report scalar metrics such as MAE, Mean Absolute Percentage Er-ror (MAPE), and RMSE (Das et al., 2018). These metrics enable model comparison but provide limited insight into the actual error distribution. Only a few researchers analyze error distributions more deeply. For instance, (De Giorgi et al., 2014) present a short-term neural-network forecasting method for a single site across horizons of 1, 3, 6, 12, and 24 hours. They report error distributions with slight skewness and decreasing kurtosis as the horizon in-creases. Their inputs include recent power, air tem-perature, module temperature, and plane-of-array ir-radiance parameters that require detailed measure-ments and are not generally available for many sys-tems. Because their model is trained on measured weather, it assumes a perfect weather forecast and thus only reflects the error of the plant-level model. For very short-term horizons, (Chu et al., 2015) augment statistical models (auto-regression moving average, k-nearest neighbors) with a deterministic cloud-tracking and shadow-estimation model using sky images. Across 5, 10, and 15 minute horizons, the cloud-tracking approach achieved the lowest RMSE and produced error distributions with near-zero skew-ness, moderate kurtosis, and short tails. These results indicate that including explicit short-term weather in-formation can substantially improve forecasts. How-ever, such findings do not directly generalize to day-ahead forecasting, where weather variability is larger. A regional aggregation approach in (Junior et al., 2014) uses support vector regression and principal component analysis to forecast for six different plants spread over the island of Hokkaido (Japan). The error distributions show slight negative bias. These mod-els use historical power and national weather fore-casts (temperature, cloudiness, humidity, and hori-zontal extraterrestrial irradiance). Hence, weather-forecast errors are embedded in the aggregate error and are not disentangled. Results for aggregated sys-tems do not necessarily transfer to single-sites. In summary, hybrid models combining weather forecasts with data-driven site-specific models are the most realistic setting. However, the relative contribu-tion of weather-forecast error versus site-model error remains unclear in many studies. Thus, we propose to analyze weather-forecast and plant-characteristic er-rors separately and to perform a detailed examination of error distributions for stochastic optimization. tt − h + 1 t + f   
+
+> Inputs Outputs
+> . . . p
+> . . . wi
+> . . . s
+> . . . ˆp
+> Figure 1: Inputs/outputs of the plant characteristic model on the time axis.
+
+## 3 METHODOLOGY 
+
+The PV power forecasting is executed at time t and yields an output vector ˆ p ∈ R f , representing predicted power for the subsequent f discrete forecast time steps (leads). One time step corresponds to one hour in this work, although higher temporal resolution is possible and limited only by data availability. To analyze forecasting error, we decompose the problem into a plant characteristic model and a weather forecast model, reflecting distinct error sources. While the methodology is applicable to other weather-dependent renewables (e.g., wind), the present study focuses on PV systems. The two models are described below. 
+
+3.1 Plant Characteristic Model 
+
+The plant characteristic model captures local, system-specific influences on PV power output, including panel type, dimensions, rated power, orientation (tilt and azimuth), surface albedo, persistent shading from vegetation or buildings, and the effects of meteorolog-ical variables such as solar irradiance, air temperature, and wind. Because accurate on-site weather measure-ments are frequently unavailable, we employ satellite-based weather observations as an intermediate layer, enabling application over large spatial domains. Although physically-based, non-linear models can reproduce PV output with high fidelity (Holmgren et al., 2018), they require detailed and accurate system and environmental parameters. In large PV databases, this metadata is frequently missing, erroneous, or set to default values (Killinger et al., 2018), and is diffi-cult to extract reliably (Danner and de Meer, 2021). Moreover, local environmental conditions to deter-mine shading and microclimate are seldom fully ob-served. Data-driven models therefore exploit empiri-cal relationships among multiple inputs and may in-corporate historical power traces to implicitly capture hardly observable system characteristics. Following prior work, we include the historical power vector p ∈ Rh, comprising the h observa-tions from t − h + 1 to t. The lags share the same temporal resolution as the forecast horizon f (here      
+
+> pwis
+> MLP 1MLP 2
+> . . .
+> MLP m
+> Mean output vector
+> ˆp1ˆp2ˆpm
+> ˆp
+> Figure 2: Plant characteristic model: ensemble of MLPs.
+
+hourly). In addition, we incorporate n weather fea-tures wi ∈ R f , i ∈ { 1, . . . , n}, n ∈ N, selected by a correlation analysis to retain variables most informa-tive for power generation. During training, satellite-derived weather observations at the PV site are used as targets for the plant model rather than NWP fore-casts. This ensures the model learns site- and system-specific mappings (e.g., orientation, shading, albedo) independently of NWP errors. Retrieval of satellite observations requires the PV system’s geographic co-ordinates (latitude and longitude). The solar eleva-tion angles s ∈ R f are computed following (Hughes, 1985). Atmospheric refraction is neglected at the hourly resolution considered. Angles below zero are set to zero to indicate nighttime; the elevation attains a maximum of 90 ◦ at the zenith. All inputs and outputs are summarized in Figure 1. The plant characteristic model is implemented as a MLP, a feed-forward network with one input layer, one or more hidden layers, and a linear output layer. Neurons are fully connected between consecutive lay-ers; each neuron applies a weighted sum followed by a non-linear activation. Activation functions and other hyperparameters are selected by tuning. In-put features p, wi, and s are scaled using a min-max scaler fitted on the training set; the same factors are applied to test data. MLP training minimizes the mean squared error using gradient-based optimiza-tion. Given the non-convexity of the loss surface and sensitivity to initialization, we train an ensemble of 
+
+m instances with different random initialization. The element-wise mean of the individual output vectors 
+
+ˆp j ∈ R f , j ∈ { 1, . . . , m}, constitutes the final predic-tion (see Figure 2). This bagging approach (Breiman, 1996) reduces variance while preserving the temporal structure of inputs across ensemble members. 
+
+3.2 Weather Forecast Model 
+
+The weather forecast model provides predictions of meteorological variables that drive PV power genera-tion, such as surface irradiance and air temperature, which in turn reflect larger-scale atmospheric pro-cesses (clouds, advection, diurnal rotation, etc.). While pure machine-learning weather prediction models, like GraphCast (Lam et al., 2023), have shown promise, NWP still remains the operational standard for short-term forecasting (Antonanzas et al., 2016; Junior et al., 2014; Almeida et al., 2015). NWP integrates the governing equations of atmo-spheric dynamics and thermodynamics, initialized from an assimilated state composed of heteroge-neous observations (satellites, surface stations, radars, radiosondes), and produces prognostic fields (tem-perature, humidity, wind, pressure, radiative fluxes, etc.) at prescribed spatial and temporal resolutions. High-resolution NWP systems, such as the HRRR system, require substantial computational resources and therefore employ parameterization for sub-grid processes (cloud microphysics, convection, turbu-lence, radiation), which introduce structural approx-imations (Dowell et al., 2022). Given the complexity and computational cost of NWP, we treat it as a black box and focus on quan-tifying its forecast errors for meteorological fields relevant to PV generation. Specifically, we assess NWP errors by comparing forecasted meteorological variables with satellite-derived observations, the lat-ter serving as an intermediate representation between NWP output and the plant characteristic model. 
+
+## 4 EXPERIMENTAL SETUP 
+
+In the following, the dataset and model parameteriza-tion are detailed. Further, the extraction procedure for the error distribution is explained. 
+
+4.1 Plant Characteristic Model 
+
+4.1.1 Dataset 
+
+Two PV systems have been selected from the PV-DAQ dataset (Deline et al., 2021): system 33 (Col-orado) and system 1423 (Nevada), shown in Figure 3, with rated peak powers of 2.4 kW and 6 kW, respec-tively. Given their modest rated peak power, genera-tion curtailment due to grid constraints is not antici-pated. The sites have been chosen for their continental locations and fixed panel orientations, making them broadly representative of the majority of PVDAQ in-stallations, and because they are the only sites with sufficient recent measurements that overlap the tem-poral coverage of the employed NWP dataset. Raw inverter AC power measurements have been System 33 
+
+> System 1423
+> Albuquerque
+> Bismarck
+> Hanford
+> Madison
+> Salt Lake City
+> Seattle
+> Sterling
+> PV system
+> SOLRAD network
+
+Figure 3: Location of selected PV systems and the SOL-RAD irradiance observation network. 0.00        
+
+> 0.25
+> 0.50
+> 0.75
+> 1.00
+> 0.0
+> 0.1
+> 0.2
+> 0.3
+> 0.4
+> 2016 2017 2018 2019 2020 2021 2022 2023
+> 0.00
+> 0.25
+> 0.50
+> 0.75
+> 1.00
+> Spring
+> Summer
+> Fall
+> Winter
+> 0.0
+> 0.1
+> 0.2
+> 0.3
+> 0.4
+> 0
+> 20
+> 40
+> 1e3
+> Training data
+> Test data
+> Cum. samples (right)
+> System 33
+> 0
+> 5
+> 10
+> 1e3
+> System 1423
+> AC Power in p.u.
+
+Figure 4: Pre-processed AC power data from the selected PV systems with training and test data split. 
+
+pre-processed by removing invalid records (extreme outliers) and by setting small negative values, at-tributable to standby losses during non-generation pe-riods, to zero. Data with heterogeneous sampling intervals (1 to 15 min) have been aggregated to an hourly resolution by computing period means, match-ing the temporal granularity of available weather fore-casts. Each system’s power time series was normal-ized by its rated peak power. The training set comprises multi-year data from 2016-2021, while the test set comprises the calendar year 2022; both sets are illustrated in Figure 4. Sam-ples have been excluded from training and evaluation if they lacked at least h − 1 preceding valid observa-tions or f subsequent valid leads. The cumulative-valid-samples plot (Figure 4) indicates that system 33 provides approximately four years of valid training data (67.7% of the training period) and 90.9% cov-erage of the testing year; system 1423 provides under six months of valid training data and 89.5% of the testing year. For both systems the data are well dis-tributed across seasons and hours of day (minimum 16.7% per season), supporting representative evalua-tion despite the smaller sample size for system 1423. Historical satellite-derived weather observations from Solcast have been used to train and evaluate the plant characteristic model. Solcast provides data from 2007 up to seven days prior to the present, with Table 1: Pearson (P) and Spearman (S) correlation of input features to PV power output. System 33 1423 both Corr. P S P S P SGHI 0.91 0.88 0.93 0.97 0.91 0.89 
+
+s 0.79 0.86 0.87 0.96 0.81 0.87 Temp. 0.40 0.54 0.23 0.29 0.34 0.34 
+
+pt−1 0.90 0.90 0.93 0.93 0.91 0.91 
+
+pt−24 0.80 0.89 0.93 0.98 0.82 0.92 
+
+native temporal resolution of 5 min, spatial resolu-tion of 2 km for irradiance/cloud variables and 27 km for ancillary parameters such as air temperature. For each PV system the Solcast time series have been spa-tially interpolated to the site location and temporally resampled to hourly averages. Prior validation stud-ies report low bias (0.33%) and small standard devi-ation (1.7%) for Solcast Global Horizontal Irradiance (GHI) (Bright, 2019); we reproduced these findings by comparison with SOLRAD ground measurements (Figure 3), supporting the use of Solcast irradiance as ground-truth for weather inputs. Candidate meteo-rological features for the weather data included GHI, Diffuse Horizontal Irradiance (DHI), Direct Normal Irradiance (DNI), air temperature, and wind speed. 
+
+4.1.2 Input Feature Selection 
+
+For feature selection, a correlation analysis of histor-ical power output and weather parameters with the power output in one time step has been conducted. Both Pearson and Spearman correlations of the PV systems are listed in Table 1. From the analysis of previous-hour lags of power generation, the auto-correlation exhibits the largest average Pearson coefficients across both PV sys-tems with pt−1 (0.91) and pt−24 (0.82). Such strong persistence motivates the use of simple benchmarks like Same-as-Last and Same-as-Yesterday. Auto-correlations for intermediate lags (2-23 hours) and for lags exceeding one day are substantially lower. Since we forecast simultaneously for f = 24 leads, we therefore employ h = 24 hourly lags as input to ensure the one-day temporal dependence is available for each element of the output vector ˆp; the MLP may additionally learn useful structure from other lags. Among candidate meteorological features (GHI, DNI, DHI, air temperature, wind speed), irradiance-related variables show the strongest association with power (Figure 5). To avoid multicollinearity and re-duce input dimensionality, we retain GHI as the sole irradiance feature; its mean Pearson and Spearman correlations with power are 0.91 and 0.89, respec-tively (averaged over both sites). Air temperature ex-AC power 
+
+> GHI
+> DNI
+> DHI
+> Solar elevation
+> Temperature
+> Wind speed
+> AC power
+> GHI
+> DNI
+> DHI
+> Solar elevation
+> Temperature
+> Wind speed
+> 1.00
+> 0.89
+> 0.83
+> 0.81
+> 0.87
+> 0.34
+> 0.05
+> 0.89
+> 1.00
+> 0.91
+> 0.92
+> 0.97
+> 0.42
+> -0.01
+> 0.83
+> 0.91
+> 1.00
+> 0.74
+> 0.81
+> 0.37
+> -0.02
+> 0.81
+> 0.92
+> 0.74
+> 1.00
+> 0.94
+> 0.36
+> -0.00
+> 0.87
+> 0.97
+> 0.81
+> 0.94
+> 1.00
+> 0.43
+> 0.00
+> 0.34
+> 0.42
+> 0.37
+> 0.36
+> 0.43
+> 1.00
+> -0.10
+> 0.05
+> -0.01
+> -0.02
+> -0.00
+> 0.00
+> -0.10
+> 1.00
+
+Figure 5: Spearman correlation of input features to the AC power output of both PV systems. 
+
+hibits moderate association (Spearman 0.54 for sys-tem 33, 0.29 for system 1423) and is retained be-cause it affects module efficiency, known from physi-cal models (Holmgren et al., 2018), and conveys sea-sonal information, with lower temperatures in winter and higher temperatures in summer in the Northern Hemisphere. Although a cooling effect of wind is known from physical models, its impact on the power output of a PV system is minor (Zhu et al., 2015). As the Spearman correlation of wind speed to power out-put is negligible at 0.05, it is not used as input feature. The solar elevation angle s, calculated from lo-cation and time, attains a high Spearman correlation (0.87). Although correlated with GHI, s encodes complementary geometric and temporal information (timing of sunrise/sunset and diurnal progression) that is not solely determined by irradiance, e.g., in case of clouds, and thus is included as an input feature. 
+
+4.1.3 Hyperparameter Tuning 
+
+We tuned the MLP hyperparameters via an exhaus-tive grid search over a realistic parameter space. Each candidate configuration was assessed using five-fold cross-validation on the training set to obtain unbiased estimates of generalization performance and to mit-igate overfitting. Architectural choices were guided by established best practices (Heaton, 2008): while a single hidden layer is sufficient to approximate non-linear mappings given adequate width, preliminary experiments showed no consistent benefit from ar-chitectures with more than two hidden layers. To avoid overfitting, the hidden-layer widths were con-strained. A practical reference point is two-thirds of the number of input neurons plus the number of out-puts (88 for our setup). Additionally, we imposed an upper bound of twice the input dimension (192) and required hidden-layer width to lie between the input (24) and output (96) dimensions. 0 
+
+> 25
+> 50
+> 75
+> 100
+> 125
+> 150
+> 175
+> 200
+> First layer size 0
+> 25
+> 50
+> 75
+> 100
+> 125
+> 150
+> 175
+> 200
+> Second layer size
+> 0.86
+> 0.87
+> 0.88
+> 0.89
+> 0.90
+> 0.91
+> 0.92
+> 0.93
+> R2 score
+> 0.885
+> 0.890
+> 0.895
+> 0.900
+> 0.905
+> 0.910
+> 0.915
+> 0.920
+> 0.925
+
+Figure 6: Impact of hidden layer width on the R2 score for system 33. The red indicator shows the selected width, highlighting the start of the yellowish plateau. 
+
+Within the ensemble, all MLPs are identically configured with two hidden layers using rectified lin-ear unit (ReLU) activation f (x) = max (0, x) (Nair and Hinton, 2010) (superior to identity, logistic and tanh), while the output-layer neurons use the identity acti-vation. To determine the optimal width, we evalu-ated the cross-validated R2 score for varying neuron counts per hidden layer. As illustrated for system 33 in Figure 6, performance increases between 10 and 50 neurons per layer and plateaus beyond around 90 neu-rons. Thus, 90 and 80 neurons are used on first and second hidden layers, respectively, balancing predic-tive performance and overfitting risk; system 1423 ex-hibited similar behavior. Finally, we set the ensemble size m = 200, reducing MAE from 3.65% (average of 30 individual MLPs) to 2.81% while keeping training time below one minute on a 16-core machine. 
+
+4.2 Weather Forecast Model 
+
+The HRRR weather forecast model provides high-resolution forecasts for the United States and is re-garded state-of-the-art for short-term NWP (Dow-ell et al., 2022). The current operational version (HRRRv4, deployed December 2 nd , 2020) produces hourly forecasts on a 3 km horizontal grid with an 18-hour horizon; forecasts are extended to 48 hours in cy-cles issued every 6 hours. HRRRv4 provides surface solar radiation among its prognostic variables and ex-hibits substantially improved irradiance skill relative to HRRRv3 (James et al., 2022). Consistent with the plant characteristic feature analysis, we evaluate HRRR forecasts of GHI and air temperature at ground. For each PV site we selected the nearest HRRR grid point to represent the model forecast at the location. Solcast satellite-derived fields serve as the observational reference. To increase climatic representativeness, we also evaluate HRRR forecasts at locations from the SOLRAD ground net-work shown in Figure 3. Due to differing grid def-initions and resolutions, the HRRR-Solcast mapping can introduce a spatial offset of up to approximately 1.41 km. This mapping error may contribute to the forecast-observation discrepancies. We suspect the error is small enough to be negligible as the weather on an hourly scale is typically a larger phenomenon. 
+
+4.3 Error Analysis 
+
+We analyze the performance of the plant character-istic and weather forecast model individually using Mean Bias Error (MBE) in Equation (1) and MAE in Equation (2) where ˜ p ∈ R f is the ground-truth output between t + 1 and t + f . Further, the combined model is compared with the individual models to get insights into the error source. 
+
+MBE = 1
+
+n ∑
+
+ 1
+
+f ∑( ˆp − ˜p)
+
+
+
+(1) 
+
+MAE = 1
+
+n ∑
+
+ 1
+
+f ∑| ˆp − ˜p|
+
+
+
+(2) Beyond aggregate performance metrics, we an-alyze empirical forecast-error distributions by lead time using the day-ahead forecast initialized at 06:00 UTC for each day; 06:00 UTC corresponds to 23:00 local standard time for system 33 and 22:00 for sys-tem 1423. We assume that seasonal variations in air temperature, GHI, and hence PV generation are cap-tured by the weather-forecast model, so that the resid-ual forecast errors are approximately independent of the seasonal cycle and may be characterized by a common lead-dependent distribution. This procedure is consistent with prior studies (Ding and McCulloch, 2021; De Giorgi et al., 2014). 
+
+## 5 RESULTS AND DISCUSSION 
+
+We first analyze plant-model errors under perfect forecasts, then evaluate weather-forecast errors, and finally examine combined errors. 
+
+5.1 Plant Characteristic Model 
+
+The plant characteristic model has been evaluated without the influence of weather-forecast errors using Solcast satellite data as ground truth (perfect forecast conditions). The model has been applied for the year 2022 with forecasts initialized daily at 06:00 UTC and 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 
+
+> Forecast lead
+> 0.6
+> 0.4
+> 0.2
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> Relative error
+
+(a) Relative error of different leads. 0.02 0.00 0.02 
+
+> Relative error
+> 0
+> 50
+> 100
+> Density
+
+(b) Distribution for lead 4 0.50 0.25 0.00 0.25 0.50  
+
+> Relative error
+> 0
+> 2
+> 4
+> 6
+> 8
+> Density
+
+(c) Distribution for lead 13 Figure 7: Errors of the plant characteristic model with a forecast at 23:00 of system 33. Orange curves show the fitted normal distribution in the probability density plots. Table 2: Error metrics for 24 leads starting at 6:00 UTC. Plant Weather Combined System Power GHI Temp Power W/kWp W/m2 ◦C W/kWp MBE  33 -0.12 20.68 3.88 18.34 1423 -5.53 12.66 -1.02 6.57 MAE  33 28.12 39.94 3.97 47.28 1423 28.04 22.74 1.61 31.16 
+
+a forecasting horizon of 24 hourly leads. Errors are normalized by the system peak power (W /kWp). Both PV systems exhibit a MAE of approximately 2.8% of peak power ( ≈ 28 W /kWp). The MBE is negligible for system 33 ( −0.12 W /kWp) but shows a negative bias for system 1423 ( −5.53 W /kWp), see Table 2. The underestimation for system 1423 is most pronounced during daytime (leads 7-19) and may be attributable to its smaller training dataset. Error distributions are unimodal across all leads. Contrary to expectation, small nonzero errors persist during nocturnal leads (1-6 and 20-24). These noc-turnal errors are model noise and are approximately normally distributed with low dispersion (cf. Fig-ures 7b and 8b). Applying a sunrise/sunset filter could avoid these nighttime errors. During daytime, the er-ror distributions are approximately symmetric (exam-ples: Figures 7c and 8c), with an average absolute skewness of about 0.5 (moderate). Error mass is con-centrated near zero, indicating frequent accurate pre-dictions, while occasional large outliers occur. This behavior is reflected in elevated kurtosis: mean kur-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 
+
+> Forecast lead
+> 0.6
+> 0.4
+> 0.2
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> Relative error
+
+(a) Relative error of different leads. 0.02 0.00 0.02 
+
+> Relative error
+> 0
+> 20
+> 40
+> 60
+> 80
+> Density
+
+(b) Distribution for lead 4 0.4 0.2 0.0 0.2 0.4  
+
+> Relative error
+> 0
+> 2
+> 4
+> 6
+> 8
+> Density
+
+(c) Distribution for lead 13 Figure 8: Errors of the plant characteristic model with a forecast at 22:00 of system 1423. Orange curves show the fitted normal distribution in the probability density plots. 
+
+tosis of 5.67 for system 33 and 4.87 for system 1423, indicating leptokurtic (peaked and heavy-tailed) dis-tributions. The minimum kurtosis falls slightly below 3 for a few nocturnal leads. 
+
+5.2 Weather Forecast Model 
+
+Irradiation has a higher impact on the power output of the PV systems, thus we analyze the GHI forecast error of the weather forecast model in detail. Temper-ature forecast errors are shown in the Appendix. GHI forecast errors are near zero at night, as in-dicated for system 33 in Figure 9a and system 1423 in Figure 10a. During daytime both locations show a systematic positive bias, which is also present across the SOLRAD stations. This systematic overestima-tion across stations is 11 .75 W /m2 (Table 3) and has been reported previously (James et al., 2022). Tem-perature forecasts exhibit a substantial positive bias at system 33 (3 .88 ◦C), whereas the spatial average bias is small (0 .30 ◦C), indicating regional heterogeneity. Analysis of multi-day lead errors (see Appendix) shows that the error magnitude does not increase sub-stantially on the second day. These findings con-tradict the assumption of monotonically increasing forecast standard deviation with lead time, reported in (Antoniadou-Plytaria et al., 2022). The GHI forecast error distribution is unimodal for all leads and is sharply peaked around zero, in-dicating frequent perfect or near-perfect predictions (cf. Figures 9b–9c and 10b–10c). A systematic bias is apparent: forecasts tend to slightly underestimate irradiance in the morning (leads 6–8) and to over-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 
+
+> Forecast lead
+> 800
+> 600
+> 400
+> 200
+> 0
+> 200
+> 400
+> 600
+> 800
+> Error in  W/m2
+
+(a) Relative error of different leads. 50 0 50 100  
+
+> Error in W/m2
+> 0.00
+> 0.02
+> 0.04
+> 0.06
+> 0.08
+> Density
+
+(b) Distribution for lead 7 500 0 500   
+
+> Error in W/m2
+> 0.0000
+> 0.0025
+> 0.0050
+> 0.0075
+> 0.0100
+> Density
+
+(c) Distribution for lead 13 Figure 9: Errors of the weather forecast model with a fore-cast at 23:00 of system 33. Orange curves show the fitted normal distribution in the probability density plots. Table 3: HRRRv4 forecast accuracy at SOLRAD network stations and selected PV systems with 24 leads at 6:00 UTC. GHI in W /m2 Temperature in ◦CStation MBE MAE MBE MAE System 33 20.68 39.94 3.88 3.97 System 1423 12.66 22.74 -1.02 1.61 Albuquerque 11.65 27.89 0.77 1.41 Bismarck 14.00 31.05 0.26 1.34 Hanford 6.04 20.17 -1.88 2.10 Madison 10.45 35.30 -0.29 1.18 Seattle 4.83 34.28 0.13 1.26 Salt Lake City 9.48 28.87 1.57 1.91 Sterling 15.94 36.24 -0.74 1.28 Average 11.75 30.72 0.30 1.78 
+
+estimate during later daytime hours. This temporal pattern is reflected in the skewness, which is strongly negative in the early leads (below −1.0) and strongly positive during the day (up to 3 .27 for system 1423). The distributions are leptokurtic, with kurtosis val-ues of at least 5 for both systems. Forecasts at the location of system 1423 are generally more accurate than at system 33, exhibiting a higher kurtosis (11.66 versus 5.23) and a lower MAE (22 .74 W /m2 versus 39 .94 W /m2); see Table 2. 
+
+5.3 Combined Model 
+
+The plant characteristic model is trained on satellite data and thus ignores the systematic GHI bias in the NWP forecasts. Training on forecasts might let it 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 
+
+> Forecast lead
+> 800
+> 600
+> 400
+> 200
+> 0
+> 200
+> 400
+> 600
+> 800
+> Error in  W/m2
+
+(a) Relative error of different leads. 20 0 
+
+> Error in W/m2
+> 0.0
+> 0.1
+> 0.2
+> 0.3
+> 0.4
+> Density
+
+(b) Distribution for lead 7 500 0 500   
+
+> Error in W/m2
+> 0.000
+> 0.005
+> 0.010
+> 0.015
+> 0.020
+> Density
+
+(c) Distribution for lead 13 Figure 10: Errors of the weather forecast model with a fore-cast at 23:00 of system 1423. Orange curves show the fitted normal distribution in the probability density plots. 
+
+compensate for that bias, but the model is deliberately plant-specific and not a bias corrector; this modularity lets the NWP part be updated separately. Bias can in-stead be handled by post-processing the NWP output or by using an ensemble of NWPs (Lu et al., 2015). In the combined-model, the plant model is driven by daily weather forecasts initialized at 06:00 UTC rather than by ground truth. Error metrics computed on these combined forecasts quantify the influence of the GHI bias: the negative bias observed for sys-tem 1423 in the plant-only evaluation is partly off-set by the positive GHI bias, yielding a slight positive MBE of 6 .57 W /kWp (Table 2). System 33 likewise exhibits the effect of the GHI overestimation. The MAE of approximately 28 W /kWp for both systems (plant-only) increases to 31 .16 W /kWp for system 1423 (an 11% increase) and to 47 .28 W /kWp for system 33 (a 68% increase). These results demon-strate that spatial differences in weather-forecast ac-curacy have a substantial and measurable impact on PV power-forecast performance. Consistent with the GHI analysis, the combined-model errors display a small negative bias during morning leads (visible in Figures 13a and 11a). The skewness and kurtosis patterns of the combined-model error distributions mirror those of the GHI forecasts but with slightly reduced intensity, as exem-plified in Figures 11b, 11c, 13b, and 13c. We fitted normal, generalized hyperbolic, and Student’s t distributions to lead-wise errors and tested goodness-of-fit with Kolmogorov-Smirnov and Cram´ er-von Mises (CS¨ oRg˝ o and Faraway, 1996) tests 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 
+
+> Forecast lead
+> 0.6
+> 0.4
+> 0.2
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> Relative error
+
+(a) Relative error of different leads. 0.10 0.05 0.00 0.05 0.10 
+
+> Relative error
+> 0
+> 10
+> 20
+> 30
+> Density
+
+(b) Distribution for lead 7 0.5 0.0 0.5  
+
+> Relative error
+> 0
+> 2
+> 4
+> 6
+> Density
+
+(c) Distribution for lead 13 Figure 11: Errors of the combined model with a forecast at 23:00 of system 33. Orange curves show the fitted normal distribution in the probability density plots. 0 1 2 3 4 5 6 7 8 9 10 
+
+> Lead distance
+> 0.00
+> 0.25
+> 0.50
+> 0.75
+> 1.00
+> Pearson correlation
+
+Figure 12: Temporal correlations of lead distance using SOLRAD stations locations forecasts for every 6 hours 
+
+(α = 0.05) on diurnal leads (6–20). For system 1423 (Table 4) the normal is rejected for leads 10-19, while Student’s t and generalized hyperbolic fit substan-tially better. Q–Q plots are in the Appendix. Another aspect is the temporal dependence of forecast errors. If, for example, clear sky weather is predicted at 13:00, the forecast error at 14:00 will be small as well. To evaluate this assumption, we computed the Pearson correlation coefficient between the error at each forecast lead and errors at subse-quent leads for forecasts initialized at 06:00 UTC. As shown in Figure 12, the lag-1 correlation is 0 .58 and decays with increasing lead separation. Multi-period stochastic optimization models should therefore ac-count for this temporal autocorrelation when repre-senting forecast uncertainty. 
+
+## 6 CONCLUSIONS 
+
+Knowledge of the forecast error distribution of renew-able energy generation is a critical input for stochastic 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 
+
+> Forecast lead
+> 0.6
+> 0.4
+> 0.2
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> Relative error
+
+(a) Relative error of different leads. 0.050 0.025 0.000 0.025 0.050 
+
+> Relative error
+> 0
+> 10
+> 20
+> 30
+> 40
+> Density
+
+(b) Distribution for lead 7 0.4 0.2 0.0 0.2 0.4  
+
+> Relative error
+> 0
+> 2
+> 4
+> 6
+> 8
+> Density
+
+(c) Distribution for lead 13 Figure 13: Errors of the combined model with a forecast at 22:00 of system 1423. Orange curves show the fitted normal distribution in the probability density plots. Table 4: Goodness-of-Fit of different distributions for sys-tem 1423 showing the p-values of the Kolmogorov-Smirnov (K-S) and Cram´ er-von Mises (C-M) test at 22:00 local time. 
+
+Normal Student’s t Generalized Hyperbolic Lead K-S C-M K-S C-M K-S C-M 6 0.615 0.445 0.591 0.419 0.576 0.474 7 0.160 0.092 0.090 0.158 - 0.009 8 0.735 0.866 0.735 0.866 0.597 0.811 9 0.634 0.612 0.590 0.596 0.864 0.845 10 0.000 0.000 0.049 0.104 0.534 0.511 11 0.000 0.000 0.434 0.692 0.163 0.394 12 0.000 0.000 0.587 0.541 0.237 0.418 13 0.000 0.000 0.504 0.580 0.570 0.642 14 0.000 0.000 0.648 0.578 0.294 0.595 15 0.000 0.000 0.428 0.499 0.553 0.446 16 0.000 0.000 0.290 0.366 0.323 0.566 17 0.000 0.000 0.076 0.085 0.414 0.639 18 0.008 0.004 0.107 0.049 0.992 0.971 19 0.001 0.002 0.166 0.133 0.224 0.178 20 0.520 0.513 0.600 0.528 0.475 0.432 
+
+optimization. Motivated by a lack of reference dis-tributions for PV systems in the literature, we con-ducted a detailed analysis of forecast errors using a two-part model. The plant-characteristic component is an ensemble of MLPs that captures plant-specific behavior, including panel size, orientation, efficiency, and local shading arising from the surrounding envi-ronment and weather. Its MAE for two exemplary systems is approximately 28 W /kWp when satellite-based observation data are treated as a perfect weather forecast. The second component is an NWP-based weather forecast model, in particular the HRRRv4 model, applied to the most relevant weather features (GHI and air temperature). This model exhibits spa-tially varying accuracy and a systematic bias in GHI forecasts, resulting in a modest overestimation. Com-bined, the two components increase the MAE by 11% and 68% for the two examined PV systems. The common Gaussian assumption for forecast er-rors does not adequately describe the observed dis-tributions. The generalized hyperbolic and Student’s t distributions provide better fits. Additionally, fore-cast errors across different lead times exhibit temporal correlation, which decreases with increasing lead sep-aration and thus should be considered in applications. For future work, we recommend investigating the potential benefits of combining multiple NWP models in an ensemble, as suggested by (Lu et al., 2015), or introducing a statistical intermediate layer to mitigate the GHI bias. Such measures could reduce forecast errors and improve the accuracy of PV system fore-casts. Further, a similar two-part modelling approach could be applied to wind and load forecasts to analyze the interplay of the two-parted model. 
+
+## ACKNOWLEDGEMENTS 
+
+This work has received funding from the European Union’s Horizon 2020 research and innovation pro-gramme under grant agreement No 957819. The au-thors want to thank Johannes Heil for implementa-tion, feedback and discussions. Microsoft Copilot has been used for language improvements using a hand-crafted initial version of the script as input. 
+
+## REFERENCES 
+
+Abdel-Nasser, M. and Mahmoud, K. (2019). Accurate pho-tovoltaic power forecasting models using deep lstm-rnn. Neural computing and applications , 31:2727– 2740. Almeida, M. P., Perpinan, O., and Narvarte, L. (2015). Pv power forecast using a nonparametric pv model. Solar Energy , 115:354–368. Antonanzas, J., Osorio, N., Escobar, R., Urraca, R., de Pi-son, F. M., and Antonanzas-Torres, F. (2016). Re-view of photovoltaic power forecasting. Solar Energy ,136:78–111. Antoniadou-Plytaria, K., Steen, D., Tuan, L. A., Carlson, O., Mohandes, B., and Ghazvini, M. A. F. (2022). Scenario-based Stochastic Optimization for Energy and Flexibility Dispatch of a Microgrid. IEEE Trans-actions on Smart Grid , 13(5):3328–3341. Breiman, L. (1996). Bagging predictors. Machine Learn-ing , 24(2):123–140. Bright, J. M. (2019). Solcast: Validation of a satellite-derived solar irradiance dataset. Solar Energy ,189:435–449. Chu, Y., Urquhart, B., Gohari, S. M., Pedro, H. T., Kleissl, J., and Coimbra, C. F. (2015). Short-term reforecast-ing of power output from a 48 mwe solar pv plant. 
+
+Solar Energy , 112:68–77. Chupong, C. and Plangklang, B. (2011). Forecasting power output of pv grid connected system in thailand without using solar radiation measurement. Energy Procedia ,9:230–237. Cococcioni, M., D’Andrea, E., and Lazzerini, B. (2011). 24-hour-ahead forecasting of energy production in so-lar pv systems. In 2011 11th International Conference on Intelligent Systems Design and Applications , pages 1276–1281, Cordoba, Spain. IEEE, IEEE. CS¨ oRg˝ o, S. and Faraway, J. J. (1996). The exact and asymp-totic distributions of cram´ er-von mises statistics. Jour-nal of the Royal Statistical Society Series B: Statistical Methodology , 58(1):221–234. Danner, D., Seidemann, J., Lechl, M., and de Meer, H. (2021). Flexibility disaggregation under forecast con-ditions. In Proceedings of the Twelfth ACM Inter-national Conference on Future Energy Systems , e-Energy ’21, pages 27–38, New York, NY, USA. As-sociation for Computing Machinery. Danner, P. and de Meer, H. (2021). Location and solar system parameter extraction from power measurement time series. Energy Informatics , 4(3):14. Danner, P., Volkova, A., and de Meer, H. (2024). Two-step blackout mitigation by flexibility-enabled microgrid islanding. In Workshop on Cybersecurity and Privacy of Energy Systems (EnergySP) at 15th ACM Inter-national Conference on Future Energy Systems [Ac-cepted] , Singapore, Singapore. Association for Com-puting Machinery. Das, U. K., Tey, K. S., Seyedmahmoudian, M., Mekhilef, S., Idris, M. Y. I., Van Deventer, W., Horan, B., and Stojcevski, A. (2018). Forecasting of photovoltaic power generation and model optimization: A review. 
+
+Renewable and Sustainable Energy Reviews , 81:912– 928. De Giorgi, M. G., Congedo, P. M., and Malvoni, M. (2014). Photovoltaic power forecasting using statistical meth-ods: impact of weather data. IET Science, Measure-ment & Technology , 8(3):90–97. Deline, C., Perry, K., Deceglie, M., Muller, M., Sekulic, W., and Jordan, D. (2021). Photovoltaic data acquisition (pvdaq) public datasets. Ding, M., Wang, L., and Bi, R. (2011). An ann-based approach for forecasting the power output of pho-tovoltaic system. Procedia Environmental Sciences ,11:1308–1315. Ding, Y. and McCulloch, M. D. (2021). Distributionally robust optimization for networked microgrids consid-ering contingencies and renewable uncertainty. In 
+
+2021 60th IEEE Conference on Decision and Control (CDC) , pages 2330–2335, Austin, TX, USA. IEEE, IEEE. Dowell, D. C., Alexander, C. R., James, E. P., Weygandt, S. S., Benjamin, S. G., Manikin, G. S., Blake, B. T., Brown, J. M., Olson, J. B., Hu, M., Smirnova, T. G., Ladwig, T., Kenyon, J. S., Ahmadov, R., Turner, D. D., Duda, J. D., and Alcott, T. I. (2022). The high-resolution rapid refresh (hrrr): An hourly updat-ing convection-allowing forecast model. part i: Moti-vation and system description. Weather and Forecast-ing , 37(8):1371 – 1395. Heaton, J. (2008). Introduction to Neural Networks for Java, 2nd Edition . Heaton Research, Inc., 2nd edition. Hemmati, M., Mohammadi-Ivatloo, B., Abapour, M., and Anvari-Moghaddam, A. (2020). Optimal Chance-Constrained Scheduling of Reconfigurable Microgrids Considering Islanding Operation Constraints. IEEE Systems Journal , 14(4):5340–5349. Holmgren, W. F., Hansen, C. W., and Mikofski, M. A. (2018). pvlib python: a python package for modeling solar energy systems. Journal of Open Source Soft-ware , 3(29):884. Hughes, G. W. (1985). Engineering astronomy. Sandia Nat. Lab., Albuquerque, NM, USA, Tech. Rep , 5323. James, E. P., Alexander, C. R., Dowell, D. C., Weygandt, S. S., Benjamin, S. G., Manikin, G. S., Brown, J. M., Olson, J. B., Hu, M., Smirnova, T. G., Ladwig, T., Kenyon, J. S., and Turner, D. D. (2022). The high-resolution rapid refresh (hrrr): An hourly updating convection-allowing forecast model. part ii: Forecast performance. Weather and Forecasting , 37(8):1397 – 1417. Junior, J. G. d. S. F., Oozeki, T., Ohtake, H., Shimose, K.-i., Takashima, T., and Ogimoto, K. (2014). Forecasting regional photovoltaic power generation-a comparison of strategies to obtain one-day-ahead data. Energy Procedia , 57:1337–1345. Killinger, S., Lingfors, D., Saint-Drenan, Y.-M., Moraitis, P., van Sark, W., Taylor, J., Engerer, N. A., and Bright, J. M. (2018). On the search for representative charac-teristics of PV systems: Data collection and analysis of PV system azimuth, tilt, capacity, yield and shad-ing. Solar Energy , 173:1087–1106. Lam, R., Sanchez-Gonzalez, A., Willson, M., Wirnsberger, P., Fortunato, M., Alet, F., Ravuri, S., Ewalds, T., Eaton-Rosen, Z., Hu, W., Merose, A., Hoyer, S., Holland, G., Vinyals, O., Stott, J., Pritzel, A., Mo-hamed, S., and Battaglia, P. (2023). Learning skillful medium-range global weather forecasting. Science ,382(6677):1416–1421. Liu, G., Starke, M., Xiao, B., and Tomsovic, K. (2017). Robust optimisation-based microgrid scheduling with islanding constraints. IET Generation, Transmission & Distribution , 11(7):1820–1828. Liu, J., Fang, W., Zhang, X., and Yang, C. (2015). An im-proved photovoltaic power forecasting model with the assistance of aerosol index data. IEEE Transactions on Sustainable Energy , 6(2):434–442. Lu, S., Hwang, Y., Khabibrakhmanov, I., Marianno, F. J., Shao, X., Zhang, J., Hodge, B.-M., and Hamann, H. F. (2015). Machine learning based multi-physical-model blending for enhancing renewable energy forecast -improvement via situation dependent error correction. In 2015 European Control Conference (ECC) , pages 283–290, Linz, Austria. IEEE. Markovics, D. and Mayer, M. J. (2022). Compari-son of machine learning methods for photovoltaic power forecasting based on numerical weather pre-diction. Renewable and Sustainable Energy Reviews ,161:112364. Nair, V. and Hinton, G. E. (2010). Rectified linear units improve restricted boltzmann machines. In Proceed-ings of the 27th international conference on machine learning (ICML-10) , pages 807–814, Haifa, Israel. Omnipress. Rana, M., Koprinska, I., and Agelidis, V. G. (2015). Fore-casting solar power generated by grid connected pv systems using ensembles of neural networks. In 2015 International Joint Conference on Neural Networks (IJCNN) , pages 1–8, Killarney, Ireland. IEEE. Roald, L., Oldewurtel, F., Van Parys, B., and Ander-sson, G. (2015). Security Constrained Optimal Power Flow with Distributionally Robust Chance Constraints. arXiv:1508.06061 [math]. Shi, Z., Liang, H., Huang, S., and Dinavahi, V. (2019). Dis-tributionally robust chance-constrained energy man-agement for islanded microgrids. IEEE Transactions on Smart Grid , 10(2):2234–2244. Yang, C., Du, X., Xu, D., Tang, J., Lin, X., Xie, K., and Li, W. (2023). Optimal bidding strategy of renewable-based virtual power plant in the day-ahead market. In-ternational Journal of Electrical Power & Energy Sys-tems , 144:108557. Zhu, H., Li, X., Sun, Q., Nie, L., Yao, J., and Zhao, G. (2015). A power prediction method for photovoltaic power plant based on wavelet decomposition and arti-ficial neural networks. Energies , 9(1):11. 
+
+## APPENDIX 
+
+Weather forecast model temperature error Com-pared to GHI, air temperature forecast has an almost constant error distribution as shown in Figure 14. Slight variations due to the day-night cycle can be ob-served. Further, a bias of around 4 ◦C is visible for system 33. The error is almost normally distributed for all leads. 
+
+Distribution Fitting Q-Q plots for selected leads of system 1423 (Figure 15) show the normal distribu-tion fits poorly(first row), Student’s t fits the center but misses the tails (second row), and the generalized hy-perbolic fits best overall (third row). All three perform well at morning lead 8, while generalized hyperbolic is superior for higher daytime leads. 1 6 11 16 21 26 31 36 41 46 
+
+Forecast lead 
+
+15 
+
+10 
+
+5
+
+0
+
+5
+
+10 
+
+15 
+
+> Error in °C
+
+(a) System 33. 1 6 11 16 21 26 31 36 41 46 
+
+Forecast lead 
+
+15 
+
+10 
+
+5
+
+0
+
+5
+
+10 
+
+15  
+
+> Error in °C
+
+(b) System 1423. 0 5 10 
+
+Error in °C 
+
+0.0 
+
+0.1 
+
+0.2 
+
+> Density
+
+(c) System 33 lead 12. 0 5 10 
+
+Error in °C 
+
+0.00 
+
+0.05 
+
+0.10 
+
+0.15  
+
+> Density
+
+(d) System 33 lead 24. 4 2 0 2
+
+Error in °C 
+
+0.0 
+
+0.2 
+
+0.4  
+
+> Density
+
+(e) System 1423 lead 12 10 5 0 5
+
+Error in °C 
+
+0.0 
+
+0.1 
+
+0.2  
+
+> Density
+
+(f) System 1423 lead 24 Figure 14: Errors of the weather forecast model for air temperature with a forecast at 6:00 UTC. 2 0 2
+
+Theoretical Quantiles 
+
+3
+
+2
+
+1
+
+0
+
+1
+
+2
+
+3
+
+> Sample Quantiles
+
+(a) Normal, lead 8 2 0 2 4
+
+Theoretical Quantiles 
+
+3
+
+2
+
+1
+
+0
+
+1
+
+2
+
+3
+
+4 
+
+> Sample Quantiles
+
+(b) Normal, lead 10 4 2 0 2 4
+
+Theoretical Quantiles 
+
+4
+
+2
+
+0
+
+2
+
+4 
+
+> Sample Quantiles
+
+(c) Normal, lead 13 2 0 2 4
+
+Theoretical Quantiles 
+
+3
+
+2
+
+1
+
+0
+
+1
+
+2
+
+3
+
+4 
+
+> Sample Quantiles
+
+(d) Normal, lead 17 2 0 2
+
+Theoretical Quantiles 
+
+3
+
+2
+
+1
+
+0
+
+1
+
+2
+
+3
+
+> Sample Quantiles
+
+(e) Student’s t, lead 8 10 0 10 
+
+Theoretical Quantiles 
+
+15 
+
+10 
+
+5
+
+0
+
+5
+
+10 
+
+15  
+
+> Sample Quantiles
+
+(f) Student’s t, lead 10 20 0 20 
+
+Theoretical Quantiles 
+
+20 
+
+10 
+
+0
+
+10 
+
+20  
+
+> Sample Quantiles
+
+(g) Student’s t, lead 13 10 0 10 
+
+Theoretical Quantiles 
+
+10 
+
+5
+
+0
+
+5
+
+10  
+
+> Sample Quantiles
+
+(h) Student’s t, lead 17 7 8 9 10 11 
+
+Theoretical Quantiles 
+
+7
+
+8
+
+9
+
+10 
+
+11 
+
+> Sample Quantiles
+
+(i) Hyperbolic, lead 8 0 10 
+
+Theoretical Quantiles 
+
+5
+
+0
+
+5
+
+10 
+
+15  
+
+> Sample Quantiles
+
+(j) Hyperbolic, lead 10 20 0 20 
+
+Theoretical Quantiles 
+
+20 
+
+10 
+
+0
+
+10 
+
+20  
+
+> Sample Quantiles
+
+(k) Hyperbolic, lead 13 5 0 5 10 
+
+Theoretical Quantiles 
+
+5
+
+0
+
+5
+
+10  
+
+> Sample Quantiles
+
+(l) Hyperbolic, lead 17 Figure 15: Q-Q plots on empirical data against fitted distributions for the forecast at 22:00 for system 1423.

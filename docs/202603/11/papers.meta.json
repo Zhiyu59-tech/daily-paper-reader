@@ -1,0 +1,51 @@
+{
+  "label": "2026-03-11",
+  "date": "2026-03-11",
+  "generated_at": "2026-03-11T20:15:14",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202603/11/2603.03402v1-heterogeneous-time-constants-improve-stability-in-equilibrium-propagation",
+      "section": "quick",
+      "title_en": "Heterogeneous Time Constants Improve Stability in Equilibrium Propagation",
+      "authors": "Yoshimasa Kubo, Suhani Pragnesh Modi, Smit Patel",
+      "date": "2026-03-03",
+      "pdf": "https://arxiv.org/pdf/2603.03402v1",
+      "score": "7.0",
+      "evidence": "平衡传播算法在理论框架上与Hopfield网络的能量最小化密切相关",
+      "tldr": "平衡传播（EP）是神经网络训练中一种具有生物合理性的反向传播替代方案。针对现有EP模型统一时间步长导致生物真实性不足的问题，本文提出了异构时间步长（HTS）方法，为每个神经元分配基于生物分布的特定时间常数。实验证明，HTS在保持竞争性任务性能的同时，显著提升了训练稳定性，增强了EP模型的鲁棒性与生物学解释力。",
+      "tags": "query:hp-pg",
+      "abstract_en": "Equilibrium propagation (EP) is a biologically plausible alternative to backpropagation for training neural networks. However, existing EP models use a uniform scalar time step dt, which corresponds biologically to a membrane time constant that is heterogeneous across neurons. Here, we introduce heterogeneous time steps (HTS) for EP by assigning neuron-specific time constants drawn from biologically motivated distributions. We show that HTS improves training stability while maintaining competitive task performance. These results suggest that incorporating heterogeneous temporal dynamics enhances both the biological realism and robustness of equilibrium propagation.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/11/2603.04132v1-two-stage-photovoltaic-forecasting-separating-weather-prediction-from-plant-characteristics",
+      "section": "quick",
+      "title_en": "Two-Stage Photovoltaic Forecasting: Separating Weather Prediction from Plant-Characteristics",
+      "authors": "Philipp Danner, Hermann de Meer",
+      "date": "2026-03-04",
+      "pdf": "https://arxiv.org/pdf/2603.04132v1",
+      "score": "7.0",
+      "evidence": "用于能源管理的光伏发电预测",
+      "tldr": "针对光伏发电预测中天气预测误差与电站特性混淆的问题，本文提出一种两阶段预测框架。该方法将预测分解为天气预测模型（处理辐照度和温度）和电站特性模型（捕捉朝向、遮挡等特定参数），并利用卫星观测作为中间层。研究分析了HRRR天气模型的误差分布，并使用神经网络训练电站模型，为随机优化提供了更精准的误差分布细节。",
+      "tags": "query:hp-pg",
+      "abstract_en": "Several energy management applications rely on accurate photovoltaic generation forecasts. Common metrics like mean absolute error or root-mean-square error, omit error-distribution details needed for stochastic optimization. In addition, several approaches use weather forecasts as inputs without analyzing the source of the prediction error. To overcome this gap, we decompose forecasting into a weather forecast model for environmental parameters such as solar irradiance and temperature and a plant characteristic model that captures site-specific parameters like panel orientation, temperature influence, or regular shading. Satellite-based weather observation serves as an intermediate layer. We analyze the error distribution of the high-resolution rapid-refresh numerical weather prediction model that covers the United States as a black-box model for weather forecasting and train an ensemble of neural networks on historical power output data for the plant characteristic model. Results show mean absolute error increases by 11% and 68% for two selected photovoltaic systems when using weather forecasts instead of satellite-based ground-truth weather observations as a perfect forecast. The generalized hyperbolic and Student's t distributions adequately fit the forecast errors across lead times.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/11/2603.09490v1-temporal-conditioned-normalizing-flows-for-multivariate-time-series-anomaly-detection",
+      "section": "quick",
+      "title_en": "Temporal-Conditioned Normalizing Flows for Multivariate Time Series Anomaly Detection",
+      "authors": "David Baumgartner, Helge Langseth, Kenth Engø-Monsen, Heri Ramampiaro",
+      "date": "2026-03-10",
+      "pdf": "https://arxiv.org/pdf/2603.09490v1",
+      "score": "6.0",
+      "evidence": "用于故障诊断的多变量时间序列异常检测",
+      "tldr": "本文针对多变量时间序列异常检测，提出了时间条件归一化流（tcNF）框架。该方法通过自回归方式将归一化流建立在历史观测值之上，从而精确建模复杂的时间依赖性和不确定性。tcNF 能够生成预期行为的概率分布，通过识别分布中的低概率事件来实现鲁棒的异常检测。实验证明，该方法在多个数据集上均表现出优异的准确性和鲁棒性，并提供了开源代码以促进研究。",
+      "tags": "query:hp-pg",
+      "abstract_en": "This paper introduces temporal-conditioned normalizing flows (tcNF), a novel framework that addresses anomaly detection in time series data with accurate modeling of temporal dependencies and uncertainty. By conditioning normalizing flows on previous observations, tcNF effectively captures complex temporal dynamics and generates accurate probability distributions of expected behavior. This autoregressive approach enables robust anomaly detection by identifying low-probability events within the learned distribution. We evaluate tcNF on diverse datasets, demonstrating good accuracy and robustness compared to existing methods. A comprehensive analysis of strengths and limitations and open-source code is provided to facilitate reproducibility and future research.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,82 @@
+Title: Heterogeneous Time Constants Improve Stability in Equilibrium Propagation
+
+URL Source: https://arxiv.org/pdf/2603.03402v1
+
+Published Time: Thu, 05 Mar 2026 01:04:51 GMT
+
+Number of Pages: 3
+
+Markdown Content:
+# Heterogeneous Time Constants Improve Stability in Equilibrium Propagation 
+
+Yoshimasa Kubo 1 Suhani Pragnesh Modi 1 Smit Patel 1 
+
+> 1
+
+Department of Computer Science, Lakehead University 
+
+ykubo@lakeheadu.ca, smodi7@lakeheadu.ca, spate239@lakeheadu.ca 
+
+Abstract 
+
+Equilibrium propagation (EP) is a biologically plausible al-ternative to backpropagation for training neural networks. However, existing EP models use a uniform scalar time step dt , which corresponds biologically to a membrane time constant that is heterogeneous across neurons. Here, we introduce heterogeneous time steps (HTS) for EP by assigning neuron-specific time constants drawn from biologically motivated distributions. We show that HTS improves training stability while maintaining com-petitive task performance. These results suggest that in-corporating heterogeneous temporal dynamics enhances both the biological realism and robustness of equilibrium propagation. 
+
+# Introduction 
+
+Equilibrium propagation (EP) is a biologically plausible learning algorithm for training neural networks (Ernoult et al., 2019; Laborieux & Zenke, 2022; Laborieux et al., 2021; Scellier & Bengio, 2017, 2019). Prior work has applied EP to image classification (Laborieux & Zenke, 2022; Laborieux et al., 2021), including continual learn-ing (Kubo et al., 2025), reinforcement learning (Kubo et al., 2022b), and natural language processing tasks, highlighting its potential as an alternative to backprop-agation, which, despite its effectiveness, lacks biologi-cal plausibility. Nevertheless, several aspects of EP re-main underexplored from a biological perspective. In particular, existing EP implementations typically employ a single scalar time step dt to update neural states. Interpreted biologically, this parameter corresponds to a membrane time constant, which is known to vary substantially across neurons rather than remaining uni-form. Moreover, prior studies in spiking neural networks have shown that heterogeneous time constants can im-prove performance on multiple tasks (Perez-Nieves et al., 2021). Here, we introduce heterogeneous time steps (HTS) for equilibrium propagation, assigning neuron-specific time constants drawn from biologically motivated distri-butions instead of using a shared scalar value. We eval-uate multiple distributions and analyze their effects on learning dynamics and performance. Our results show that EP models with HTS exhibit improved training stabil-ity compared to conventional scalar-time-step EP, while maintaining competitive accuracy. These findings sug-gest that incorporating heterogeneous temporal dynam-ics enhances both the biological plausibility and robust-ness of equilibrium propagation. 
+
+# Methods 
+
+Model Dynamics 
+
+Equilibrium propagation (EP) formulates neural state dy-namics as gradient flow on an energy function E. In con-tinuous time, the dynamics are expressed as 
+
+𝜏 ds dt = − 𝜕 E
+
+𝜕 s , (1) where 𝜏 denotes the neuronal membrane time constant and s represents the neural state. In discrete-time implementations, this yields the up-date rule 
+
+st+1 = st − dt 𝜕 E
+
+𝜕 st , (2) where dt is the integration time step. In conventional EP models, dt is treated as a scalar shared across all neurons. For state updates, we employed the predictive learn-ing rule (Luczak et al., 2022) without explicit prediction units (Kubo et al., 2022a; Luczak & Kubo, 2022), result-ing in a more biologically grounded implementation. 
+
+Heterogeneous Time Steps 
+
+To introduce temporal heterogeneity in EP, we replaced the conventional scalar dt with neuron-specific time steps in the hidden layer. Each hidden neuron was as-signed a distinct dt i sampled from a probability distribu-tion. We evaluated three biologically motivated distribu-tions: normal, log-normal, and gamma. All distributions were parameterized with mean 0.3 
+
+and standard deviation 0.1 . To ensure numerical sta-bility of the discrete-time Euler updates and to avoid pathological time scales, all sampled time steps were restricted to a bounded interval: 
+
+dt i ∈ [dt min , dt max ], 
+
+> arXiv:2603.03402v1 [cs.LG] 3 Mar 2026
+
+Figure 1: Distributions of heterogeneous time steps ( dt i ) used in the hidden layer. All distributions were parameterized with 𝜇 = 0.3 , 𝜎 = 0.1 and clamped to [10 −3, 0.5] for numerical stability. The visible accumulation at dt = 0.5 for heavy-tailed distributions results from this truncation. Table 1: Average test accuracy (%) ± standard deviation across 10 random seeds. 
+
+Dataset dt y Normal Log-normal Gamma Scalar MNIST 0.15 98.43 ± 0.03% 98.43 ± 0.04% 98.43 ± 0.04% 98.43 ± 0.04% 0.20 98.44 ± 0.03% 98.44 ± 0.02% 98.43 ± 0.02% 98.43 ± 0.04% 0.25 98.44 ± 0.04% 98.44 ± 0.03% 98.43 ± 0.03% 98.44 ± 0.04% 0.30 98.46 ± 0.03% 98.46 ± 0.02% 98.45 ± 0.04% 98.43 ± 0.03% 0.35 98.46 ± 0.04% 98.45 ± 0.03% 98.45 ± 0.04% 98.44 ± 0.04% 
+
+KMNIST 0.15 91.29 ± 0.22% 91.21 ± 0.14% 91.15 ± 0.18% 91.07 ± 0.17% 0.20 91.21 ± 0.17% 91.22 ± 0.13% 91.23 ± 0.15% 91.10 ± 0.18% 0.25 91.23 ± 0.11% 91.24 ± 0.11% 91.28 ± 0.11% 91.11 ± 0.07% 0.30 91.26 ± 0.14% 91.19 ± 0.11% 91.26 ± 0.15% 91.12 ± 0.15% 0.35 91.23 ± 0.16% 91.27 ± 0.16% 91.17 ± 0.15% 91.10 ± 0.18% 
+
+FMNIST 0.15 89.65 ± 0.13% 89.65 ± 0.13% 89.65 ± 0.11% 89.53 ± 0.12% 0.20 89.69 ± 0.16% 89.71 ± 0.10% 89.66 ± 0.13% 89.44 ± 0.17% 0.25 89.65 ± 0.10% 89.66 ± 0.11% 89.63 ± 0.18% 89.57 ± 0.23% 0.30 89.68 ± 0.18% 89.63 ± 0.08% 89.61 ± 0.13% 89.50 ± 0.16% 0.35 89.65 ± 0.12% 89.59 ± 0.12% 89.64 ± 0.16% 89.43 ± 0.23% where dt min = 10 −3 and dt max = 0.5 . Bounding dt i
+
+prevents excessively large integration steps that could destabilize gradient-flow dynamics, as well as vanish-ingly small values that would significantly slow conver-gence. For heavy-tailed distributions such as the log-normal and gamma, samples exceeding dt max are mapped to 
+
+dt max , which results in a small accumulation of proba-bility mass at the upper boundary. This effect is visible in Figure 1 and reflects the imposed stability constraint rather than an intrinsic property of the underlying distri-butions. Heterogeneous time steps were applied only to the hidden layer, while the output layer retained a scalar time step due to its distinct functional role in classification. The hidden layer contained 1024 neurons in all experi-ments. To examine the interaction between hidden-layer heterogeneity and output-layer dynamics, we var-ied the scalar time step of the output layer across 
+
+{0.15, 0.20, 0.25, 0.30, 0.35 }. This allowed us to eval-uate stability and performance under different output temporal scales while maintaining heterogeneous dy-namics in the hidden layer. 
+
+Experimental Setup 
+
+Experiments were conducted on MNIST, KMNIST, and Fashion-MNIST using a single hidden layer with 1024 neurons. The hidden and output activation functions were Leaky ReLU and sigmoid, respectively. Models were trained for 50 epochs with batch size 256. Learning rates were set to 𝛼 1 = 0.5 (input-to-hidden) and 𝛼 2 = 0.1 (hidden-to-output). The free and clamped phases con-sisted of 125 and 12 time steps, respectively, with feed-back parameter 𝛾 = 1.0 and nudging parameter 𝛽 = 1.0 .
+
+# Results and Conclusion 
+
+Table 1 summarizes test accuracy across datasets. On MNIST, performance differences among models are negligible. In contrast, on KMNIST and Fashion-MNIST, EP models with heterogeneous time steps (HTS) show consistent but modest improvements over the scalar baseline, suggesting a mild regularizing effect similar to activation-based regularization in EP (Kubo et al., 2022a). In summary, incorporating heterogeneous time steps improves stability while preserving performance and in-creasing biological plausibility. 
+
+# Acknowledgments 
+
+This research was enabled in part by computational re-sources provided by the Digital Research Alliance of Canada (alliancecan.ca). 
+
+# References 
+
+Ernoult, M., Grollier, J., Querlioz, D., Bengio, Y., & Scel-lier, B. (2019). Updates of equilibrium prop match gradients of backprop through time in an rnn with static input. Advances in neural information process-ing systems , 32 .Kubo, Y., Chalmers, E., & Luczak, A. (2022a). Biologically-inspired neuronal adaptation im-proves learning in neural networks. arXiv preprint arXiv:2204.14008 .Kubo, Y., Chalmers, E., & Luczak, A. (2022b). Com-bining backpropagation with equilibrium propaga-tion to improve an actor-critic reinforcement learn-ing framework. Frontiers in Computational Neuro-science , 16 , 980613. Kubo, Y., Delanois, J. E., & Bazhenov, M. (2025). To-ward lifelong learning in equilibrium propagation: Sleep-like and awake rehearsal for enhanced sta-bility. arXiv preprint arXiv:2508.14081 .Laborieux, A., Ernoult, M., Scellier, B., Bengio, Y., Grol-lier, J., & Querlioz, D. (2021). Scaling equilibrium propagation to deep convnets by drastically reduc-ing its gradient estimator bias. Frontiers in neuro-science , 15 , 633674. Laborieux, A., & Zenke, F. (2022). Holomorphic equilib-rium propagation computes exact gradients through finite size oscillations. Advances in neural informa-tion processing systems , 35 , 12950–12963. Luczak, A., & Kubo, Y. (2022). Predictive neuronal adap-tation as a basis for consciousness. Frontiers in Sys-tems Neuroscience , 15 , 767461. Luczak, A., McNaughton, B. L., & Kubo, Y. (2022). Neu-rons learn by predicting future activity. Nature ma-chine intelligence , 4(1), 62–72. Perez-Nieves, N., Leung, V. C., Dragotti, P. L., & Good-man, D. F. (2021). Neural heterogeneity promotes robust learning. Nature communications , 12 (1), 5791. Scellier, B., & Bengio, Y. (2017). Equilibrium propaga-tion: Bridging the gap between energy-based mod-els and backpropagation. Frontiers in computational neuroscience , 11 , 24. Scellier, B., & Bengio, Y. (2019). Equivalence of equi-librium propagation and recurrent backpropagation. 
+
+Neural computation , 31 (2), 312–329.

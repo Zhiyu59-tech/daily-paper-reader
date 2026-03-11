@@ -1,0 +1,126 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-03-11T20:14:44.351093+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 3,
+    "quick_skim_target": 11,
+    "quick_selected": 3
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2603.03402v1",
+      "title": "Heterogeneous Time Constants Improve Stability in Equilibrium Propagation",
+      "abstract": "Equilibrium propagation (EP) is a biologically plausible alternative to backpropagation for training neural networks. However, existing EP models use a uniform scalar time step dt, which corresponds biologically to a membrane time constant that is heterogeneous across neurons. Here, we introduce heterogeneous time steps (HTS) for EP by assigning neuron-specific time constants drawn from biologically motivated distributions. We show that HTS improves training stability while maintaining competitive task performance. These results suggest that incorporating heterogeneous temporal dynamics enhances both the biological realism and robustness of equilibrium propagation.",
+      "authors": [
+        "Yoshimasa Kubo",
+        "Suhani Pragnesh Modi",
+        "Smit Patel"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-03-03T14:35:38+00:00",
+      "link": "https://arxiv.org/pdf/2603.03402v1",
+      "tags": [
+        "query:HP PG"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Equilibrium propagation is a theoretical framework closely related to Hopfield network energy minimization",
+      "llm_evidence_cn": "平衡传播算法在理论框架上与Hopfield网络的能量最小化密切相关",
+      "llm_evidence": "平衡传播算法在理论框架上与Hopfield网络的能量最小化密切相关",
+      "canonical_evidence": "平衡传播算法在理论框架上与Hopfield网络的能量最小化密切相关",
+      "llm_tldr_en": "Introduces heterogeneous time constants to improve stability in Equilibrium Propagation, a Hopfield-like learning rule.",
+      "llm_tldr_cn": "在平衡传播算法中引入异构时间常数，提高了类似Hopfield学习规则的训练稳定性。",
+      "llm_tldr": "在平衡传播算法中引入异构时间常数，提高了类似Hopfield学习规则的训练稳定性。",
+      "llm_tags": [
+        "query:hp-pg"
+      ],
+      "matched_query_tag": "query:hp-pg",
+      "matched_query_text": "Hopfield neural network architecture and theory",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2603.09490v1",
+      "title": "Temporal-Conditioned Normalizing Flows for Multivariate Time Series Anomaly Detection",
+      "abstract": "This paper introduces temporal-conditioned normalizing flows (tcNF), a novel framework that addresses anomaly detection in time series data with accurate modeling of temporal dependencies and uncertainty. By conditioning normalizing flows on previous observations, tcNF effectively captures complex temporal dynamics and generates accurate probability distributions of expected behavior. This autoregressive approach enables robust anomaly detection by identifying low-probability events within the learned distribution. We evaluate tcNF on diverse datasets, demonstrating good accuracy and robustness compared to existing methods. A comprehensive analysis of strengths and limitations and open-source code is provided to facilitate reproducibility and future research.",
+      "authors": [
+        "David Baumgartner",
+        "Helge Langseth",
+        "Kenth Engø-Monsen",
+        "Heri Ramampiaro"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-03-10T10:49:48+00:00",
+      "link": "https://arxiv.org/pdf/2603.09490v1",
+      "tags": [
+        "keyword:HP PG",
+        "query:HP PG"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "multivariate time series anomaly detection for fault diagnosis",
+      "llm_evidence_cn": "用于故障诊断的多变量时间序列异常检测",
+      "llm_evidence": "用于故障诊断的多变量时间序列异常检测",
+      "canonical_evidence": "用于故障诊断的多变量时间序列异常检测",
+      "llm_tldr_en": "Introduces temporal-conditioned normalizing flows for robust anomaly detection in time series.",
+      "llm_tldr_cn": "引入时间条件归一化流，用于时间序列中稳健的异常检测。",
+      "llm_tldr": "引入时间条件归一化流，用于时间序列中稳健的异常检测。",
+      "llm_tags": [
+        "query:hp-pg"
+      ],
+      "matched_query_tag": "query:hp-pg",
+      "matched_query_text": "power system fault diagnosis using Hopfield models",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.04132v1",
+      "title": "Two-Stage Photovoltaic Forecasting: Separating Weather Prediction from Plant-Characteristics",
+      "abstract": "Several energy management applications rely on accurate photovoltaic generation forecasts. Common metrics like mean absolute error or root-mean-square error, omit error-distribution details needed for stochastic optimization. In addition, several approaches use weather forecasts as inputs without analyzing the source of the prediction error. To overcome this gap, we decompose forecasting into a weather forecast model for environmental parameters such as solar irradiance and temperature and a plant characteristic model that captures site-specific parameters like panel orientation, temperature influence, or regular shading. Satellite-based weather observation serves as an intermediate layer. We analyze the error distribution of the high-resolution rapid-refresh numerical weather prediction model that covers the United States as a black-box model for weather forecasting and train an ensemble of neural networks on historical power output data for the plant characteristic model. Results show mean absolute error increases by 11% and 68% for two selected photovoltaic systems when using weather forecasts instead of satellite-based ground-truth weather observations as a perfect forecast. The generalized hyperbolic and Student's t distributions adequately fit the forecast errors across lead times.",
+      "authors": [
+        "Philipp Danner",
+        "Hermann de Meer"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-03-04T14:45:58+00:00",
+      "link": "https://arxiv.org/pdf/2603.04132v1",
+      "tags": [
+        "keyword:HP PG",
+        "query:HP PG"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "photovoltaic generation forecasting for energy management",
+      "llm_evidence_cn": "用于能源管理的光伏发电预测",
+      "llm_evidence": "用于能源管理的光伏发电预测",
+      "canonical_evidence": "用于能源管理的光伏发电预测",
+      "llm_tldr_en": "A two-stage photovoltaic forecasting method separating weather prediction from plant-specific characteristics.",
+      "llm_tldr_cn": "一种将天气预报与电站特性分离的两阶段光伏发电预测方法。",
+      "llm_tldr": "一种将天气预报与电站特性分离的两阶段光伏发电预测方法。",
+      "llm_tags": [
+        "query:hp-pg"
+      ],
+      "matched_query_tag": "query:hp-pg",
+      "matched_query_text": "Hopfield network based load forecasting for electrical grids",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}
