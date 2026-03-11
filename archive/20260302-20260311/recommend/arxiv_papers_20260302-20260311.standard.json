@@ -1,238 +1,389 @@
 {
   "mode": "standard",
-  "generated_at": "2026-03-11T12:27:43.737171+00:00",
+  "generated_at": "2026-03-11T12:51:59.246919+00:00",
   "stats": {
     "mode": "standard",
     "tag_count": 1,
-    "deep_divecandidates": 1,
+    "deep_divecandidates": 2,
     "deep_cap": 6,
-    "deep_selected": 1,
-    "quick_candidates": 5,
+    "deep_selected": 2,
+    "quick_candidates": 8,
     "quick_skim_target": 11,
-    "quick_selected": 5
+    "quick_selected": 8
   },
   "deep_dive": [
     {
-      "id": "2603.07261v1",
-      "title": "Turning Time Series into Algebraic Equations: Symbolic Machine Learning for Interpretable Modeling of Chaotic Time Series",
-      "abstract": "Chaotic time series are notoriously difficult to forecast. Small uncertainties in initial conditions amplify rapidly, while strong nonlinearities and regime dependent variability constrain predictability. Although modern deep learning often delivers strong short horizon accuracy, its black box nature limits scientific insight and practical trust in settings where understanding the underlying dynamics matters. To address this gap, we propose two complementary symbolic forecasters that learn explicit, interpretable algebraic equations from chaotic time series data. Symbolic Neural Forecaster (SyNF) adapts a neural network based equation learning architecture to the forecasting setting, enabling fully differentiable discovery of compact and interpretable algebraic relations. The Symbolic Tree Forecaster (SyTF) builds on evolutionary symbolic regression to search directly over equation structures under a principled accuracy complexity trade off. We evaluate both approaches in a rolling window nowcasting setting with one step ahead forecasting using several accuracy metrics and compare against a broad suite of baselines spanning classical statistical models, tree ensembles, and modern deep learning architectures. Numerical experiments cover a benchmark of 132 low dimensional chaotic attractors and two real world chaotic time series, namely weekly dengue incidence in San Juan and the Nino 3.4 sea surface temperature index. Across datasets, symbolic forecasters achieve competitive one step ahead accuracy while providing transparent equations that reveal salient aspects of the underlying dynamics.",
+      "id": "2603.03464v1",
+      "title": "Graph Hopfield Networks: Energy-Based Node Classification with Associative Memory",
+      "abstract": "We introduce Graph Hopfield Networks, whose energy function couples associative memory retrieval with graph Laplacian smoothing for node classification. Gradient descent on this joint energy yields an iterative update interleaving Hopfield retrieval with Laplacian propagation. Memory retrieval provides regime-dependent benefits: up to 2.0~pp on sparse citation networks and up to 5 pp additional robustness under feature masking; the iterative energy-descent architecture itself is a strong inductive bias, with all variants (including the memory-disabled NoMem ablation) outperforming standard baselines on Amazon co-purchase graphs. Tuning enables graph sharpening for heterophilous benchmarks without architectural changes.",
       "authors": [
-        "Madhurima Panja",
-        "Grace Younes",
-        "Tanujit Chakraborty"
+        "Abinav Rao",
+        "Alex Wa",
+        "Rishi Athavale"
       ],
       "primary_category": "cs.LG",
       "categories": [
         "cs.LG",
-        "nlin.CD",
-        "physics.data-an"
+        "cs.AI",
+        "cs.IR"
       ],
-      "published": "2026-03-07T15:35:34+00:00",
-      "link": "https://arxiv.org/pdf/2603.07261v1",
+      "published": "2026-03-03T19:21:05+00:00",
+      "link": "https://arxiv.org/pdf/2603.03464v1",
       "tags": [
-        "keyword:RL SR",
-        "query:RL SR"
+        "keyword:HP PG",
+        "query:HP PG"
       ],
-      "llm_score": 10.0,
-      "llm_evidence_en": "learn explicit interpretable algebraic equations from time series data",
-      "llm_evidence_cn": "从时间序列数据中学习显式可解释的代数方程",
-      "llm_evidence": "从时间序列数据中学习显式可解释的代数方程",
-      "canonical_evidence": "从时间序列数据中学习显式可解释的代数方程",
-      "llm_tldr_en": "Proposes symbolic machine learning to discover algebraic equations for chaotic time series modeling.",
-      "llm_tldr_cn": "提出符号机器学习方法，从混沌时间序列中发现代数方程以实现可解释建模。",
-      "llm_tldr": "提出符号机器学习方法，从混沌时间序列中发现代数方程以实现可解释建模。",
+      "llm_score": 9.0,
+      "llm_evidence_en": "Graph Hopfield Networks with associative memory",
+      "llm_evidence_cn": "具有联想记忆的图霍普菲尔德网络",
+      "llm_evidence": "具有联想记忆的图霍普菲尔德网络",
+      "canonical_evidence": "具有联想记忆的图霍普菲尔德网络",
+      "llm_tldr_en": "Introduces Graph Hopfield Networks combining associative memory with graph smoothing.",
+      "llm_tldr_cn": "引入了结合联想记忆与图平滑的图霍普菲尔德网络。",
+      "llm_tldr": "引入了结合联想记忆与图平滑的图霍普菲尔德网络。",
       "llm_tags": [
-        "query:rl-sr"
+        "query:hp-pg"
       ],
-      "matched_query_tag": "query:rl-sr",
-      "matched_query_text": "symbolic regression for mathematical expression discovery",
-      "matched_requirement_id": "req-2",
+      "matched_query_tag": "query:hp-pg",
+      "matched_query_text": "Hopfield neural network architecture and theory",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2603.09317v1",
+      "title": "Hopfield model for patterns with internal structure",
+      "abstract": "The spherical version of the Hopfield model for pattern recognition is considered in the static limit. Structures inside the patterns are modeled by Gaussian random variables that reward correlation between pairs of spins in a given pattern. The free energy is derived analytically with the replica method. The overlap distribution obeys a self-consistent equation. Coming from high temperatures, a spin glass phase is entered, in which patterns and correlations appear at lower temperatures. For small enough loading capacity, also a glass phase with patterns and correlations appears.",
+      "authors": [
+        "Theodorus Maria Nieuwenhuizen"
+      ],
+      "primary_category": "cond-mat.dis-nn",
+      "categories": [
+        "cond-mat.dis-nn",
+        "cond-mat.stat-mech"
+      ],
+      "published": "2026-03-10T07:50:04+00:00",
+      "link": "https://arxiv.org/pdf/2603.09317v1",
+      "tags": [
+        "keyword:HP PG",
+        "query:HP PG"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Hopfield model for pattern recognition theory",
+      "llm_evidence_cn": "用于模式识别理论的霍普菲尔德模型",
+      "llm_evidence": "用于模式识别理论的霍普菲尔德模型",
+      "canonical_evidence": "用于模式识别理论的霍普菲尔德模型",
+      "llm_tldr_en": "Analytical study of the spherical Hopfield model for patterns with internal structures.",
+      "llm_tldr_cn": "对具有内部结构的模式的球形霍普菲尔德模型的分析研究。",
+      "llm_tldr": "对具有内部结构的模式的球形霍普菲尔德模型的分析研究。",
+      "llm_tags": [
+        "query:hp-pg"
+      ],
+      "matched_query_tag": "query:hp-pg",
+      "matched_query_text": "Hopfield neural network architecture and theory",
+      "matched_requirement_id": "req-1",
       "selection_source": "fresh_fetch"
     }
   ],
   "quick_skim": [
     {
-      "id": "2603.01834v1",
-      "title": "Probing Materials Knowledge in LLMs: From Latent Embeddings to Reliable Predictions",
-      "abstract": "Large language models are increasingly applied to materials science, yet fundamental questions remain about their reliability and knowledge encoding. Evaluating 25 LLMs across four materials science tasks -- over 200 base and fine-tuned configurations -- we find that output modality fundamentally determines model behavior. For symbolic tasks, fine-tuning converges to consistent, verifiable answers with reduced response entropy, while for numerical tasks, fine-tuning improves prediction accuracy but models remain inconsistent across repeated inference runs, limiting their reliability as quantitative predictors. For numerical regression, we find that better performance can be obtained by extracting embeddings directly from intermediate transformer layers than from model text output, revealing an ``LLM head bottleneck,'' though this effect is property- and dataset-dependent. Finally, we present a longitudinal study of GPT model performance in materials science, tracking four models over 18 months and observing 9--43\\% performance variation that poses reproducibility challenges for scientific applications.",
+      "id": "2603.01657v1",
+      "title": "FreeGNN: Continual Source-Free Graph Neural Network Adaptation for Renewable Energy Forecasting",
+      "abstract": "Accurate forecasting of renewable energy generation is essential for efficient grid management and sustainable power planning. However, traditional supervised models often require access to labeled data from the target site, which may be unavailable due to privacy, cost, or logistical constraints. In this work, we propose FreeGNN, a Continual Source-Free Graph Domain Adaptation framework that enables adaptive forecasting on unseen renewable energy sites without requiring source data or target labels. Our approach integrates a spatio-temporal Graph Neural Network (GNN) backbone with a teacher--student strategy, a memory replay mechanism to mitigate catastrophic forgetting, graph-based regularization to preserve spatial correlations, and a drift-aware weighting scheme to dynamically adjust adaptation strength during streaming updates. This combination allows the model to continuously adapt to non-stationary environmental conditions while maintaining robustness and stability. We conduct extensive experiments on three real-world datasets: GEFCom2012, Solar PV, and Wind SCADA, encompassing multiple sites, temporal resolutions, and meteorological features. The ablation study confirms that each component memory, graph regularization, drift-aware adaptation, and teacher--student strategy contributes significantly to overall performance. The experiments show that FreeGNN achieves an MAE of 5.237 and an RMSE of 7.123 on the GEFCom dataset, an MAE of 1.107 and an RMSE of 1.512 on the Solar PV dataset, and an MAE of 0.382 and an RMSE of 0.523 on the Wind SCADA dataset. These results demonstrate its ability to achieve accurate and robust forecasts in a source-free, continual learning setting, highlighting its potential for real-world deployment in adaptive renewable energy systems. For reproducibility, implementation details are available at: https://github.com/AraoufBh/FreeGNN.",
       "authors": [
-        "Vineeth Venugopal",
-        "Soroush Mahjoubi",
-        "Elsa Olivetti"
-      ],
-      "primary_category": "cond-mat.mtrl-sci",
-      "categories": [
-        "cond-mat.mtrl-sci",
-        "cs.LG"
-      ],
-      "published": "2026-03-02T13:09:12+00:00",
-      "link": "https://arxiv.org/pdf/2603.01834v1",
-      "tags": [
-        "keyword:RL SR",
-        "query:RL SR"
-      ],
-      "llm_score": 7.0,
-      "llm_evidence_en": "LLMs for symbolic tasks and numerical regression in materials science",
-      "llm_evidence_cn": "LLM在材料科学中的符号任务与数值回归",
-      "llm_evidence": "LLM在材料科学中的符号任务与数值回归",
-      "canonical_evidence": "LLM在材料科学中的符号任务与数值回归",
-      "llm_tldr_en": "Evaluates LLMs on materials science tasks, comparing symbolic and numerical regression performance.",
-      "llm_tldr_cn": "评估LLM在材料科学任务中的表现，对比了符号任务与数值回归的可靠性。",
-      "llm_tldr": "评估LLM在材料科学任务中的表现，对比了符号任务与数值回归的可靠性。",
-      "llm_tags": [
-        "query:rl-sr"
-      ],
-      "matched_query_tag": "query:rl-sr",
-      "matched_query_text": "combining deep learning and symbolic regression for scientific discovery",
-      "matched_requirement_id": "req-5",
-      "selection_source": "fresh_fetch",
-      "quick_tier": "7"
-    },
-    {
-      "id": "2603.02479v1",
-      "title": "PRISM: Pushing the Frontier of Deep Think via Process Reward Model-Guided Inference",
-      "abstract": "DEEPTHINK methods improve reasoning by generating, refining, and aggregating populations of candidate solutions, which enables strong performance on complex mathematical and scientific tasks. However, existing frameworks often lack reliable correctness signals during inference, which creates a population-enhancement bottleneck where deeper deliberation amplifies errors, suppresses correct minority solutions, and yields weak returns to additional compute. In this paper, we introduce a functional decomposition of DEEPTHINK systems and propose PRISM, a Process Reward Model (PRM)-guided inference algorithm that uses step-level verification to guide both population refinement and solution aggregation. During refinement, PRISM treats candidate solutions as particles in a PRM-defined energy landscape and reshapes the population through score-guided resampling and stochastic refinement, which concentrates probability mass on higher-quality reasoning while preserving diversity. Across mathematics and science benchmarks, PRISM is competitive with or outperforms existing DEEPTHINK methods, reaching 90.0%, 75.4%, and 71.4% with gpt-oss-20b on AIME25, HMMT25, and GPQA Diamond, respectively, while matching or exceeding gpt-oss-120b. Additionally, our analysis shows that PRISM produces consistent net-directional correction during refinement, remains reliable when the initial population contains few correct candidates, and often lies on the compute-accuracy Pareto frontier.",
-      "authors": [
-        "Rituraj Sharma",
-        "Weiyuan Chen",
-        "Noah Provenzano",
-        "Tu Vu"
-      ],
-      "primary_category": "cs.AI",
-      "categories": [
-        "cs.AI"
-      ],
-      "published": "2026-03-03T00:03:42+00:00",
-      "link": "https://arxiv.org/pdf/2603.02479v1",
-      "tags": [
-        "query:RL SR"
-      ],
-      "llm_score": 6.0,
-      "llm_evidence_en": "process reward model-guided inference for complex mathematical and scientific tasks",
-      "llm_evidence_cn": "过程奖励模型引导的推理，用于复杂的数学和科学任务",
-      "llm_evidence": "过程奖励模型引导的推理，用于复杂的数学和科学任务",
-      "canonical_evidence": "过程奖励模型引导的推理，用于复杂的数学和科学任务",
-      "llm_tldr_en": "Uses step-level verification to guide solution generation and refinement in complex reasoning tasks.",
-      "llm_tldr_cn": "利用步骤级验证引导复杂推理任务中的解生成与优化。",
-      "llm_tldr": "利用步骤级验证引导复杂推理任务中的解生成与优化。",
-      "llm_tags": [
-        "query:rl-sr:composite"
-      ],
-      "matched_query_tag": "query:rl-sr:composite",
-      "matched_query_text": "Papers central to 强化学习与符号回归相关的学术论文检索, especially work that connects or combines: reinforcement learning algorithms and frameworks; symbolic regression for mathematical expression discovery; MCTS for symbolic regression search space; transformer models for symbolic regression and sequence generation; combining deep learning and symbolic regression for scientific discovery; discrete optimization in symbolic regression via reinforcement learning.",
-      "matched_requirement_id": "req-composite-rl-sr",
-      "selection_source": "fresh_fetch",
-      "quick_tier": "6"
-    },
-    {
-      "id": "2603.03756v1",
-      "title": "MOOSE-Star: Unlocking Tractable Training for Scientific Discovery by Breaking the Complexity Barrier",
-      "abstract": "While large language models (LLMs) show promise in scientific discovery, existing research focuses on inference or feedback-driven training, leaving the direct modeling of the generative reasoning process, $P(\\text{hypothesis}|\\text{background})$ ($P(h|b)$), unexplored. We demonstrate that directly training $P(h|b)$ is mathematically intractable due to the combinatorial complexity ($O(N^k)$) inherent in retrieving and composing inspirations from a vast knowledge base. To break this barrier, we introduce MOOSE-Star, a unified framework enabling tractable training and scalable inference. In the best case, MOOSE-Star reduces complexity from exponential to logarithmic ($O(\\log N)$) by (1) training on decomposed subtasks derived from the probabilistic equation of discovery, (2) employing motivation-guided hierarchical search to enable logarithmic retrieval and prune irrelevant subspaces, and (3) utilizing bounded composition for robustness against retrieval noise. To facilitate this, we release TOMATO-Star, a dataset of 108,717 decomposed papers (38,400 GPU hours) for training. Furthermore, we show that while brute-force sampling hits a ''complexity wall,'' MOOSE-Star exhibits continuous test-time scaling.",
-      "authors": [
-        "Zonglin Yang",
-        "Lidong Bing"
+        "Abderaouf Bahi",
+        "Amel Ourici",
+        "Ibtissem Gasmi",
+        "Aida Derrablia",
+        "Warda Deghmane",
+        "Mohamed Amine Ferrag"
       ],
       "primary_category": "cs.LG",
       "categories": [
         "cs.LG",
-        "cs.CE",
-        "cs.CL"
+        "cs.AI"
       ],
-      "published": "2026-03-04T06:11:18+00:00",
-      "link": "https://arxiv.org/pdf/2603.03756v1",
+      "published": "2026-03-02T09:43:11+00:00",
+      "link": "https://arxiv.org/pdf/2603.01657v1",
       "tags": [
-        "query:RL SR"
+        "keyword:HP PG",
+        "query:HP PG"
       ],
       "llm_score": 7.0,
-      "llm_evidence_en": "modeling generative reasoning for scientific discovery and hypothesis generation",
-      "llm_evidence_cn": "为科学发现和假设生成建模生成式推理过程",
-      "llm_evidence": "为科学发现和假设生成建模生成式推理过程",
-      "canonical_evidence": "为科学发现和假设生成建模生成式推理过程",
-      "llm_tldr_en": "A framework for tractable training of generative reasoning models in scientific discovery.",
-      "llm_tldr_cn": "一种用于科学发现中生成式推理模型可训练化的统一框架。",
-      "llm_tldr": "一种用于科学发现中生成式推理模型可训练化的统一框架。",
+      "llm_evidence_en": "renewable energy forecasting for grid management using GNNs",
+      "llm_evidence_cn": "利用图神经网络进行电网管理的再生能源预测",
+      "llm_evidence": "利用图神经网络进行电网管理的再生能源预测",
+      "canonical_evidence": "利用图神经网络进行电网管理的再生能源预测",
+      "llm_tldr_en": "Proposes a source-free graph neural network adaptation framework for renewable energy forecasting in power grids.",
+      "llm_tldr_cn": "提出了一种无源图神经网络自适应框架，用于电网中的可再生能源预测。",
+      "llm_tldr": "提出了一种无源图神经网络自适应框架，用于电网中的可再生能源预测。",
       "llm_tags": [
-        "query:rl-sr"
+        "query:hp-pg:composite"
       ],
-      "matched_query_tag": "query:rl-sr",
-      "matched_query_text": "combining deep learning and symbolic regression for scientific discovery",
-      "matched_requirement_id": "req-5",
+      "matched_query_tag": "query:hp-pg:composite",
+      "matched_query_text": "Papers central to Hopfield神经网络在电力系统与电网中的应用研究, especially work that connects or combines: Hopfield neural network architecture and theory; power grid systems and infrastructure; electrical load forecasting with Hopfield models; power system fault diagnosis using Hopfield models; application of Hopfield neural networks in power system optimization; power system fault detection using associative memory networks; Hopfield network based load forecasting for electrical grids; energy storage management in power grids using Hopfield models.",
+      "matched_requirement_id": "req-composite-hp-pg",
       "selection_source": "fresh_fetch",
       "quick_tier": "7"
     },
     {
-      "id": "2603.04948v1",
-      "title": "$\\nabla$-Reasoner: LLM Reasoning via Test-Time Gradient Descent in Latent Space",
-      "abstract": "Scaling inference-time compute for Large Language Models (LLMs) has unlocked unprecedented reasoning capabilities. However, existing inference-time scaling methods typically rely on inefficient and suboptimal discrete search algorithms or trial-and-error prompting to improve the online policy. In this paper, we propose $\\nabla$-Reasoner, an iterative generation framework that integrates differentiable optimization over token logits into the decoding loop to refine the policy on the fly. Our core component, Differentiable Textual Optimization (DTO), leverages gradient signals from both the LLM's likelihood and a reward model to refine textual representations. $\\nabla$-Reasoner further incorporates rejection sampling and acceleration design to robustify and speed up decoding. Theoretically, we show that performing inference-time gradient descent in the sample space to maximize reward is dual to aligning an LLM policy via KL-regularized reinforcement learning. Empirically, $\\nabla$-Reasoner achieves over 20% accuracy improvement on a challenging mathematical reasoning benchmark, while reducing number of model calls by approximately 10-40% compared to strong baselines. Overall, our work introduces a paradigm shift from zeroth-order search to first-order optimization at test time, offering a cost-effective path to amplify LLM reasoning.",
+      "id": "2603.01363v1",
+      "title": "Fed-GAME: Personalized Federated Learning with Graph Attention Mixture-of-Experts For Time-Series Forecasting",
+      "abstract": "Federated learning (FL) on graphs shows promise for distributed time-series forecasting. Yet, existing methods rely on static topologies and struggle with client heterogeneity. We propose Fed-GAME, a framework that models personalized aggregation as message passing over a learnable dynamic implicit graph. The core is a decoupled parameter difference-based update protocol, where clients transmit parameter differences between their fine-tuned private model and a shared global model. On the server, these differences are decomposed into two streams: (1) averaged difference used to updating the global model for consensus (2) the selective difference fed into a novel Graph Attention Mixture-of-Experts (GAME) aggregator for fine-grained personalization. In this aggregator, shared experts provide scoring signals while personalized gates adaptively weight selective updates to support personalized aggregation. Experiments on two real-world electric vehicle charging datasets demonstrate that Fed-GAME outperforms state-of-the-art personalized FL baselines.",
       "authors": [
-        "Peihao Wang",
-        "Ruisi Cai",
-        "Zhen Wang",
-        "Hongyuan Mei",
-        "Qiang Liu",
-        "Pan Li",
-        "Zhangyang Wang"
+        "Yi Li",
+        "Han Liu",
+        "Mingfeng Fan",
+        "Guo Chen",
+        "Chaojie Li",
+        "Biplab Sikdar"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.DC"
+      ],
+      "published": "2026-03-02T01:43:06+00:00",
+      "link": "https://arxiv.org/pdf/2603.01363v1",
+      "tags": [
+        "keyword:HP PG",
+        "query:HP PG"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "federated learning for distributed time-series forecasting",
+      "llm_evidence_cn": "分布式时间序列预测的联邦学习",
+      "llm_evidence": "分布式时间序列预测的联邦学习",
+      "canonical_evidence": "分布式时间序列预测的联邦学习",
+      "llm_tldr_en": "A federated learning framework using graph attention for heterogeneous time-series forecasting.",
+      "llm_tldr_cn": "一种利用图注意力进行异构时间序列预测的联邦学习框架。",
+      "llm_tldr": "一种利用图注意力进行异构时间序列预测的联邦学习框架。",
+      "llm_tags": [
+        "query:hp-pg"
+      ],
+      "matched_query_tag": "query:hp-pg",
+      "matched_query_text": "electrical load forecasting with Hopfield models",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.04998v1",
+      "title": "Lightweight and Scalable Transfer Learning Framework for Load Disaggregation",
+      "abstract": "Non-Intrusive Load Monitoring (NILM) aims to estimate appliance-level consumption from aggregate electrical signals recorded at a single measurement point. In recent years, the field has increasingly adopted deep learning approaches; however, cross-domain generalization remains a persistent challenge due to variations in appliance characteristics, usage patterns, and background loads across homes. Transfer learning provides a practical paradigm to adapt models with limited target data. However, existing methods often assume a fixed appliance set, lack flexibility for evolving real-world deployments, remain unsuitable for edge devices, or scale poorly for real-time operation. This paper proposes RefQuery, a scalable multi-appliance, multi-task NILM framework that conditions disaggregation on compact appliance fingerprints, allowing one shared model to serve many appliances without a fixed output set. RefQuery keeps a pretrained disaggregation network fully frozen and adapts to a target home by learning only a per-appliance embedding during a lightweight backpropagation stage. Experiments on three public datasets demonstrate that RefQuery delivers a strong accuracy-efficiency trade-off against single-appliance and multi-appliance baselines, including modern Transformer-based methods. These results support RefQuery as a practical path toward scalable, real-time NILM on resource-constrained edge devices.",
+      "authors": [
+        "L. E. Garcia-Marrero",
+        "G. Petrone",
+        "E. Monmasson"
       ],
       "primary_category": "cs.LG",
       "categories": [
         "cs.LG"
       ],
-      "published": "2026-03-05T08:42:54+00:00",
-      "link": "https://arxiv.org/pdf/2603.04948v1",
+      "published": "2026-03-05T09:43:48+00:00",
+      "link": "https://arxiv.org/pdf/2603.04998v1",
       "tags": [
-        "keyword:RL SR",
-        "query:RL SR"
+        "keyword:HP PG",
+        "query:HP PG"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "load disaggregation and electrical signal monitoring",
+      "llm_evidence_cn": "负荷分解与电信号监测",
+      "llm_evidence": "负荷分解与电信号监测",
+      "canonical_evidence": "负荷分解与电信号监测",
+      "llm_tldr_en": "A transfer learning framework for non-intrusive load monitoring in power systems.",
+      "llm_tldr_cn": "一种用于电力系统非侵入式负荷监测的迁移学习框架。",
+      "llm_tldr": "一种用于电力系统非侵入式负荷监测的迁移学习框架。",
+      "llm_tags": [
+        "query:hp-pg"
+      ],
+      "matched_query_tag": "query:hp-pg",
+      "matched_query_text": "power grid systems and infrastructure",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2603.02906v1",
+      "title": "Towards Accurate and Interpretable Time-series Forecasting: A Polynomial Learning Approach",
+      "abstract": "Time series forecasting enables early warning and has driven asset performance management from traditional planned maintenance to predictive maintenance. However, the lack of interpretability in forecasting methods undermines users' trust and complicates debugging for developers. Consequently, interpretable time-series forecasting has attracted increasing research attention. Nevertheless, existing methods suffer from several limitations, including insufficient modeling of temporal dependencies, lack of feature-level interpretability to support early warning, and difficulty in simultaneously achieving the accuracy and interpretability. This paper proposes the interpretable polynomial learning (IPL) method, which integrates interpretability into the model structure by explicitly modeling original features and their interactions of arbitrary order through polynomial representations. This design preserves temporal dependencies, provides feature-level interpretability, and offers a flexible trade-off between prediction accuracy and interpretability by adjusting the polynomial degree. We evaluate IPL on simulated and Bitcoin price data, showing that it achieves high prediction accuracy with superior interpretability compared with widely used explainability methods. Experiments on field-collected antenna data further demonstrate that IPL yields simpler and more efficient early warning mechanisms.",
+      "authors": [
+        "Bo Liu",
+        "Shao-Bo Lin",
+        "Changmiao Wang",
+        "Xiaotong Liu"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "stat.ME"
+      ],
+      "published": "2026-03-03T11:59:46+00:00",
+      "link": "https://arxiv.org/pdf/2603.02906v1",
+      "tags": [
+        "keyword:HP PG",
+        "query:HP PG"
       ],
       "llm_score": 6.0,
-      "llm_evidence_en": "differentiable optimization over token logits to refine policy",
-      "llm_evidence_cn": "通过Token Logit的可微优化来改进策略",
-      "llm_evidence": "通过Token Logit的可微优化来改进策略",
-      "canonical_evidence": "通过Token Logit的可微优化来改进策略",
-      "llm_tldr_en": "Proposes Nabla-Reasoner, using gradient descent in latent space to improve LLM reasoning policies.",
-      "llm_tldr_cn": "提出Nabla-Reasoner，利用潜空间梯度下降优化LLM推理策略。",
-      "llm_tldr": "提出Nabla-Reasoner，利用潜空间梯度下降优化LLM推理策略。",
+      "llm_evidence_en": "interpretable time-series forecasting for maintenance",
+      "llm_evidence_cn": "用于维护的可解释时间序列预测",
+      "llm_evidence": "用于维护的可解释时间序列预测",
+      "canonical_evidence": "用于维护的可解释时间序列预测",
+      "llm_tldr_en": "Introduces interpretable polynomial learning for time-series forecasting, useful for grid load and maintenance.",
+      "llm_tldr_cn": "引入了用于时间序列预测的可解释多项式学习，对电网负荷和维护有用。",
+      "llm_tldr": "引入了用于时间序列预测的可解释多项式学习，对电网负荷和维护有用。",
       "llm_tags": [
-        "query:rl-sr"
+        "query:hp-pg"
       ],
-      "matched_query_tag": "query:rl-sr",
-      "matched_query_text": "discrete optimization in symbolic regression via reinforcement learning",
+      "matched_query_tag": "query:hp-pg",
+      "matched_query_text": "Hopfield network based load forecasting for electrical grids",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.05263v1",
+      "title": "A Behaviour-Aware Federated Forecasting Framework for Distributed Stand-Alone Wind Turbines",
+      "abstract": "Accurate short-term wind power forecasting is essential for grid dispatch and market operations, yet centralising turbine data raises privacy, cost, and heterogeneity concerns. We propose a two-stage federated learning framework that first clusters turbines by long-term behavioural statistics using Double Roulette Selection (DRS) initialisation with recursive Auto-split refinement, and then trains cluster-specific LSTM models via FedAvg. Experiments on 400 stand-alone turbines in Denmark show that DRS-auto discovers behaviourally coherent groups and achieves competitive forecasting accuracy while preserving data locality. Behaviour-aware grouping consistently outperforms geographic partitioning and matches strong k-means++ baselines, suggesting a practical privacy-friendly solution for heterogeneous distributed turbine fleets.",
+      "authors": [
+        "Bowen Li",
+        "Xiufeng Liu",
+        "Maria Sinziiana Astefanoaei"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-03-05T15:12:40+00:00",
+      "link": "https://arxiv.org/pdf/2603.05263v1",
+      "tags": [
+        "keyword:HP PG",
+        "query:HP PG"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "wind power forecasting for grid dispatch",
+      "llm_evidence_cn": "用于电网调度的风电预测",
+      "llm_evidence": "用于电网调度的风电预测",
+      "canonical_evidence": "用于电网调度的风电预测",
+      "llm_tldr_en": "A federated learning framework for wind power forecasting in distributed power grids.",
+      "llm_tldr_cn": "一种用于分布式电网风电预测的联邦学习框架。",
+      "llm_tldr": "一种用于分布式电网风电预测的联邦学习框架。",
+      "llm_tags": [
+        "query:hp-pg"
+      ],
+      "matched_query_tag": "query:hp-pg",
+      "matched_query_text": "power grid systems and infrastructure",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2603.03902v1",
+      "title": "PatchDecomp: Interpretable Patch-Based Time Series Forecasting",
+      "abstract": "Time series forecasting, which predicts future values from past observations, plays a central role in many domains and has driven the development of highly accurate neural network models. However, the complexity of these models often limits human understanding of the rationale behind their predictions. We propose PatchDecomp, a neural network-based time series forecasting method that achieves both high accuracy and interpretability. PatchDecomp divides input time series into subsequences (patches) and generates predictions by aggregating the contributions of each patch. This enables clear attribution of each patch, including those from exogenous variables, to the final prediction. Experiments on multiple benchmark datasets demonstrate that PatchDecomp provides predictive performance comparable to recent forecasting methods. Furthermore, we show that the model's explanations not only influence predicted values quantitatively but also offer qualitative interpretability through visualization of patch-wise contributions.",
+      "authors": [
+        "Hiroki Tomioka",
+        "Genta Yoshimura"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-03-04T10:04:51+00:00",
+      "link": "https://arxiv.org/pdf/2603.03902v1",
+      "tags": [
+        "keyword:HP PG",
+        "query:HP PG"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "interpretable neural network for time series forecasting",
+      "llm_evidence_cn": "可解释的时间序列预测神经网络",
+      "llm_evidence": "可解释的时间序列预测神经网络",
+      "canonical_evidence": "可解释的时间序列预测神经网络",
+      "llm_tldr_en": "Proposes an interpretable patch-based neural network for accurate time series forecasting.",
+      "llm_tldr_cn": "提出了一种基于补丁的可解释神经网络，用于高精度时间序列预测。",
+      "llm_tldr": "提出了一种基于补丁的可解释神经网络，用于高精度时间序列预测。",
+      "llm_tags": [
+        "query:hp-pg"
+      ],
+      "matched_query_tag": "query:hp-pg",
+      "matched_query_text": "electrical load forecasting with Hopfield models",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.09661v1",
+      "title": "FreqCycle: A Multi-Scale Time-Frequency Analysis Method for Time Series Forecasting",
+      "abstract": "Mining time-frequency features is critical for time series forecasting. Existing research has predominantly focused on modeling low-frequency patterns, where most time series energy is concentrated. The overlooking of mid to high frequency continues to limit further performance gains in deep learning models. We propose FreqCycle, a novel framework integrating: (i) a Filter-Enhanced Cycle Forecasting (FECF) module to extract low-frequency features by explicitly learning shared periodic patterns in the time domain, and (ii) a Segmented Frequency-domain Pattern Learning (SFPL) module to enhance mid to high frequency energy proportion via learnable filters and adaptive weighting. Furthermore, time series data often exhibit coupled multi-periodicity, such as intertwined weekly and daily cycles. To address coupled multi-periodicity as well as long lookback window challenges, we extend FreqCycle hierarchically into MFreqCycle, which decouples nested periodic features through cross-scale interactions. Extensive experiments on seven diverse domain benchmarks demonstrate that FreqCycle achieves state-of-the-art accuracy while maintaining faster inference speeds, striking an optimal balance between performance and efficiency.",
+      "authors": [
+        "Boya Zhang",
+        "Shuaijie Yin",
+        "Huiwen Zhu",
+        "Xing He"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-03-10T13:34:36+00:00",
+      "link": "https://arxiv.org/pdf/2603.09661v1",
+      "tags": [
+        "keyword:HP PG",
+        "query:HP PG"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "time-frequency analysis for time series forecasting",
+      "llm_evidence_cn": "用于时间序列预测的时频分析",
+      "llm_evidence": "用于时间序列预测的时频分析",
+      "canonical_evidence": "用于时间序列预测的时频分析",
+      "llm_tldr_en": "A multi-scale time-frequency method for time series forecasting, applicable to electrical load prediction.",
+      "llm_tldr_cn": "一种用于时间序列预测的多尺度时频分析方法，可应用于电力负荷预测。",
+      "llm_tldr": "一种用于时间序列预测的多尺度时频分析方法，可应用于电力负荷预测。",
+      "llm_tags": [
+        "query:hp-pg"
+      ],
+      "matched_query_tag": "query:hp-pg",
+      "matched_query_text": "Hopfield network based load forecasting for electrical grids",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.09675v1",
+      "title": "GNNs for Time Series Anomaly Detection: An Open-Source Framework and a Critical Evaluation",
+      "abstract": "There is growing interest in applying graph-based methods to Time Series Anomaly Detection (TSAD), particularly Graph Neural Networks (GNNs), as they naturally model dependencies among multivariate signals. GNNs are typically used as backbones in score-based TSAD pipelines, where anomalies are identified through reconstruction or prediction errors followed by thresholding. However, and despite promising results, the field still lacks standardized frameworks for evaluation and suffers from persistent issues with metric design and interpretation. We thus present an open-source framework for TSAD using GNNs, designed to support reproducible experimentation across datasets, graph structures, and evaluation strategies. Built with flexibility and extensibility in mind, the framework facilitates systematic comparisons between TSAD models and enables in-depth analysis of performance and interpretability. Using this tool, we evaluate several GNN-based architectures alongside baseline models across two real-world datasets with contrasting structural characteristics. Our results show that GNNs not only improve detection performance but also offer significant gains in interpretability, an especially valuable feature for practical diagnosis. We also find that attention-based GNNs offer robustness when graph structure is uncertain or inferred. In addition, we reflect on common evaluation practices in TSAD, showing how certain metrics and thresholding strategies can obscure meaningful comparisons. Overall, this work contributes both practical tools and critical insights to advance the development and evaluation of graph-based TSAD systems.",
+      "authors": [
+        "Federico Bello",
+        "Gonzalo Chiarlone",
+        "Marcelo Fiori",
+        "Gastón García González",
+        "Federico Larroca"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-03-10T13:45:34+00:00",
+      "link": "https://arxiv.org/pdf/2603.09675v1",
+      "tags": [
+        "keyword:HP PG",
+        "query:HP PG"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "GNN-based time series anomaly detection for multivariate signals",
+      "llm_evidence_cn": "基于GNN的多变量信号时间序列异常检测",
+      "llm_evidence": "基于GNN的多变量信号时间序列异常检测",
+      "canonical_evidence": "基于GNN的多变量信号时间序列异常检测",
+      "llm_tldr_en": "Presents a framework for graph-based time series anomaly detection, relevant to power system fault detection.",
+      "llm_tldr_cn": "提出一种基于图神经网络的时间序列异常检测框架，可用于电力系统故障检测。",
+      "llm_tldr": "提出一种基于图神经网络的时间序列异常检测框架，可用于电力系统故障检测。",
+      "llm_tags": [
+        "query:hp-pg"
+      ],
+      "matched_query_tag": "query:hp-pg",
+      "matched_query_text": "power system fault detection using associative memory networks",
       "matched_requirement_id": "req-6",
-      "selection_source": "fresh_fetch",
-      "quick_tier": "6"
-    },
-    {
-      "id": "2603.07371v1",
-      "title": "ConfHit: Conformal Generative Design with Oracle Free Guarantees",
-      "abstract": "The success of deep generative models in scientific discovery requires not only the ability to generate novel candidates but also reliable guarantees that these candidates indeed satisfy desired properties. Recent conformal-prediction methods offer a path to such guarantees, but its application to generative modeling in drug discovery is limited by budget constraints, lack of oracle access, and distribution shift. To this end, we introduce ConfHit, a distribution-free framework that provides validity guarantees under these conditions. ConfHit formalizes two central questions: (i) Certification: whether a generated batch can be guaranteed to contain at least one hit with a user-specified confidence level, and (ii) Design: whether the generation can be refined to a compact set without weakening this guarantee. ConfHit leverages weighted exchangeability between historical and generated samples to eliminate the need for an experimental oracle, constructs multiple-sample density-ratio weighted conformal p-value to quantify statistical confidence in hits, and proposes a nested testing procedure to certify and refine candidate sets of multiple generated samples while maintaining statistical guarantees. Across representative generative molecule design tasks and a broad range of methods, ConfHit consistently delivers valid coverage guarantees at multiple confidence levels while maintaining compact certified sets, establishing a principled and reliable framework for generative modeling.",
-      "authors": [
-        "Siddhartha Laghuvarapu",
-        "Ying Jin",
-        "Jimeng Sun"
-      ],
-      "primary_category": "cs.LG",
-      "categories": [
-        "cs.LG",
-        "cs.AI"
-      ],
-      "published": "2026-03-07T22:55:12+00:00",
-      "link": "https://arxiv.org/pdf/2603.07371v1",
-      "tags": [
-        "query:RL SR"
-      ],
-      "llm_score": 6.0,
-      "llm_evidence_en": "deep generative models for scientific discovery with validity guarantees",
-      "llm_evidence_cn": "具有有效性保证的科学发现深度生成模型",
-      "llm_evidence": "具有有效性保证的科学发现深度生成模型",
-      "canonical_evidence": "具有有效性保证的科学发现深度生成模型",
-      "llm_tldr_en": "A distribution-free framework providing validity guarantees for generative design in scientific discovery.",
-      "llm_tldr_cn": "一种为科学发现中的生成式设计提供有效性保证的分布无关框架。",
-      "llm_tldr": "一种为科学发现中的生成式设计提供有效性保证的分布无关框架。",
-      "llm_tags": [
-        "query:rl-sr"
-      ],
-      "matched_query_tag": "query:rl-sr",
-      "matched_query_text": "combining deep learning and symbolic regression for scientific discovery",
-      "matched_requirement_id": "req-5",
       "selection_source": "fresh_fetch",
       "quick_tier": "6"
     }

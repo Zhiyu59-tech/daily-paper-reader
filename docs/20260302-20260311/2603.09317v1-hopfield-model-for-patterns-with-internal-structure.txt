@@ -1,0 +1,2413 @@
+Title: Hopfield model for patterns with internal structure
+
+URL Source: https://arxiv.org/pdf/2603.09317v1
+
+Published Time: Wed, 11 Mar 2026 00:43:29 GMT
+
+Number of Pages: 26
+
+Markdown Content:
+Springer Nature 2021 L ATEX template 
+
+# Hopfield model for patterns with internal structure 
+
+## Theodorus Maria Nieuwenhuizen 
+
+*Institute for Theoretical Physics, University of Amsterdam, Science Park 904, Amsterdam, 1090 GL, The Netherlands. 
+
+Abstract 
+
+The spherical version of the Hopfield model for pattern recogni-tion is considered in the static limit. Structures inside the pat-terns are modeled by Gaussian random variables that reward cor-relation between pairs of spins in a given pattern. The free energy is derived analytically with the replica method. The overlap distri-bution obeys a self-consistent equation. Coming from high temper-atures, a spin glass phase is entered, in which patterns and cor-relations appear at lower temperatures. For small enough loading capacity, also a glass phase with patterns and correlations appears. 
+
+# Contents 
+
+1 Introduction 3
+
+1.1 Correlation within patterns . . . . . . . . . . . . . . . . . . . . 41.2 Setup . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 4
+
+2. The spherical Hopfield model 4
+
+2.1 The Hamiltonian . . . . . . . . . . . . . . . . . . . . . . . . . . 42.2 The replica free energy . . . . . . . . . . . . . . . . . . . . . . . 52.3 On the sign of the quartic term . . . . . . . . . . . . . . . . . . 72.4 High temperature phase . . . . . . . . . . . . . . . . . . . . . . 72.5 Free energy in the glass phase . . . . . . . . . . . . . . . . . . . 7
+
+3. Incorporating structure inside patterns 9
+
+3.1 The correlation Hamiltonian . . . . . . . . . . . . . . . . . . . . 91
+
+> arXiv:2603.09317v1 [cond-mat.dis-nn] 10 Mar 2026
+
+Springer Nature 2021 L ATEX template 2 CONTENTS 3.2 Contribution to the replicated free energy . . . . . . . . . . . . 10 3.3 The full free replicated energy . . . . . . . . . . . . . . . . . . . 11 3.4 The free energy in the replica limit n → 0 . . . . . . . . . . . . 11 3.5 Replica symmetric free energy . . . . . . . . . . . . . . . . . . . 12 
+
+4. Mean field equations 12 
+
+4.1 The pattern and its correlation . . . . . . . . . . . . . . . . . . 12 4.2 The glass phase . . . . . . . . . . . . . . . . . . . . . . . . . . . 13 4.3 The spin glass phase . . . . . . . . . . . . . . . . . . . . . . . . 13 
+
+5. Aspects of the phase diagram 14 
+
+5.1 Spin glass phase from high T . . . . . . . . . . . . . . . . . . . 14 5.2 Stability at a glass to spin glass transition . . . . . . . . . . . . 15 5.3 The glass phase at T = 0 . . . . . . . . . . . . . . . . . . . . . 16 5.4 The spin glass at T = 0 . . . . . . . . . . . . . . . . . . . . . . 17 
+
+6. Discussion and outlook 18 7. Appendix A: Replica theory for spherical models 19 8. Appendix B: Fluctuations in the glass state 22 9 References 24 Springer Nature 2021 L ATEX template CONTENTS 3
+
+# 1 Introduction 
+
+Work dedicated to Desir´ e Boll´ eAnalytic descriptions of biological neural networks were introduced for mimicking and understanding the functioning of the human brain. Their imple-mentation as learning models led to artificial intelligence (AI), which, by machine learning, now has many applications. While these schemes employ various ingredients; here we focus on artificial neural networks. Often they embody layered neural networks, repetitions of single neural networks. Originally, the aim of neural networks was to mimic and understand the functioning of the human brain; a physical Hebbian update rule was proposed [1]. An important contribution was made by John Hopfield, who introduced what is now called “Hopfield models” or “Hopfield networks” [2, 3], in which the couplings are taken symmetric. In the mean field limit of the model, a system of N artificial neurons, a number p = αN of patterns can be stored, where α is the loading capacity of the network [4]. While these are dynamical models, taking the couplings symmetric assures a statics, so that the phase diagram provides insights in the functioning of the model even before addressing the dynamics. There appears a deep connection with the equilibrium statistical mechanics of spin glasses. The Sherrington-Kirkpatrick mean field spin glass model [5] (SK) was solved by Parisi [6, 7] by introducing infinite order replica symmetry breaking (RSB). The validity of Parisi’s approach was proven by Talagrand 1 [8]. The formulation of the SK model for spherical spins provided the first case where the inverse Parisi function x(q) is solvable exactly [9]. Spherical spins can be quantized [10], so that the model is even well behaved at low temperatures. Various more complicated functions x(q) occur in site-disordered magnets [11]. The idea for realizing full RSB in spherical spin models was further implemented and developed, e.g., in [12–14]. Spin glass phases with a finite number of replica symmetry breakings, sought for but not appearing in site-disordered magnets [11], occur in spherical s + p multispin interaction models [15]. With the SK couplings turned into a Hopfield couplings, the model was solved by Amit, Gutfreund and Sompolinsky [4]. It contains a “glass” phase with replica symmetry, and at low temperature a spin glass phase with full breaking of replica symmetry. Well within the glass phase, metastable patterns occur, which at a lower temperature become the lowest free energy states. This exhibits a retrievable memory. For loading capacity α ≤ αc ≃ 0.14 the system provides an effective retrieval of memory. There exist many generalizations and applications of SK and Hopfield models; we only mention a few. Boltzmann machines are SK-type models with external fields; they can be treated as generalized Hopfield networks [16]. Restricted Boltzmann machines, having no intralayer couplings, can be 
+
+> 1Giorgio Parisi was awarded the 2021 Nobel Prize in Physics, John Hopfield the one of 2024 and Michel Talagrand the 2024 Abel Prize.
+
+Springer Nature 2021 L ATEX template 4 CONTENTS employed for many layers and are widely used in machine learning [17, 18]. From an other angle, in such models the effects of social balance on social fragmentation were considered [19]. 
+
+## 1.1 Correlation within patterns 
+
+How the spherical limit of the Hopfield model should be defined, was solved by Boll´ e et al. [20]. It amounts to include a quartic term for the patterns, but of the “wrong” sign, as we recall below. The spherical Hopfield model exhibits a similar phase diagram as the Ising case, but it has no full RSB phase. The theoretical question of how replica symmetry breaking can be incorporated led us to consider patterns with inter-nal correlation. This concept can have a broad role beyond the spherical limit and beyond the mean-field limit of the Hopfield model. Hopfield models with correlated patterns, were discussed, see, e. g., [21–24]. In such models, the parameters ξμi of pattern μ are correlated between different patterns μ′̸ = μ. An example is the remarkable modern habit of making selfies, different photographs of the same person; these are evidently correlated. In our case, however, the patterns remain ξμi uncorrelated, but they are accompanied by a pair correlation ξμij within the pattern μ. One may think of analyzing weaves in clothes, waves on water surfaces, tracks of birds, city plans, etc. Clearly, those patterns have internal structure. A theory that incorporates this nature may speed up any specific network model. 
+
+## 1.2 Setup 
+
+The setup of this article is as follows. In section 2 we recall the spherical Hop-field model and make some remarks. In section 3 we introduce the correlation in patterns and work out the replica free energy. In section 4 we consider aspects of the phase diagram. We close with a summary. In Appendix A we summarize properties of replica symmetry breaking for spherical spin models, and in Appendix B we analyse the stability of a replica symmetric state with magnetization and correlation. 
+
+# 2. The spherical Hopfield model 
+
+## 2.1 The Hamiltonian 
+
+Let us consider the 2 + 4 spherical model with Hamiltonian 
+
+H(2)  
+
+> B
+
++ H(4)  
+
+> B
+
+= − u2
+
+2
+
+> N
+
+X
+
+> i,j =1
+
+Jij σiσj − u4
+
+4
+
+> N
+
+X
+
+> i,j,k,l =1
+
+Jkl ij σiσj σkσl (2.1) Springer Nature 2021 L ATEX template CONTENTS 5where the spherical spins are real valued, only constrained by PNi=1 σ2 
+
+> i
+
+= N .We add a sixth order interaction, 
+
+HB = H(2)  
+
+> B
+
++ H(4)  
+
+> B
+
++ H(6)  
+
+> B
+
+, H(6)  
+
+> B
+
+= u6
+
+6
+
+X
+
+> ijkmnl
+
+Jmn ijkl σiσj σkσlσmσn, (2.2) The case with random, independently distributed Gaussian couplings J··· ··· was shown to have a spin glass phase; it was the first model that allows an exact solution of the (inverse) Parisi function x(q) [9]. Here we follow Boll´ e et al. [20], to be called “ref. B”, and employ the model as a Hopfield model for pattern recognition. We thus assume p ≡ αN patterns of the spins σi (i = 1 , · · · , N ) that are represented, for each pattern μ, by Gaussian random variables ξμi ≡ (ξμ)i of zero average and unit variance. The couplings read in terms of them 
+
+Jij = 1
+
+N
+
+> p
+
+X
+
+> μ=1
+
+ξμi ξμj , J kl ij = 1
+
+N 3
+
+> p
+
+X
+
+> μ=1
+
+ξμi ξμj ξμk ξμl , J mn ijkl = 1
+
+N 5
+
+> p
+
+X
+
+> μ=1
+
+ξμi ξμj ξμk ξμl ξμmξμn . (2.3) 
+
+## 2.2 The replica free energy 
+
+In ref. B, the steps to proceed for the replicated partition sum ⟨Zn⟩ and its logarithm −βN f n + O(N 0) have been presented in full detail. Here we repeat the derivation, so that we can incorporate correlations between the patterns in next chapter. In doing so, we suppress the writing of the integration measures, and only present the successive expressions for the integrand, which is an exponential. For simplicity of notation, we denote it in the successive steps as exp[ −βN f n + O(N 0)] and present the running expression for fn. We can leave out constant terms since they have no physical meaning. The starting point is to express the Hamiltonian in terms of the order parameter 
+
+mμ = 1
+
+N
+
+X
+
+> i
+
+ξμi σi, (2.4) In the partition sum Z, factors 1 = R dmμδ(mμ − mμ) are inserted and the δ’s are expressed as ( βN/ 2πi ) R i∞−i∞ d ˆ mμ exp[ βN ˆmμ(mμ − mμ)], plane waves over associated fields ˆ mμ; they take imaginary values, but their saddle point values will appear to be real. One arrives at 
+
+f = X
+
+> μ
+
+[− u2
+
+2 m2 
+
+> μ
+
+− u4
+
+4 m4 
+
+> μ
+
++ u6
+
+4 m6 
+
+> μ
+
++ ˆ mμ(mμ − 1
+
+N
+
+X
+
+> i
+
+ξμi σi)] . (2.5) Replication leads to summing this over α = 1, · · · , n , so that σi → σαi ,
+
+mμ → mαμ and ˆmμ → ˆmαμ . The quenched ξμi , identical for each replica, are Springer Nature 2021 L ATEX template 6 CONTENTS independent Gaussian random variables with average 0 and variance 1. They can be integrated out, leading to 
+
+fn = X
+
+> μα
+
+[− u2
+
+2 mαμ 2 − u4
+
+4 mαμ 4 + u6
+
+6 mαμ 6 + ˆ mαμ mαμ ] − β
+
+2
+
+X
+
+> αβμ
+
+ˆmαμ ˆmβμqαβ , (2.6) with the overlaps 
+
+qαβ = 1
+
+N
+
+X
+
+> i
+
+σαi σβi . (2.7) For each β = α this expresses the spherical constraint (1 /N ) P 
+
+> i
+
+σαi 2 = 1. Since the qα̸=β can act as order parameters, and also because our later incorporation of correlations produces powers of them, we do not yet perform the Gaussian spin integrals, but introduce similar integrals over δ functions for the overlaps, again expressed as plane waves integrals over conjugate variables. This leads to 
+
+fn = X
+
+> μα
+
+[− u2
+
+2 mαμ 2 − u4
+
+4 mαμ 4 + u6
+
+6 mαμ 6 + ˆ mαμ mαμ ] − β
+
+2
+
+X
+
+> αβμ
+
+ˆmαμ ˆmβμqαβ 
+
+− 12
+
+X
+
+> αβ
+
+ˆqαβ qαβ + 12
+
+X
+
+> αβ
+
+ˆqαβ 
+
+1
+
+N
+
+X
+
+> i
+
+σαi σβi . (2.8) At this moment the spins can be integrated out, and subsequently the ˆ qαβ by the saddle point method, which replaces the second line successively by 
+
+7→ − 12
+
+X
+
+> αβ
+
+ˆqαβ qαβ + T
+
+2 log det ˆ q 7 → − T
+
+2 log det q, (2.9) where we again skip constants. In the following step, the Gaussian ˆ mαμ with 
+
+μ = 1 , · · · , p , where p = αN , are integrated out. This results in 
+
+fn = X
+
+> μα
+
+− u2
+
+2 mαμ 2 − u4
+
+4 mαμ 4 + u6
+
+6 mαμ 6+ T
+
+2
+
+X
+
+> μαβ
+
+mαμ (q−1)αβ mβμ + α−12 T tr log q. 
+
+(2.10) Next we assume that pattern μ = 1 possibly has a macroscopic average, so we set mα 
+
+> 1
+
+→ mα + mα 
+
+> 1
+
+. The cross terms mαmα 
+
+> 1
+
+will vanish at the saddle point value of mα, so we can integrate over the np microscopic “noise” parameters 
+
+mαμ ∼ 1/√N . (The same result appears when keeping the integral over mα 
+
+> 1
+
+.) This results in the final expression for the replicated free energy per spin, 
+
+fn = − u2
+
+2
+
+X
+
+> α
+
+m2 
+
+> α
+
+− u4
+
+4
+
+X
+
+> α
+
+m4 
+
+> α
+
++ u6
+
+6
+
+X
+
+> α
+
+m6 
+
+> α
+
++ T
+
+2
+
+X
+
+> αβ
+
+mα(q−1)αβ mβSpringer Nature 2021 L ATEX template CONTENTS 7
+
+− T
+
+2 log det q + αT 
+
+2 log det(1 − β1q), β1 = βu 2. (2.11) In the following, we take units with u2 = 1, while at times restoring u2.
+
+## 2.3 On the sign of the quartic term 
+
+The reason for choosing the “wrong” sign of the quartic term, −u4m4/4 in (2.1), becomes clear now. The cause is that the m and qd terms stem from the same physical mechanism. In the normal case u4 < 0 there can be a continuous transition with a small m2 ≈ (1 −qd −T )/|u4|(1 −qd), but near the transition, 
+
+qd ≈ 1 − T , the α term in (2.17) has a linear singularity and the argument of the logarithm becomes negative. This problematic behavior does not occur for u4 > 0, the case considered in B and here. It does come at a cost, as we discuss now. 
+
+## 2.4 High temperature phase 
+
+The “wrong” sign leads to peculiarities at large m. As seen in B and in next subsection, one will have qd = 0 for T > 1+ √α. In that case, f has extrema at 
+
+m2 
+
+> ±
+
+= u4 ± pu24 − 4u6(T − 1) 2u6
+
+, (2.12) which are real and possibly problematic for T < 1 + u24/4u6. The ones at 
+
+m = ±m− are unstable and can be discarded; the ones at m = ±m+ are stable and need consideration. For small u6 one has a large m+, which is a peculiarity of the model. Indeed, for Ising spins σi = ±1 one has the upper bound 
+
+mμ = 1
+
+N
+
+> N
+
+X
+
+> i=1
+
+ξμi σi ≤ | mμ| ≤ mmax = 1
+
+N
+
+> N
+
+X
+
+> i=1
+
+⟨| ξμi |⟩ =
+
+r 2
+
+π (Ising) . (2.13) For spherical spins, the maximum is larger. With help of a Lagrange multiplier 
+
+λ(N − P 
+
+> i
+
+σ2 
+
+> i
+
+) one finds σmax  
+
+> i
+
+= ξμi (N/ P 
+
+> j
+
+ξμj 2)1/2 so that mmax = 1. States m = ± m+ for m+ > 1 are artifacts, hence we neglect them from now on. Keeping this in mind, we set u6 = 0, as was done in B. Another option would be to restrict the model to 0 < u 6 < u 24/4√α, which makes the m±
+
+roots (2.12) complex in this domain and hence physically irrelevant. 
+
+## 2.5 Free energy in the glass phase 
+
+The replica symmetric phase is called “glass phase”. At some low temperature it may host retrievable patterns. It involves a common order parameter qd for all qα̸=β ,
+
+qαβ = (1 − qd)δαβ + qdEαβ , (Eαβ = 1 , α, β = 1 , · · · , n ). (2.14) Springer Nature 2021 L ATEX template 8 CONTENTS The eigenvalues, eigenvectors and their degeneracies of this n × n matrix are 
+
+λ1 = 1 + ( n − 1) qd, e(1)  
+
+> α
+
+= 1
+
+√n , deg = 1 ,λj = 1 − qd, e(j) 
+
+> α
+
+= 1 − nδ α,j 
+
+pn(n − 1) , deg = n − 1. (2.15) The patterns will be replica symmetric, mα = m, so there results 
+
+fn = − u2
+
+2 nm 2 − u4
+
+4 nm 4 + nT m 2
+
+2[1 + ( n − 1) qd]
+
+− T
+
+2
+
+n
+
+log[1 + ( n − 1) qd] + ( n − 1) log(1 − qd)
+
+o
+
++ αT 
+
+2
+
+n
+
+log T − [1 + ( n − 1) qd]
+
+T + ( n − 1) log T − (1 − qd)
+
+T
+
+o
+
+. (2.16) This is valid for all integer n. In the replica method, one assumes that the limit 
+
+n → 0 can be taken by analytic continuation. The free energy per replicated spin, f = fn/n , thus becomes 
+
+f = − u2
+
+2 m2 − u4
+
+4 m4 + T m 2
+
+2(1 − qd) − T
+
+2
+
+n
+
+log(1 − qd) + qd
+
+1 − qd
+
+o
+
++ αT 
+
+2
+
+n
+
+log[1 − β(1 − qd)] − qd
+
+T − 1 + qd
+
+o
+
+. (2.17) We take units where u2 = 1. The mean field equations are 
+
+T −1+ qd
+
+1 − qd
+
+m = u4m3, qd
+
+(1 − qd)2 = m2
+
+(1 − qd)2 + αq d
+
+(T −1+ qd)2 . (2.18) At m = 0, the solution of (2.18) reads for T < T g
+
+qd = 1 − TTg
+
+, Tg = 1 + √α. (2.19) This is the pure glass phase. A glass phase with pattern recovery occurs when 
+
+m =
+
+s
+
+T − 1 + qd
+
+u4(1 − qd) . (2.20) Inserting this in (2.18) leads to a quartic equation for qd. The full phase dia-gram was analyzed in ref. B. Well inside the glass phase, patterns become metastable and, at still lower temperature, they become stable. Springer Nature 2021 L ATEX template CONTENTS 9
+
+# 3. Incorporating structure inside patterns 
+
+We extend the spherical neural net model with correlations due to structure inside the patterns. The same idea can be applied to many other models, including those with Ising spins. 
+
+## 3.1 The correlation Hamiltonian 
+
+As a further step to generalize the model, we assume a Hamiltonian for correlations inside pc of the patterns, with pc ≤ p and αc = pc/N ≤ α,
+
+H(2)  
+
+> c
+
+= − v2
+
+2N 2
+
+> pc
+
+X
+
+> μ=1
+> N
+
+X
+
+> ijkl =1
+
+ξμij ξμkl σiσj σkσl = − v2
+
+2 N X
+
+> μ
+
+c2
+
+> μ
+
+, (3.1) for independent random Gaussian variables ξμij for all i, j = 1 , · · · , N with average 0 and variance 1. In the standard situation pc = p, so that αc = α,each pattern can have structure in principle. However, for instructive reasons we will consider general pc and αc. The pattern correlation is introduced as 
+
+cμ = 1
+
+N 3/2
+
+> N
+
+X
+
+> i,j =1
+
+ξμij σiσj = 1
+
+N 3/2
+
+X
+
+> i<j
+
+(ξμij + ξμji )σiσj + 1
+
+N 3/2
+
+X
+
+> i
+
+ξμii σ2 
+
+> i
+
+, (3.2) The combination ξμij + ξμji is a Gaussian with average 0 and variance √2. For Ising spins one has, similar to (2.13), the upper limit, 
+
+|cμ| = 1
+
+N 3/2
+
+X
+
+> ij
+
+ξμij σiσj ≤ 1
+
+N 3/2
+
+X
+
+> ij
+
+|ξμij | =
+
+r 2Nπ . (3.3) This makes the existence plausible of condensed patterns with cμ = O(1), even for spherical spins; like the non-condensed mμ of previous section, the non-condensed cμ ∼ N −1/2 are noise effects, to be averaged over (integrated out). To model condensation of pattern correlations, we consider, analogous to subsection 2.4, the higher order terms 
+
+H(4)  
+
+> c
+
+= − v4
+
+4N 5
+
+X
+
+> μ
+
+ X 
+
+> ij
+
+ξμij σiσj
+
+4
+
+= − v4
+
+4 N X
+
+> μ
+
+c4
+
+> μ
+
+, H(6)  
+
+> c
+
+= v6
+
+6 N X
+
+> μ
+
+c6
+
+> μ
+
+,H(4)  
+
+> cm
+
+= − w4
+
+2N 4
+
+ X 
+
+> i
+
+ξμi σi
+
+2 X 
+
+> ij
+
+ξμij σiσj
+
+2
+
+= − w4
+
+2 N X
+
+> μ
+
+m2 
+
+> μ
+
+c2
+
+> μ
+
+, (3.4) (Odd powers of cμ are odd in ξμij and omitted.) Taking v2,4,6 > 0, the H(2 ,4) 
+
+> c
+
+reward correlations, while H(6)  
+
+> c
+
+prevents too large ones. For w4 > 0 the term Springer Nature 2021 L ATEX template 10 CONTENTS 
+
+H(4)  
+
+> cm
+
+rewards correlation cμ in the pattern mμ. For w4 = 0, stable high temper-ature minima ±c+ occur with c+ > v 4/2v6. For v6 < v 4
+
+pπ/ 8N they exceed the Ising bound (3.3). We neglect them and also set v6 → 0. We thus collect 
+
+Hc
+
+N =
+
+> pc
+
+X
+
+> μ=1
+
+
+
+− v2
+
+2 c2 
+
+> μ
+
+− v4
+
+4 c4 
+
+> μ
+
+− w4
+
+2 m2 
+
+> μ
+
+c2
+
+> μ
+
+
+
+. (3.5) 
+
+## 3.2 Contribution to the replicated free energy 
+
+In the replicated partition sum, we follow the setup of section 2 and introduce the additional order parameters cαμ and the associated ˆ cαμ , to get the correlation contribution to the free energy 
+
+f cn = X
+
+> μα
+
+h
+
+− v2
+
+2 cαμ 2 − v4
+
+4 cαμ 4 − w4
+
+2 mαμ 2cαμ 2 +ˆ cαμ (cαμ − 1
+
+N 3/2
+
+X
+
+> ij
+
+ξμij σαi σαj )
+
+i
+
+. (3.6) We integrate out the quenched ξμij . In the result we may replace (1 /N ) P 
+
+> i
+
+σαi σβi
+
+by qαβ because of the δ functions already present in the part treated in section 2; for the same reason, mαμ can be replaced by mαμ . This leads to 
+
+f cn = X
+
+> μα
+
+h
+
+− v2
+
+2 cαμ 2 − v4
+
+4 cαμ 4 − w4
+
+2 mαμ 2cαμ 2 +ˆ cαμ cαμ
+
+i
+
+− β
+
+2
+
+X
+
+> μαβ
+
+ˆcαμ ˆcβμQαβ , (3.7) where 
+
+Qαβ = ( qαβ )2, (α, β = 1 , · · · , n ), (3.8) is evidently different from ( q2)αβ = qαγ qγβ ; it takes the place of qαβ in section 2. The next step is to integrate out the ˆ c, which leads to 
+
+f cn = X
+
+> μα
+
+h
+
+− v2
+
+2 cαμ 2 − v4
+
+4 cαμ 4 − w4
+
+2 mαμ 2cαμ 2
+
+i
+
++ T
+
+2
+
+X
+
+> μαβ
+
+cαμ cβμ(Q−1)αβ 
+
++ αcT
+
+2 tr log Q. (3.9) Finally, assume that the μ=1 pattern mα 
+
+> 1
+
+≡ mα and its correlation c1 
+
+> α
+
+≡ cα
+
+are possibly of order unity, and integrate out the other cαμ . This leads to 
+
+f cn = X
+
+> αc
+
+h
+
+− v2
+
+2 c2 
+
+> α
+
+− v4
+
+4 c4 
+
+> α
+
+− w4
+
+2 m2
+
+> α
+
+c2
+
+> α
+
+i
+
++ T
+
+2
+
+X
+
+> αβ
+
+cα(Q−1)αβ cβ
+
++ αcT
+
+2 log det( 1−β2Q); (β2 ≡ βv 2 = v2
+
+T ). (3.10) Springer Nature 2021 L ATEX template CONTENTS 11 
+
+## 3.3 The full free replicated energy 
+
+Combining eqs. (2.11) and (3.10), the total replicated free energy fn reads 
+
+fn = X
+
+> α
+
+h
+
+− u2
+
+2 m2 
+
+> α
+
+− u4
+
+4 m4 
+
+> α
+
+− v2
+
+2 c2 
+
+> α
+
+− v4
+
+4 c4 
+
+> α
+
+− w4
+
+2 m2
+
+> α
+
+c2
+
+> α
+
+i
+
++ T
+
+2
+
+X
+
+> αβ
+
+h
+
+mα(q−1)αβ mβ + cα(Q−1)αβ cβ
+
+i
+
+(3.11) + αT 
+
+2 log det( 1 − β1q) + αcT
+
+2 log det( 1 − β2Q) − T
+
+2 log det q. 
+
+Objects with one replica index must be replica symmetric, viz. mα = m
+
+and cα = c, while qαβ and Qαβ can exhibit replica symmetry breaking. So the free energy per spin f = F/N becomes the limit n → 0 limit of 
+
+f = − u2
+
+2 m2 − u4
+
+4 m4 − v2
+
+2 c2 − v4
+
+4 c4 − w4
+
+2 m2c2
+
++ T
+
+2n
+
+X
+
+> αβ
+
+h
+
+m2(q−1)αβ + c2(Q−1)αβ 
+
+i
+
+(3.12) + αT 
+
+2n log det( 1 − β1q) + αcT
+
+2n log det( 1 − β2Q) − T
+
+2n log det q. 
+
+where, restoring general u2,
+
+β1 = βu 2, T1 = 1
+
+β1
+
+= Tu2
+
+, β2 = βv 2, T2 = 1
+
+β2
+
+= Tv2
+
+. (3.13) 
+
+## 3.4 The free energy in the replica limit n → 0
+
+For general replica symmetry breaking, the terms of (3.12) are analyzed in the Appendix, and the limit n → 0 is taken. Collecting the results leads to 
+
+f = − u2
+
+2 m2 − u4
+
+4 m4 − v2
+
+2 c2 − v4
+
+4 c4 − w4
+
+2 m2c2 + T m 2
+
+2I1(q0) + T c 2
+
+2I2(q0)+ αT 
+
+2
+
+n
+
+log[1 − β(1 − qd)] − q0
+
+J1(q0) −
+
+Z qd
+
+> q0
+
+dqJ1(q)
+
+o
+
++ αcT
+
+2
+
+n
+
+log[1 − β2(1 − q2
+
+> d
+
+)] − q20
+
+J2(q0) −
+
+Z qd
+
+> q0
+
+dq 2qJ2(q)
+
+o
+
+− T
+
+2
+
+n
+
+log(1 − qd) + q0
+
+I1(q0) +
+
+Z qd
+
+> q0
+
+dqI1(q)
+
+o
+
+, (3.14) where 
+
+J1(q) = T1 − I1(q), J2(q) = T2 − I2(q). (3.15) Springer Nature 2021 L ATEX template 12 CONTENTS 
+
+I1 and I2 involve the Parisi function x(q) with x(q) = 1 for qd ≤ q ≤ 1, 
+
+I1(q)= 
+
+Z 1
+
+> q
+
+d¯ q x (¯ q) =1 −qd +
+
+Z qd
+
+> q
+
+d¯ q x (¯ q), I2(q)=1 −q2 
+
+> d
+
++
+
+Z qd
+
+> q
+
+d¯ q 2¯ qx (¯ q), (3.16) It holds that 
+
+I′
+
+> 1
+
+(q) = −x(q), I′
+
+> 2
+
+(q) = −2qx (q). (3.17) 
+
+## 3.5 Replica symmetric free energy 
+
+As in ref. B, a replica symmetric “glass” phase may occur. Hereto one sets 
+
+q0 → qd, while x(q) = 0 for 0 ≤ q ≤ qd and x(q) = 1 for qd ≤ q ≤ 1, so that 
+
+I1(q) → 1 − qd, I2(q) → 1 − q2
+
+> d
+
+. This simplifies (3.14) to 
+
+f = − 12 m2 − u4
+
+4 m4 − v2
+
+2 c2 − v4
+
+4 c4 − w4
+
+2 m2c2 + T m 2
+
+2(1 − qd) + T c 2
+
+2(1 − q2
+
+> d
+
+)+ αT 
+
+2
+
+n
+
+log[1 − β(1 − qd)] − qd
+
+T − 1 + qd
+
+o
+
+− T
+
+2
+
+n
+
+log(1 − qd) + qd
+
+1 − qd
+
+o
+
++ αcT
+
+2
+
+n
+
+log[1 − β2(1 − q2
+
+> d
+
+)] − q2
+
+> d
+
+T2 − 1 + q2
+
+> d
+
+o
+
+. (3.18) In the limit αc → 0 and c → 0, the free energy without correlations of ref B, reproduced in eq. (2.17), is recovered. 
+
+# 4. Mean field equations 
+
+In the high temperature phase one has qd = x(q) = 0, I1(q) = I2(q) = 1, and 
+
+m = c = 0. 
+
+## 4.1 The pattern and its correlation 
+
+The mean field equations for m and c are 
+
+K1 − w4c2m = u4m3, K2 − w4m2c = v4c3. (4.1) where 
+
+K1 = u2
+
+J1(q0)
+
+I1(q0) = TI1(q0) − u2, K2 = v2
+
+J2(q0)
+
+I2(q0) = TI2(q0) − v2. (4.2) They have the solution that both m = c = 0, or one of them being finite 
+
+m = ±
+
+r K1
+
+u4
+
+, c = 0; or c = ±
+
+r K2
+
+v4
+
+, m = 0 , (4.3) Springer Nature 2021 L ATEX template CONTENTS 13 that get stabilized when the spin glass is strong enough. At temperatures well below these two, they can both be finite, 
+
+m2 = v4K1 −w4K2
+
+u4v4 − w24
+
+, c2 = u4K2(q0)−w4K1
+
+u4v4 − w24
+
+. (4.4) A small c occurs when u4K2 ≈ w4K1, whence m2 = ( K1 − w4c2)/u 4 smoothly joins the first case of (4.3). Likewise, small m connects to the second case. These cases apply to u2 > v 2 and u2 < v 2, respectively. 
+
+## 4.2 The glass phase 
+
+A replica symmetric “glass” phase may exist. The expressions for m and c are given in sec. 4.1, where now 
+
+K1 = T
+
+1 − qd
+
+− u2, K2 = T
+
+1 − q2
+
+> d
+
+− v2. (4.5) The mean field equation for qd reads 
+
+qd
+
+(1 − qd)2 = m2
+
+(1 − qd)2 + 2qdc2
+
+(1 − q2
+
+> d
+
+)2 + αq d
+
+(T − 1 + qd)2 + 2αcq3
+
+> d
+
+(T2 − 1 + q2
+
+> d
+
+)2 . (4.6) 
+
+## 4.3 The spin glass phase 
+
+We now consider a nontrivial function x(q) and vary f with respect to x(q), employing δI 1(¯ q)/δx (q) = θ(q − ¯q) and δI 2(¯ q)/δx (q) = 2 qθ (q − ¯q) from (3.16). This yields for q0 < q < q d
+
+Z(q) ≡ m2
+
+I21 (q0) + 2qc 2
+
+I22 (q0) + αq 0
+
+J21 (q0) + 2αcq20 qJ22 (q0) − q0
+
+I21 (q0) +
+
+α
+
+Z qq0
+
+d¯ qJ21 (¯ q) + 2 αcq
+
+Z qq0
+
+d¯ q 2¯ qJ22 (¯ q) −
+
+Z qq0
+
+d¯ qI21 (¯ q) = 0 . (4.7) It can be verified that Z(q0) = 0 and Z(qd) = 0 coincide with ∂f /∂q 0 = 0 and 
+
+∂f /∂q d = 0, respectively. The first case reads explicitly 
+
+Z(q0) = m2
+
+I21 (q0) + 2q0c2
+
+I22 (q0) + αq 0
+
+J21 (q0) + 2αcq30
+
+J22 (q0) − q0
+
+I21 (q0) = 0 . (4.8) Taking the derivative of (4.7) with respect to q yields 
+
+Z′(q) = 2c2
+
+I22 (q0) + αJ21 (q) + 2αcq20
+
+J22 (q0) + 4αcq2
+
+J22 (q) − 1
+
+I21 (q) +2 αc
+
+Z qq0
+
+d¯ q 2¯ qJ22 (¯ q) = 0 . (4.9) Springer Nature 2021 L ATEX template 14 CONTENTS At q0 this imposes a second boundary condition 
+
+Z′(q0) = 2c2
+
+I22 (q0) + αJ21 (q0) + 6αcq20
+
+J22 (q0) − 1
+
+I21 (q0) = 0 , (4.10) which makes Z(q0) equivalent to 
+
+Z(q0) = m2
+
+I21 (q0) − 4αcq30
+
+J22 (q0) = 0 . (4.11) In Z′′ (q) we insert I′
+
+> 1
+
+(q) = −x(q) and I′
+
+> 2
+
+(q) = −2qx (q). Solving Z′′ = 0 yields 
+
+x(q) = q × 6αcI31 (q)J31 (q)J2(q)
+
+J31 (q)J32 (q) + αI 31 (q)J32 (q) + 8 αcq3I31 (q)J31 (q) . (4.12) With the definitions (3.16), this is a self-consistent equation for x(q). With the conditions (4.10) and (4.11), the problem is well posed. Taking m and c
+
+from any of the four cases in section 4.1, eqs. (4.10) and (4.11) determine the endpoints q0 and qd of x(q). When m = 0, also q0 = 0, as usual in spin glasses. 
+
+# 5. Aspects of the phase diagram 
+
+## 5.1 Spin glass phase from high T
+
+Near a phase transition from high temperature, the pattern overlap m, the pattern correlation c and the replica overlaps qα̸=β are small or still zero. Remembering that qαα = 1, we set qαβ = δαβ + ˜ qαβ and Qαβ = δαβ + ˜Qαβ 
+
+with ˜ qαα = ˜Qαα = 0 and ˜Qαβ = ˜ q2 
+
+> αβ
+
+. We define 
+
+β = 1
+
+T , β 2 = 1
+
+T2
+
+= βv 2, ¯β = β
+
+1−β = 1
+
+T −1 , ¯β2 = β2
+
+1−β2
+
+= v2
+
+T −v2
+
+. (5.1) Assuming that m = c = 0, expansion of (3.12) up to order ˜ q3 and ˜Q2 results in 
+
+f = T
+
+2n
+
+h 1 − α ¯β2
+
+2 tr ˜ q2 − 1 + α ¯β3
+
+3 tr ˜ q3 − αc ¯β22
+
+2 tr ˜Q2
+
+i
+
+, tr ˜Q2 = X
+
+> αβ
+
+q4 
+
+> αβ
+
+. (5.2) This is just the shape of Parisi’s free energy functional near the transition at 
+
+TSG = 1 + √α, where α ¯β2 −1 ∼ T −TSG . In particular, the quartic replica symmetry breaking term has the negative sign of the SK model. Hence coming from high T , the physical state has full replica symmetry breaking due to the presence of the correlation parameter αc in (5.2), that is to say, due to the presence of non-condensed patterns. With m = q0 = 0 still Springer Nature 2021 L ATEX template CONTENTS 15 and, for v2 < 1 + √α small enough, also c = 0. Then eq. (4.10) solves as 
+
+I1(0) = T
+
+1 + √α , J1(0) = T √α
+
+1 + √α , TSG = 1 + √α. (5.3) With I1(q) = 1 at high T , this indicates a phase transition to a spin glass phase at TSG . These values imply that x(q)/q jumps at TSG to a finite value. Indeed, at TSG one has from (4.12) with I1(0) = I2(0) = 1, 
+
+x(q) = 6αc
+
+√α(T2 − 1) q
+
+(1 + √α)( T2 − 1) 3 + 8 αc
+
+√α q 3 , T2 = 1 + √αv2
+
+. (5.4) This holds for 0 ≤ q ≤ qd ∼ 1 − T /T SG ≪ 1, so that the q3 term can be neglected. It follows that x(q)/q is a constant, finite for T → TSG , in this narrow q-region, as it happens for the Parisi solution of the SK model. 
+
+## 5.2 Stability at a glass to spin glass transition 
+
+In this subsection we consider the possibility of a (marginally) stable glass phase, a replica symmetric phase with possibly two magnetization-type order parameters (the magnetization and the correlation), making use of results for the random Blume-Emery-Griffiths-Capel model by Crisanti and Leuzzi [25]. In eq. (2.14), we add a replica symmetry broken perturbation ¯ qαβ = ¯ qβα ,
+
+qαβ = (1 − qd)δαβ + qdEαβ + ¯ qαβ , (Eαβ = 1 , α, β = 1 , · · · , n ),Qαβ = (1 − q2
+
+> d
+
+)δαβ + q2
+
+> d
+
+Eαβ + ¯Qαβ , ¯Qαβ = 2 qd ¯qαβ + ¯ q2 
+
+> αβ
+
+, (5.5) with ¯ qαα = ¯Qαα = 0. We expand (3.11) to second order in (¯ q)αβ = ¯ qαβ , while ¯Q = 2 qd ¯q+¯ q2 with (¯ q2)αβ = ¯ q2 
+
+> αβ
+
+. The terms linear in ¯ q cancel at the saddle point. The second order fluctuation matrix can be diagonalized by the method of [26]; we restrict ourselves to the dangerous mode, the “replicon” (or “ergodon”) characterized by P 
+
+> β
+
+¯qαβ = 0, in matrix form: E¯q = 0.A detailed analysis is discussed in Appendix B. The quadratic replicon perturbations around the glass thus combine as ( T / 2)Γ P 
+
+> αβ
+
+¯q2 
+
+> αβ
+
+with Γ = 12(1 −qd)2 − c2
+
+(1 −q2
+
+> d
+
+)2 − α
+
+2( T −1+ qd)2 − 3αcq2
+
+> d
+
+(T2 −1+ q2
+
+> d
+
+)2 . (5.6) When qd is nonzero, we may insert the mean field equation (4.6), leading to the simpler form Γ = 12qd
+
+h m2
+
+(1 − qd)2 − 4αcq3
+
+> d
+
+(T2 − 1 + q2
+
+> d
+
+)2
+
+i
+
+. (5.7) Springer Nature 2021 L ATEX template 16 CONTENTS The condition Γ ↓ 0 sets a smooth transition from a glas phase to a spin glass phase. For αc = 0, there is no region with Γ < 0, hence no spin glass [20]. Notice that due to eq. (4.11), this combination vanishes at the border where a spin glass smoothly goes to a glass by having x(q) → 0 for q < q d.A second important eigenvalue is the Λ − of eqs. (B.11) and (B.12). 
+
+## 5.3 The glass phase at T = 0 
+
+Simplifications occur in the T → 0 limit. At small T we set 
+
+qd = 1 − Ty + 1 + O(T 2), TT − 1 + qd
+
+= y + 1 
+
+y + O(T ) (5.8) Eq. (3.18) leads to the T = 0 free energy of the glass 
+
+f0 = y
+
+2 m2 − u4
+
+4 m4 − v4
+
+4 c4 − w4
+
+2 c2m2 + 1 − 2v2 + y
+
+4 c2
+
+− α(1 + y)2y − αcv2(1 + y)2(1 − 2v2 + y) − 1 + y
+
+2 . (5.9) The squares of the order parameters of its patterns become 
+
+m2 = 2v4y − w4(y + 1 − 2v2)2( u4v4 − w24 ) , c2 = u4(y + 1 − 2v2) − 2w4y
+
+2( u4v4 − w24 ) , (5.10) or either of them vanishing, obtained by setting w4 → 0 and discarding the other one, or both zero. The mean field equation for y is 
+
+m2 + 12 c2 + αy2 + 2αcv22
+
+(1 − 2v2 + y)2 = 1 . (5.11) The replicon has eigenvalue Γ0 = (1 + y)2
+
+2
+
+m2 − 4αcv22
+
+(1 − 2v2 + y)2
+
+i
+
+. (5.12) At given set of parameters, one can solve (5.11) for y and get Γ 0 from (5.12). To get insight in the problem, we rewrite the equations, keeping in mind that we focus on small Γ 0. The situation simplifies for v2 = 12 , where (5.9) becomes, apart from a constant, 
+
+f0 = y
+
+2 m2 − u4
+
+4 m4 − v4
+
+4 c4 − w4
+
+2 c2m2 + y
+
+4 c2 − 1 + ¯ α
+
+2y , ¯α = α + 12 αc. (5.13) The pattern parameters read 
+
+m2 = 2v4 − w4
+
+2( u4v4 − w24 ) y, c2 = u4 − 2w4
+
+2( u4v4 − w24 ) y. (5.14) Springer Nature 2021 L ATEX template CONTENTS 17 In this case, m and c are finite and real, provided w4 is not too large. Further 
+
+m2 + 12 c2 + ¯αy2 = 1 , Γ0 = (1 + y)2
+
+2y2
+
+h
+
+m2y2 − αc
+
+i
+
+. (5.15) Combining them yields (2 α + 3 αc)m2 + αcc2 = 2 αc + (2 α + αc) 2Γ 0
+
+(1 + y)2 . (5.16) The expressions (5.14) for m2 and c2 lead to a cubic equation for y,
+
+y = 4( u4v4 − w24 )[ αc + (2 α + αc)Γ 0/(1 + y)2](2 α + 3 αc)(2 v4 − w4) + αc(u4 − 2w4) , (5.17) which is solved explicitly at the transition line Γ 0 = 0. The remaining relation 2v4 − w4
+
+2( u4v4 − w24 ) = αc
+
+y3 + 2Γ 0
+
+y(1 + y)2 , (5.18) is a condition between the various parameters. At Γ 0 = 0 it codes the onset of the spin glass phase. For small Γ 0 it can be iterated around Γ 0 = 0. Let us investigate the ( α, α c) regime where the T = 0 glass phase exists at given parameters u4, v4 and not-too-large w4, keeping v2 = 12 . For αc = 0, eq. (5.12) obviously shows that Γ 0 > 0, this is the glass phase of ref. B. Eq. (5.14) in linear in y, viz. m2 + 12 c2 ≡ Ay . Eq. (5.15) takes the form 
+
+Ay 3 − y2 + ¯ α, A = u4 + 4 v4 − 4w4
+
+4( u4v4 − w24 ) , ¯α = α + 12 αc. (5.19) This equation has a real positive solution for ¯ α < ¯αc = 4 /27 A2, y < y c = 2 /3A,where d y/ d¯ α is finite. The Hessian of f0 as function of ( qd, m, c ) has one negative eigenvalue and two positive ones, as it should since qd is a (spin) glass parameter (recall that P q2 
+
+> αβ
+
+/n = ( n − 1) q2 
+
+> d
+
+→ − q2 
+
+> d
+
+when qα̸=β = qd.) At ¯ αc,one of the positive eigenvalues goes through zero. Hence the T = 0 glass phase exist for ¯ α < ¯αc. In the standard case αc = α, where each pattern possibly has correlation, it thus exist for α ≤ 8/81 A2.Next to the case (5.14) of finite m and c, there exists the stable case m2 =
+
+y/u 4 and c = 0. Eq. (5.19) then holds with A → A′ = 1 /u 4. Since A′ < A , it allows a larger region for 2 α + αc, as c2 does not “eat way” from m2 in (5.15a). 
+
+## 5.4 The spin glass at T = 0 
+
+For small T one sets 
+
+qd = 1 − rdT, x(q) = T ξ (q), I1 = T ¯I1, I2 = T ¯I2. (5.20) Springer Nature 2021 L ATEX template 18 CONTENTS For T → 0 it brings the scaled functions ¯I1(q) = rd +
+
+Z 1
+
+> q
+
+d¯ q ξ (¯ q), ¯J1(q) = 1 − ¯I1(q),
+
+¯I2(q) = 2 rd +
+
+Z 1
+
+> q
+
+d¯ q 2¯ qξ (¯ q), ¯J2(q) = 1
+
+v2
+
+− ¯I2(q). (5.21) Eq. (3.14) reduces to 
+
+f = − u2
+
+2 m2 − u4
+
+4 m4 − v2
+
+2 c2 − v4
+
+4 c4 − w4
+
+2 m2c2 + m2
+
+2 ¯I1(q0) + c2
+
+2 ¯I2(q0) (5.22) 
+
+− α
+
+2
+
+n q0
+
+¯J1(q0) +
+
+Z 1
+
+> q0
+
+dq
+
+¯J1(q)
+
+o
+
+− αc
+
+2
+
+n q20
+
+¯J2(q0) +
+
+Z 1
+
+> q0
+
+dq 2q
+
+¯J2(q)
+
+o
+
+− 12
+
+n q0
+
+¯I1(q0) +
+
+Z 1
+
+> q0
+
+dq
+
+¯I1(q)
+
+o
+
+.
+
+The conditions (4.10) and (4.11) become 2c2
+
+¯I22(q0) + α
+
+¯J21 (q0) + 6αcq20
+
+¯J22 (q0) = 1¯I12(q0) , m2
+
+¯I12(q0) = 4αcq30
+
+¯J22 (q0) . (5.23) Finally, eq. (4.12) becomes 
+
+ξ(q) = q × 6αc ¯I13(q) ¯J13(q) ¯J2(q)¯J13(q) ¯J23(q) + α ¯I13(q) ¯J23(q) + 8 αcq3 ¯I13(q) ¯J13(q) . (5.24) It is seen that, also for the spin glass, the T → 0 limit is well defined. The scaled Parisi function ξ(q) remains broad. To avoid T log T corrections to the free energy, the spherical spins have to be quantized [9, 10]. 
+
+# 6. Discussion and outlook 
+
+In this work, a Hopfield model is considered for patterns with internal structure described by random Gaussian variables ξμij that describe a correlation between spin i and spin j in pattern μ for 1 ≤ μ ≤ pc, where αc = pc/N is the loading capacity for patterns with structure, out of the p = αN total number of patterns. The natural case is αc = α, but it is instructive to consider general 
+
+αc. The employed spherical limit for the spins makes the problem solvable analytically. Correlations due to structures in patterns can be incorporated in many neural networks, such as those with Ising spins or Potts spins [27]. While the spherical Hopfield model has a glass phase but no spin glass phase, the correlations in the structures induce a spin glass state with continu-ous (full) replica symmetry breaking. It is the state entered when coming from high temperature, and likely occurs also for Ising spins. At zero temperature, a glass phase exists for 2 α + αc below a certain threshold, while a spin glass phase exist above this threshold. Phases with metastable or stable patterns Springer Nature 2021 L ATEX template CONTENTS 19 and/or correlations exist, partly separated by first order phase transitions. While various properties of the phases have been elucidated, a construction of the full phase diagram is left as a task for future. Another task for future is to study the dynamics of the network. One can extend the Langevin dynamics of the spins treated in Boll´ e et al. [20] to include Langevin forces for the correlation parameters ξμij .One may also consider higher order structures in the patterns, leading to correlations between triplets, quartets, quintets, etc, of spins. The quartet case is of special interest, given the shape of cloths, floors, city plans, etc. Another future direction is the following. If, in a spin glass, the disorder couplings are not quenched but evolve slowly in time in an equilibrium state at a temperature TA, the replica number becomes finite, n = T /T A [28]. This situation was worked out for the p-spin spin glass model [29]. Such models are related to machine learning, to which correlation in patterns can be added. In the present case, the patterns ξμi and structures ξμij can have very different long timescales and be related to an equilibrium at temperatures different from each other and different from T , so that even two finite replica numbers can appear. An application of this approach is a double-replica theory for the evolution of genotype-phenotype interrelationship [30]. 
+
+# 7. Appendix A: Replica theory for spherical models 
+
+Crisanti and Sommers in 1992 have presented the eigenvalues of the Parisi overlap matrix qαβ with K steps of RSB [31]. Here we calculate the quantity log det q and related expressions as function of n and take the llmit n → 0. To define the n → 0 replica limit, Parisi considers the class of integers n
+
+which decomposes as the product n = m1m2 · · · mK with integers n ≥ mi ≥
+
+1 such that mi/m i+1 ≥ 1 is also an integer.. With the K steps of replica symmetry breaking, m0 = n and mK+1 = 1, the overlaps qαβ take the values 
+
+qαβ = qi if I(α/m i) = I(β/m i) and I(α/m i+1 )̸ = I(β/m i+1 ). (A.1) where I(x) = ⌈x⌉ denotes the smallest integer greater than or equal to x. The inverse Parisi function x(q) is (often q(x) is called Parisi function) 
+
+x(q) = n +
+
+> K
+
+X
+
+> i=0
+
+(mi+1 − mi)θ(q − qi)= nθ (q0 − q) + m1θ(q − q0) + 
+
+> K
+
+X
+
+> i=1
+
+(mi+1 − mi)θ(q − qi), (A.2) with the property x(q) = 1 for qK ≤ q ≤ 1. Special case are K = 0 (replica symmetry) where x(q) = n + (1 − n)θ(q − q0) and K = 1 (1RSB) where 
+
+x(q) = n + ( m1 − n)θ(q − q0) + (1 − m1)θ(q − qd). Springer Nature 2021 L ATEX template 20 CONTENTS The eigenvalues of qαβ and their degeneracies are 
+
+I1(0) = 
+
+Z 10
+
+dq x (q) = nq 0 + I1(q0), deg = 1 ,I1(q0) = 
+
+Z 1
+
+> q0
+
+dq x (q) = 1 − qK +
+
+Z qK
+
+> q0
+
+dq x (q), deg = nm1
+
+− 1, (A.3) 
+
+I1(qi) = 
+
+Z 1
+
+> qi
+
+dq x (q) = 1 − qK +
+
+Z qK
+
+> qi
+
+dq x (q), deg = nmi+1 
+
+− nmi
+
+,I1(qK ) = 1 − qK , deg = n − nmK
+
+. (A.4) The total number of eigenvalues is n/m K+1 = n, as it should. It holds that 
+
+I1(qi) = 1 − mi+1 qi − (1 − mK )qK −
+
+> K−1
+
+X
+
+> j=i+1
+
+(mj+1 − mj )qj ,
+
+= 1 − qK +
+
+> K
+
+X
+
+> j=i+1
+
+mj (qj − qj−1), (i = 0 , · · · , K − 1) , (A.5) implying the recursion 
+
+I1(qi−1) = I1(qi) + mi(qi − qi−1), (i = 1 , · · · , K ). (A.6) The non-degenerate eigenvalue 
+
+I0 = 1 + ( n − m1)q0 + ( mK − 1) qK +
+
+> K−1
+
+X
+
+> j=1
+
+(mj − mj+1 )qj (A.7) relates to the eigenvector with equal entries, e(1)  
+
+> α
+
+= 1 /√n, and exhibits the blocks of qαβ of size ( mj+1 − mj ) × (mj+1 − mj ) with value qj , while the terms 
+
+mK+1 = 1 relate to the diagonal “block” of size mK+1 × mK+1 , expressing the diagonal elements qαα = 1. The other eigenvectors are perpendicular to this one, so P 
+
+> α
+
+e(j) 
+
+> α
+
+= 0 for j = 2 , · · · , n . Hence only e(1)  
+
+> α
+
+contributes to 
+
+X
+
+> αβ
+
+(q−1)αβ = nI1(0) = nnq 0 +I1(q0) , X
+
+> αβ
+
+(Q−1)αβ = nI2(0) = nnq 20 +I2(q0) .(A.8) This leads to the exact result at finite n,log det q = log I1(q0) + nq 0
+
+I1(q0) + n log I1(qK ) + n
+
+> K
+
+X
+
+> i=1
+
+log[ I1(qi−1)/I 1(qi)] 
+
+mi
+
+. (A.9) Springer Nature 2021 L ATEX template CONTENTS 21 The n → 0 limit leads to the free energy with K steps of replica symmetry breaking, log det qn = q0
+
+I1(q0) + log I1(qK ) + 
+
+> K
+
+X
+
+> i=1
+
+log[ I1(qi−1)/I 1(qi)] 
+
+mi
+
+. (A.10) where the order of the mi gets reversed, n ≤ mi ≤ mi+1 ≤ 1, with the mi now being real numbers. Physical phases with a continuous part and various steps were found in models for site disordered magnets [11]. Solutions with a finite number ( K =1, 2, · · · ) of replica symmetry breaking steps were not found in those models, but they were discovered in s + p spherical models [15]. In the continuum limit K → ∞ , the qi become dense between q0 and qd,with renamed qd ≡ qK . Setting mi → x(qi), one gets for a smooth function 
+
+x(q)log det qn = q0
+
+I1(q0) + log(1 − qd) + 
+
+Z qd
+
+> q0
+
+dqI1(q) , (A.11) which involves, from (A.5), the continuum function 
+
+I1(q)=1 −qd +qdx(qd)−qx (q)−
+
+Z x(qd)
+
+> x(q)
+
+dx q (x)=1 −qd +
+
+Z qd
+
+> q
+
+d¯ q x (¯ q). (A.12) Subtraction of a diagonal matrix T 1 with T = 1 /β immediately leads to log det( 1 − βq )
+
+n = log[1 − β(1 − qd)] − q0
+
+T − I1(q0) −
+
+Z qd
+
+> q0
+
+dqT − I1(q) . (A.13) For the matrix Q with elements Qαβ = ( qαβ )2 one employs the same block sizes mi and replaces qi → Qi = q2 
+
+> i
+
+. With d Q = d q 2q it thus follows that log det(1 − β2Q)
+
+n = log[1 − β2(1 − q2
+
+> d
+
+)] − q20
+
+T2 −I2(q0) −
+
+Z qd
+
+> q0
+
+dq 2qT2 −I2(q) , (A.14) for β2 = 1 /T 2 = v2/T . Analogous to (A.12) one has 
+
+I2(q) = 1 − q2 
+
+> d
+
++
+
+Z qd
+
+> q
+
+d¯ q 2¯ qx (¯ q). (A.15) Finally, eq. (A.8) implies for n → 01
+
+n
+
+X
+
+> αβ
+
+(q−1)αβ = 1
+
+I1(q0) , 1
+
+n
+
+X
+
+> αβ
+
+(Q−1)αβ = 1
+
+I2(q0) . (A.16) Springer Nature 2021 L ATEX template 22 CONTENTS 
+
+# 8. Appendix B: Fluctuations in the glass state 
+
+To find the eigenvalues of the stability matrix in the replica symmetric glass phase with magnetization and correlation order parameters, we connect to Appendix A of Crisanti and Leuzzi for the Blume-Emery-Griffiths-Capel, that also has two magnetization-type order parameters [25]. The starting point is the free energy functional (3.11), 
+
+fn = X
+
+> α
+
+h
+
+− u2
+
+2 m2 
+
+> α
+
+− u4
+
+4 m4 
+
+> α
+
+− v2
+
+2 c2 
+
+> α
+
+− v4
+
+4 c4 
+
+> α
+
+− w4
+
+2 m2
+
+> α
+
+c2
+
+> α
+
+i
+
++ T
+
+2
+
+X
+
+> αβ
+
+h
+
+mα(q−1)αβ mβ + cα(Q−1)αβ cβ
+
+i
+
+(B.1) + αT 
+
+2 log det( 1 − β1q) + αcT
+
+2 log det( 1 − β2Q) − T
+
+2 log det q. 
+
+For the α and αc terms we need the combinations 
+
+qT = qd + T1, QT = q2 
+
+> d
+
++ T2, T1 = Tu2
+
+, T2 = Tv2
+
+, (B.2) while the mαmβ and cαcβ terms involve q0 and Q0, respectively. The inverses of the unperturbed replica symmetric matrices read 
+
+gT = 1
+
+(1 −qT )1+qdE =sT (1 − rT E), s T = 11 − qT
+
+, rT = qd
+
+1−qT + nq d
+
+, (B.3) 
+
+GT = 1
+
+(1 −QT )1+q2
+
+> d
+
+E = ST (1−RT E), ST = 11 − QT
+
+, R T = q2
+
+> d
+
+1−QT + nq 2
+
+> d
+
+.
+
+Let us define for any scalar S, vector V and matrix M
+
+(S) = S, [V ] = X
+
+> α
+
+Vα, (M ) = X
+
+> α
+
+Mαα , [M ] = X
+
+> αβ
+
+Mαβ . (B.4) Up to second order, using (¯ q) = ( ¯Q) = 0 and [¯ q2] = (¯ q2), ( 1) = ( E) = n
+
+there occur their quadratic and bilinear fluctuation terms 
+
+δ2fn = − 12 {u2 + 3 u4m2 + w4c2}( ¯ m ¯m) − 12 {v2 + 3 v4m2 + w4m2}(¯ c¯c) − 2w4mc ( ¯ m¯c)+ T
+
+2
+
+s20
+
+2 {(¯ q2) − 2r0[¯ q2] + r20 [¯ q]2} − αT 
+
+2
+
+s2
+
+> T
+
+2 {(¯ q2) − 2rT [¯ q2] + r2 
+
+> T
+
+[¯ q]2}−αcT q 2
+
+> d
+
+S2 
+
+> T
+
+{(¯ q2) − 2RT [¯ q2] + R2 
+
+> T
+
+[¯ q]2} − αcT
+
+2 ST RT (¯ q2)+ T
+
+2 s0{( ¯ m2) − r0[ ¯ m]2} + T
+
+2 m2s30(1 − nr 0)2{[¯ q2] − r0[¯ q]2} (B.5) + T
+
+2 S0{(¯ c2) − R0[¯ c]2} + T
+
+2 c2S20 (1 − nR 0)2{4q2
+
+> d
+
+S0{[¯ q2] − R0[¯ q]2} − (¯ q2)}Springer Nature 2021 L ATEX template CONTENTS 23 
+
+−s20(1 − nr 0)m{[¯ q ¯m] − r0[¯ q][ ¯ m]} − 2qdS20 (1 − nR 0)c{[¯ q¯c] − R0[¯ q][¯ c]}.
+
+These terms can be gathered as 2δ2fn = ¯A2(¯ q2) + ¯A1[¯ q2] + ¯A0[¯ q]2 + ¯B1(¯ c¯c) + ¯B0[¯ c]2
+
++ ¯C1( ¯ m ¯m) + ¯C0[ ¯ m]2 + ¯D1([¯ q¯c] + [¯ c¯q]) + ¯D0([¯ q][¯ c] + [¯ c][¯ q]) (B.6) + ¯E1([¯ q ¯m] + [ ¯ m¯q]) + ¯E0([¯ q][ ¯ m] + [ ¯ m][¯ q]) + F1[( ¯ m¯c) + (¯ c ¯m)] .
+
+For n → 0 the coefficients read ¯A2 = T
+
+2(1 −qd)2 − c2T
+
+(1 −q2
+
+> d
+
+)2 − αT 
+
+2( T −1+ qd)2 − 3αcq2
+
+> d
+
+T
+
+(T2 −1+ q2
+
+> d
+
+)2 ,
+
+¯A1 = αq dT
+
+(1 −qd −T )3 + 4αcq4
+
+> d
+
+T
+
+(1 −q2 
+
+> d
+
+−T2)3 − c2q2
+
+> d
+
+T
+
+(1 −q2
+
+> d
+
+)4 − m2qdT
+
+(1 −qd)4 − qdT
+
+(1 −qd)3 ,
+
+¯A0 = q2
+
+> d
+
+T
+
+2(1 −qd)4 − αq 2
+
+> d
+
+T
+
+2(1 −qd −T )4 − 2αcq6
+
+> d
+
+T
+
+(1 −q2 
+
+> d
+
+−T2)4 ,
+
+¯B1 = T
+
+1−q2
+
+> d
+
+−3m2v4 −m2w4 −v2, ¯B0 = − q2
+
+> d
+
+T
+
+(1 −q2
+
+> d
+
+)2 ,
+
+¯C1 = T
+
+1−qd
+
+−3m2u4 −c2w4 −u2, ¯C0 = − qdT
+
+(1 −qd)2 ,
+
+¯D1 = 2cq dT
+
+(1 −q2
+
+> d
+
+)2 , ¯D0 = − 2cq 3
+
+> d
+
+T
+
+(1 −q2
+
+> d
+
+)3 ,
+
+¯E1 = mT 
+
+(1 −qd)2 , ¯E0 = − mq dT
+
+(1 −qd)3 ,
+
+¯F1 = −2cmw 4, ¯F0 = 0 . (B.7) The Crisanti-Leuzzi parameters are 
+
+A2 = ¯A2 + 2 ¯A1 + ¯A0, A1 = ¯A1 + ¯A0, A 0 = ¯A0
+
+B1 = ¯B1 + ¯B0, B0 = ¯B0, C1 = ¯C1 + ¯C0, C0 = ¯C0, (B.8) 
+
+D1 = ¯D1 + ¯D0, D 0 = ¯D0, E1 = ¯E1 + ¯E0, E 0 = ¯E0, F1 = ¯F1.(B.9) Now let us denote 
+
+A = A2 − 4A1 + 3 A0 = ¯A2 − 2 ¯A1. (B.10) The eigenvalues of the longitudinal fluctuations (non-degenrate) and the anomalous fluctuations (degenerate) coincide for n → 0, Λ± = A + ¯B1 ±
+
+q
+
+(A − ¯B1)2 − 8 ¯D21 . (B.11) Springer Nature 2021 L ATEX template 24 CONTENTS The potentially dangerous one is Λ −. For T → 0, Λ + ∼ +1 /T 2 but, using 
+
+qd = 1 − T / (y + 1), Λ − appears to remain finite, Λ− = y + 1 − 2v2 − 2m2(3 v4 + w4). (B.12) The replicon eigenvalue is ΛR = Γ = 12(1 −qd)2 − c2
+
+(1 −q2
+
+> d
+
+)2 − α
+
+2( T −1+ qd)2 − 3αcq2
+
+> d
+
+(T2 −1+ q2
+
+> d
+
+)2 . (B.13) The high temperature phase qd = m = c = 0 is unstable below TSG = 1 + √α.When qd̸ = 0, the mean field equation (4.6) leads to the simpler form Γ = 12qd
+
+h m2
+
+(1 − qd)2 − 4αcq3
+
+> d
+
+(T2 − 1 + q2
+
+> d
+
+)2
+
+i
+
+. (B.14) For T → 0 this becomes also ∼ 1/T 2,Γ = (y + 1) 2
+
+2T 2
+
+h
+
+m2 − 4αcv22
+
+(y + 1 − 2v2)2
+
+i
+
+. (B.15) The condition Γ ↓ 0 sets a smooth transition from a glass phase to a spin glass phase. For αc = 0, there is no region with Γ < 0, hence no spin glass [20]. For 
+
+v2 = 12 there results Γ = (y + 1) 2
+
+2T 2y2
+
+
+
+m2y2 − αc
+
+
+
+. (B.16) Data Availability Statement: No Data associated in the manuscript. 
+
+# 9 References References 
+
+[1] Heerema, M., Van Leeuwen, W.: Derivation of Hebb’s rule. Journal of Physics A: Mathematical and General 32 (2), 263 (1999) [2] Hopfield, J.J.: Neural networks and physical systems with emergent col-lective computational abilities. Proceedings of the National Academy of Sciences 79 (8), 2554–2558 (1982) [3] Bialek, W.: Moving boundaries: An appreciation of John Hopfield. arXiv preprint arXiv:2412.18030 (2024) [4] Amit, D.J., Gutfreund, H., Sompolinsky, H.: Statistical mechanics of neural networks near saturation. Annals of Physics 173 (1), 30–67 (1987) Springer Nature 2021 L ATEX template CONTENTS 25 [5] Sherrington, D., Kirkpatrick, S.: Solvable model of a spin-glass. Physical Review Letters 35 (26), 1792 (1975) [6] Parisi, G.: The order parameter for spin glasses: a function on the interval 0-1. Journal of Physics A: Mathematical and General 13 (3), 1101 (1980) [7] M´ ezard, M., Parisi, G., Virasoro, M.A.: Spin Glass Theory and Beyond: An Introduction to the Replica Method and Its Applications vol. 9. World Scientific Publishing Company, ??? (1987) [8] Talagrand, M.: The Parisi formula. Annals of mathematics, 221–263 (2006) [9] Nieuwenhuizen, T.M.: Exactly solvable model of a quantum spin glass. Physical Review Letters 74 (21), 4289 (1995) [10] Nieuwenhuizen, T.M.: Quantum description of spherical spins. Physical Review Letters 74 (21), 4293 (1995) [11] Nieuwenhuizen, T.M., van Duin, C.: Theory of site-disordered magnets. The European Physical Journal B 7(2), 191–209 (1999) [12] Crisanti, A., Leuzzi, L.: Spherical 2 + p spin-glass model: An exactly solvable model for glass to spin-glass transition. Physical Review Letters 
+
+93 (21), 217203 (2004) [13] Crisanti, A., Leuzzi, L.: Spherical 2 + p spin-glass model: An analyt-ically solvable model with a glass-to-glass transition. Physical Review B—Condensed Matter and Materials Physics 73 (1), 014412 (2006) [14] Crisanti, A., Leuzzi, L.: Equilibrium dynamics of spin-glass systems. Phys-ical Review B—Condensed Matter and Materials Physics 75 (14), 144301 (2007) [15] Crisanti, A., Leuzzi, L.: Amorphous-amorphous transition and the two-step replica symmetry breaking phase. Physical Review B – Condensed Matter and Materials Physics 76 (18), 184417 (2007) [16] Marullo, C., Agliari, E.: Boltzmann machines as generalized hopfield networks: a review of recent results and outlooks. Entropy 23 (1), 34 (2020) [17] Hinton, G.E., Salakhutdinov, R.R.: Reducing the dimensionality of data with neural networks. science 313 (5786), 504–507 (2006) [18] Pozas-Kerstjens, A., Mu˜ noz-Gil, G., Pi˜ nol, E., Garc´ ıa-March, M. ´A., Ac´ ın, A., Lewenstein, M., Grzybowski, P.R.: Efficient training of energy-based models via spin-glass control. Machine Learning: Science and Technology Springer Nature 2021 L ATEX template 26 CONTENTS 
+
+2(2), 025026 (2021) [19] Minh Pham, T., Kondor, I., Hanel, R., Thurner, S.: The effect of social balance on social fragmentation. Journal of the Royal Society Interface 
+
+17 (172), 20200752 (2020) [20] Boll´ e, D., Nieuwenhuizen, T.M., Castillo, I.P., Verbeiren, T.: A spherical Hopfield model. Journal of Physics A: Mathematical and General 36 (41), 10269 (2003) [21] Virasoro, M.A.: Categorization in neural networks and prosopagnosia. Physics Reports 184 , 301–306 (1989) [22] Fontanari, J.F., Theumann, W.: On the storage of correlated patterns in Hopfield’s model. Journal de Physique 51 (5), 375–386 (1990) [23] Tamarit, F.A., Curado, E.M.: Pair-correlated patterns in Hopfield model of neural networks. Journal of Statistical Physics 62 , 473–480 (1991) [24] L¨ owe, M.: On the storage capacity of Hopfield models with correlated patterns. The Annals of Applied Probability 8(4), 1216–1250 (1998) [25] Crisanti, A., Leuzzi, L.: Thermodynamic properties of a full-replica-symmetry-breaking ising spin glass on lattice gas: The random blume-emery-griffiths-capel model. Physical Review B—Condensed Matter and Materials Physics 70 (1), 014409 (2004) [26] Morone, F., Caltagirone, F., Harrison, E., Parisi, G.: Replica theory and spin glasses. arXiv preprint arXiv:1409.2722 (2014) [27] Boll´ e, D., Dupont, P., Huyghebaert, J.: Thermodynamic properties of the Q-state Potts-glass neural network. Physical Review A 45 (6), 4194 (1992) [28] Penney, R., Coolen, A., Sherrington, D.: Coupled dynamics of fast spins and slow interactions in neural networks and spin systems. Journal of Physics A: Mathematical and General 26 (15), 3681 (1993) [29] Allahverdyan, A., Nieuwenhuizen, T.M., Saakian, D.: Model glasses coupled to two different heat baths. The European Physical Journal B-Condensed Matter and Complex Systems 16 , 317–335 (2000) [30] Pham, T.M., Kaneko, K.: Double-replica theory for evolution of genotype-phenotype interrelationship. Physical Review Research 5(2), 023049 (2023) [31] Crisanti, A., Sommers, H.-J.: The spherical p-spin interaction spin glass model: the statics. Zeitschrift f¨ ur Physik B Condensed Matter 87 (3), 341– 354 (1992)
