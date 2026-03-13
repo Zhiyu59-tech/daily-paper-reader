@@ -1,0 +1,79 @@
+{
+  "label": "2026-03-13",
+  "date": "2026-03-13",
+  "generated_at": "2026-03-13T20:24:51",
+  "count": 5,
+  "papers": [
+    {
+      "paper_id": "202603/13/2603.11745v1-cindi-conditional-imputation-and-noisy-data-integrity-with-flows-in-power-grid-data",
+      "section": "deep",
+      "title_en": "CINDI: Conditional Imputation and Noisy Data Integrity with Flows in Power Grid Data",
+      "authors": "David Baumgartner, Helge Langseth, Heri Ramampiaro",
+      "date": "2026-03-12",
+      "pdf": "https://arxiv.org/pdf/2603.11745v1",
+      "score": "8.0",
+      "evidence": "电力电网中的异常检测与数据完整性",
+      "tldr": "针对电力网等关键基础设施中多元时间序列数据的噪声和异常问题，本文提出了一种名为CINDI的无监督概率框架。该框架利用条件归一化流将异常检测与缺失值填补统一在端到端系统中。通过建模数据的精确条件似然，CINDI能识别低概率片段并迭代采样统计一致的替代值，在保持物理和统计特性的同时，显著提升了数据完整性维护的效率和可靠性。",
+      "tags": "query:hp-pg",
+      "abstract_en": "Real-world multivariate time series, particularly in critical infrastructure such as electrical power grids, are often corrupted by noise and anomalies that degrade the performance of downstream tasks. Standard data cleaning approaches often rely on disjoint strategies, which involve detecting errors with one model and imputing them with another. Such approaches can fail to capture the full joint distribution of the data and ignore prediction uncertainty. This work introduces Conditional Imputation and Noisy Data Integrity (CINDI), an unsupervised probabilistic framework designed to restore data integrity in complex time series. Unlike fragmented approaches, CINDI unifies anomaly detection and imputation into a single end-to-end system built on conditional normalizing flows. By modeling the exact conditional likelihood of the data, the framework identifies low-probability segments and iteratively samples statistically consistent replacements. This allows CINDI to efficiently reuse learned information while preserving the underlying physical and statistical properties of the system. We evaluate the framework using real-world grid loss data from a Norwegian power distribution operator, though the methodology is designed to generalize to any multivariate time series domain. The results demonstrate that CINDI yields robust performance compared to competitive baselines, offering a scalable solution for maintaining reliability in noisy environments.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/13/2603.11905v1-risk-based-dynamic-thermal-rating-in-distribution-transformers-via-probabilistic-forecasting",
+      "section": "quick",
+      "title_en": "Risk-Based Dynamic Thermal Rating in Distribution Transformers via Probabilistic Forecasting",
+      "authors": "Scott Angus, Jethro Browell, David Greenwood, Matthew Deakin",
+      "date": "2026-03-12",
+      "pdf": "https://arxiv.org/pdf/2603.11905v1",
+      "score": "7.0",
+      "evidence": "配电变压器热额定值与电网负荷预测",
+      "tldr": "针对低压配电变压器需求增长与静态保护限制容量的问题，本文提出一种基于概率预测的动态热定值（DTR）框架。该方法利用英国644台变压器数据，通过聚类分位数回归模型预测次日最优保护设定值，直接量化过热风险。研究表明，该方案在保证风险可控的前提下，可提升10-12%的变压器容量，为电网运营商提供了灵活管理资产的新途径。",
+      "tags": "query:hp-pg",
+      "abstract_en": "Low voltage (LV) distribution transformers face accelerating demand growth while replacement lead times and costs continue to rise, making improved utilisation of existing assets essential. Static and conservative protection devices (PDs) in distribution transformers are inflexible and limit the available headroom of the transformer. This paper presents a probabilistic framework for dynamically forecasting optimal thermal protection settings. The proposed approach directly predicts the day-ahead scale factor which maximises the dynamic thermal rating of the transformer from historical load, temperature, and metadata using clustered quantile regression models trained on 644 UK LV transformers. Probabilistic forecasting quantifies overheating risk directly through the prediction percentile, enabling risk-informed operational decisions. Results show a 10--12\\% additional capacity gain compared to static settings, with hotspot temperature risk matching the selected percentile, including under realistic temperature forecast errors. These results demonstrate a practical approach for distribution network operators to take advantage of PDs with adaptive settings to maximise capacity and manage risk on operational time scales.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/13/2603.07261v1-turning-time-series-into-algebraic-equations-symbolic-machine-learning-for-interpretable-modeling-of-chaotic-time-series",
+      "section": "quick",
+      "title_en": "Turning Time Series into Algebraic Equations: Symbolic Machine Learning for Interpretable Modeling of Chaotic Time Series",
+      "authors": "Madhurima Panja, Grace Younes, Tanujit Chakraborty",
+      "date": "2026-03-07",
+      "pdf": "https://arxiv.org/pdf/2603.07261v1",
+      "score": "6.0",
+      "evidence": "用于混沌时间序列预测的可解释符号机器学习",
+      "tldr": "针对混沌时间序列预测中深度学习模型缺乏可解释性的挑战，本文提出了符号神经预测器（SyNF）和符号树预测器（SyTF）。这两种方法能从数据中自动发现显式的代数方程，在保持与现代深度学习模型相当的预测精度的同时，提供了透明且可解释的动力学模型。通过对132个混沌吸引子及真实世界流行病和气候数据的实验，验证了该方法在科学建模和预测中的有效性。",
+      "tags": "query:hp-pg",
+      "abstract_en": "Chaotic time series are notoriously difficult to forecast. Small uncertainties in initial conditions amplify rapidly, while strong nonlinearities and regime dependent variability constrain predictability. Although modern deep learning often delivers strong short horizon accuracy, its black box nature limits scientific insight and practical trust in settings where understanding the underlying dynamics matters. To address this gap, we propose two complementary symbolic forecasters that learn explicit, interpretable algebraic equations from chaotic time series data. Symbolic Neural Forecaster (SyNF) adapts a neural network based equation learning architecture to the forecasting setting, enabling fully differentiable discovery of compact and interpretable algebraic relations. The Symbolic Tree Forecaster (SyTF) builds on evolutionary symbolic regression to search directly over equation structures under a principled accuracy complexity trade off. We evaluate both approaches in a rolling window nowcasting setting with one step ahead forecasting using several accuracy metrics and compare against a broad suite of baselines spanning classical statistical models, tree ensembles, and modern deep learning architectures. Numerical experiments cover a benchmark of 132 low dimensional chaotic attractors and two real world chaotic time series, namely weekly dengue incidence in San Juan and the Nino 3.4 sea surface temperature index. Across datasets, symbolic forecasters achieve competitive one step ahead accuracy while providing transparent equations that reveal salient aspects of the underlying dynamics.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/13/2603.11475v1-deep-learning-network-temporal-models-for-traffic-prediction",
+      "section": "quick",
+      "title_en": "Deep Learning Network-Temporal Models For Traffic Prediction",
+      "authors": "Yufeng Xin, Ethan Fan",
+      "date": "2026-03-12",
+      "pdf": "https://arxiv.org/pdf/2603.11475v1",
+      "score": "6.0",
+      "evidence": "用于网络时空模式和流量预测的深度学习",
+      "tldr": "针对网络流量预测中复杂拓扑依赖和时间模式的挑战，本文研究了深度学习在多变量时间序列分析中的应用。提出了定制化的网络-时间图注意力网络（GAT）和经过微调的多模态大语言模型（LLM）两种方案。通过在真实网络数据集上的实验，证明了LLM在整体预测和泛化能力上的优势，而GAT在降低预测方差方面表现出色，为网络智能管理提供了新思路。",
+      "tags": "query:hp-pg",
+      "abstract_en": "Time series analysis is critical for emerging net- work intelligent control and management functions. However, existing statistical-based and shallow machine learning models have shown limited prediction capabilities on multivariate time series. The intricate topological interdependency and complex temporal patterns in network data demand new model approaches. In this paper, based on a systematic multivariate time series model study, we present two deep learning models aiming for learning both temporal patterns and network topological correlations at the same time: a customized network-temporal graph attention network (GAT) model and a fine-tuned multi-modal large language model (LLM) with a clustering overture. Both models are studied against an LSTM model that already outperforms the statistical methods. Through extensive training and performance studies on a real-world network dataset, the LLM-based model demonstrates superior overall prediction and generalization performance, while the GAT model shows its strength in reducing prediction variance across the time series and horizons. More detailed analysis also reveals important insights into correlation variability and prediction distribution discrepancies over time series and different prediction horizons.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/13/2603.11909v1-entransformer-a-deep-generative-transformer-for-multivariate-probabilistic-forecasting",
+      "section": "quick",
+      "title_en": "EnTransformer: A Deep Generative Transformer for Multivariate Probabilistic Forecasting",
+      "authors": "Rajdeep Pathak, Rahul Goswami, Madhurima Panja, Palash Ghosh, Tanujit Chakraborty",
+      "date": "2026-03-12",
+      "pdf": "https://arxiv.org/pdf/2603.11909v1",
+      "score": "6.0",
+      "evidence": "能源系统的多变量概率预测",
+      "tldr": "针对多元时间序列预测中不确定性量化难的问题，本文提出EnTransformer。该框架结合了Transformer的长程建模能力与engression随机学习范式，通过注入随机噪声和优化能量评分函数，在无需参数化假设的情况下直接学习条件预测分布。实验证明其在电力、交通等多个数据集上均能生成高质量的概率预测，性能优于现有基准模型。",
+      "tags": "query:hp-pg",
+      "abstract_en": "Reliable uncertainty quantification is critical in multivariate time series forecasting problems arising in domains such as energy systems and transportation networks, among many others. Although Transformer-based architectures have recently achieved strong performance for sequence modeling, most probabilistic forecasting approaches rely on restrictive parametric likelihoods or quantile-based objectives. They can struggle to capture complex joint predictive distributions across multiple correlated time series. This work proposes EnTransformer, a deep generative forecasting framework that integrates engression, a stochastic learning paradigm for modeling conditional distributions, with the expressive sequence modeling capabilities of Transformers. The proposed approach injects stochastic noise into the model representation and optimizes an energy-based scoring objective to directly learn the conditional predictive distribution without imposing parametric assumptions. This design enables EnTransformer to generate coherent multivariate forecast trajectories while preserving Transformers' capacity to effectively model long-range temporal dependencies and cross-series interactions. We evaluate our proposed EnTransformer on several widely used benchmarks for multivariate probabilistic forecasting, including Electricity, Traffic, Solar, Taxi, KDD-cup, and Wikipedia datasets. Experimental results demonstrate that EnTransformer produces well-calibrated probabilistic forecasts and consistently outperforms the benchmark models.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

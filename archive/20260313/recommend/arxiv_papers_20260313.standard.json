@@ -1,0 +1,205 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-03-13T20:23:21.946842+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 4,
+    "quick_skim_target": 11,
+    "quick_selected": 4
+  },
+  "deep_dive": [
+    {
+      "id": "2603.11745v1",
+      "title": "CINDI: Conditional Imputation and Noisy Data Integrity with Flows in Power Grid Data",
+      "abstract": "Real-world multivariate time series, particularly in critical infrastructure such as electrical power grids, are often corrupted by noise and anomalies that degrade the performance of downstream tasks. Standard data cleaning approaches often rely on disjoint strategies, which involve detecting errors with one model and imputing them with another. Such approaches can fail to capture the full joint distribution of the data and ignore prediction uncertainty. This work introduces Conditional Imputation and Noisy Data Integrity (CINDI), an unsupervised probabilistic framework designed to restore data integrity in complex time series. Unlike fragmented approaches, CINDI unifies anomaly detection and imputation into a single end-to-end system built on conditional normalizing flows. By modeling the exact conditional likelihood of the data, the framework identifies low-probability segments and iteratively samples statistically consistent replacements. This allows CINDI to efficiently reuse learned information while preserving the underlying physical and statistical properties of the system. We evaluate the framework using real-world grid loss data from a Norwegian power distribution operator, though the methodology is designed to generalize to any multivariate time series domain. The results demonstrate that CINDI yields robust performance compared to competitive baselines, offering a scalable solution for maintaining reliability in noisy environments.",
+      "authors": [
+        "David Baumgartner",
+        "Helge Langseth",
+        "Heri Ramampiaro"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.LG"
+      ],
+      "published": "2026-03-12T09:49:10+00:00",
+      "link": "https://arxiv.org/pdf/2603.11745v1",
+      "tags": [
+        "keyword:HP PG",
+        "query:HP PG"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Anomaly detection and data integrity in electrical power grids",
+      "llm_evidence_cn": "电力电网中的异常检测与数据完整性",
+      "llm_evidence": "电力电网中的异常检测与数据完整性",
+      "canonical_evidence": "电力电网中的异常检测与数据完整性",
+      "llm_tldr_en": "Introduces a probabilistic framework for anomaly detection and imputation in power grid time series data.",
+      "llm_tldr_cn": "介绍了一种用于电网时间序列数据异常检测和插补的概率框架。",
+      "llm_tldr": "介绍了一种用于电网时间序列数据异常检测和插补的概率框架。",
+      "llm_tags": [
+        "query:hp-pg"
+      ],
+      "matched_query_tag": "query:hp-pg",
+      "matched_query_text": "power grid systems and infrastructure",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2603.11905v1",
+      "title": "Risk-Based Dynamic Thermal Rating in Distribution Transformers via Probabilistic Forecasting",
+      "abstract": "Low voltage (LV) distribution transformers face accelerating demand growth while replacement lead times and costs continue to rise, making improved utilisation of existing assets essential. Static and conservative protection devices (PDs) in distribution transformers are inflexible and limit the available headroom of the transformer. This paper presents a probabilistic framework for dynamically forecasting optimal thermal protection settings. The proposed approach directly predicts the day-ahead scale factor which maximises the dynamic thermal rating of the transformer from historical load, temperature, and metadata using clustered quantile regression models trained on 644 UK LV transformers. Probabilistic forecasting quantifies overheating risk directly through the prediction percentile, enabling risk-informed operational decisions. Results show a 10--12\\% additional capacity gain compared to static settings, with hotspot temperature risk matching the selected percentile, including under realistic temperature forecast errors. These results demonstrate a practical approach for distribution network operators to take advantage of PDs with adaptive settings to maximise capacity and manage risk on operational time scales.",
+      "authors": [
+        "Scott Angus",
+        "Jethro Browell",
+        "David Greenwood",
+        "Matthew Deakin"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-03-12T13:19:01+00:00",
+      "link": "https://arxiv.org/pdf/2603.11905v1",
+      "tags": [
+        "keyword:HP PG",
+        "query:HP PG"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Distribution transformer thermal rating and load forecasting in power grids",
+      "llm_evidence_cn": "配电变压器热额定值与电网负荷预测",
+      "llm_evidence": "配电变压器热额定值与电网负荷预测",
+      "canonical_evidence": "配电变压器热额定值与电网负荷预测",
+      "llm_tldr_en": "Develops a probabilistic framework for dynamic thermal rating and load forecasting in distribution transformers.",
+      "llm_tldr_cn": "开发了一个用于配电变压器动态热额定值和负荷预测的概率框架。",
+      "llm_tldr": "开发了一个用于配电变压器动态热额定值和负荷预测的概率框架。",
+      "llm_tags": [
+        "query:hp-pg"
+      ],
+      "matched_query_tag": "query:hp-pg",
+      "matched_query_text": "power grid systems and infrastructure",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2603.07261v1",
+      "title": "Turning Time Series into Algebraic Equations: Symbolic Machine Learning for Interpretable Modeling of Chaotic Time Series",
+      "abstract": "Chaotic time series are notoriously difficult to forecast. Small uncertainties in initial conditions amplify rapidly, while strong nonlinearities and regime dependent variability constrain predictability. Although modern deep learning often delivers strong short horizon accuracy, its black box nature limits scientific insight and practical trust in settings where understanding the underlying dynamics matters. To address this gap, we propose two complementary symbolic forecasters that learn explicit, interpretable algebraic equations from chaotic time series data. Symbolic Neural Forecaster (SyNF) adapts a neural network based equation learning architecture to the forecasting setting, enabling fully differentiable discovery of compact and interpretable algebraic relations. The Symbolic Tree Forecaster (SyTF) builds on evolutionary symbolic regression to search directly over equation structures under a principled accuracy complexity trade off. We evaluate both approaches in a rolling window nowcasting setting with one step ahead forecasting using several accuracy metrics and compare against a broad suite of baselines spanning classical statistical models, tree ensembles, and modern deep learning architectures. Numerical experiments cover a benchmark of 132 low dimensional chaotic attractors and two real world chaotic time series, namely weekly dengue incidence in San Juan and the Nino 3.4 sea surface temperature index. Across datasets, symbolic forecasters achieve competitive one step ahead accuracy while providing transparent equations that reveal salient aspects of the underlying dynamics.",
+      "authors": [
+        "Madhurima Panja",
+        "Grace Younes",
+        "Tanujit Chakraborty"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "nlin.CD",
+        "physics.data-an"
+      ],
+      "published": "2026-03-07T15:35:34+00:00",
+      "link": "https://arxiv.org/pdf/2603.07261v1",
+      "tags": [
+        "keyword:HP PG",
+        "query:HP PG"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "interpretable symbolic machine learning for chaotic time series forecasting",
+      "llm_evidence_cn": "用于混沌时间序列预测的可解释符号机器学习",
+      "llm_evidence": "用于混沌时间序列预测的可解释符号机器学习",
+      "canonical_evidence": "用于混沌时间序列预测的可解释符号机器学习",
+      "llm_tldr_en": "Proposes symbolic neural forecasters to learn interpretable equations for chaotic time series prediction.",
+      "llm_tldr_cn": "提出符号神经网络预测器，用于学习混沌时间序列预测的可解释方程。",
+      "llm_tldr": "提出符号神经网络预测器，用于学习混沌时间序列预测的可解释方程。",
+      "llm_tags": [
+        "query:hp-pg"
+      ],
+      "matched_query_tag": "query:hp-pg",
+      "matched_query_text": "electrical load forecasting with Hopfield models",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.11475v1",
+      "title": "Deep Learning Network-Temporal Models For Traffic Prediction",
+      "abstract": "Time series analysis is critical for emerging net- work intelligent control and management functions. However, existing statistical-based and shallow machine learning models have shown limited prediction capabilities on multivariate time series. The intricate topological interdependency and complex temporal patterns in network data demand new model approaches. In this paper, based on a systematic multivariate time series model study, we present two deep learning models aiming for learning both temporal patterns and network topological correlations at the same time: a customized network-temporal graph attention network (GAT) model and a fine-tuned multi-modal large language model (LLM) with a clustering overture. Both models are studied against an LSTM model that already outperforms the statistical methods. Through extensive training and performance studies on a real-world network dataset, the LLM-based model demonstrates superior overall prediction and generalization performance, while the GAT model shows its strength in reducing prediction variance across the time series and horizons. More detailed analysis also reveals important insights into correlation variability and prediction distribution discrepancies over time series and different prediction horizons.",
+      "authors": [
+        "Yufeng Xin",
+        "Ethan Fan"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.NI"
+      ],
+      "published": "2026-03-12T02:56:19+00:00",
+      "link": "https://arxiv.org/pdf/2603.11475v1",
+      "tags": [
+        "keyword:HP PG",
+        "query:HP PG"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "deep learning for network-temporal patterns and traffic prediction",
+      "llm_evidence_cn": "用于网络时空模式和流量预测的深度学习",
+      "llm_evidence": "用于网络时空模式和流量预测的深度学习",
+      "canonical_evidence": "用于网络时空模式和流量预测的深度学习",
+      "llm_tldr_en": "Explores GAT and LLM models for predicting network-temporal correlations in multivariate time series.",
+      "llm_tldr_cn": "探索GAT和LLM模型，用于预测多变量时间序列中的网络时空相关性。",
+      "llm_tldr": "探索GAT和LLM模型，用于预测多变量时间序列中的网络时空相关性。",
+      "llm_tags": [
+        "query:hp-pg"
+      ],
+      "matched_query_tag": "query:hp-pg",
+      "matched_query_text": "Hopfield network based load forecasting for electrical grids",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.11909v1",
+      "title": "EnTransformer: A Deep Generative Transformer for Multivariate Probabilistic Forecasting",
+      "abstract": "Reliable uncertainty quantification is critical in multivariate time series forecasting problems arising in domains such as energy systems and transportation networks, among many others. Although Transformer-based architectures have recently achieved strong performance for sequence modeling, most probabilistic forecasting approaches rely on restrictive parametric likelihoods or quantile-based objectives. They can struggle to capture complex joint predictive distributions across multiple correlated time series. This work proposes EnTransformer, a deep generative forecasting framework that integrates engression, a stochastic learning paradigm for modeling conditional distributions, with the expressive sequence modeling capabilities of Transformers. The proposed approach injects stochastic noise into the model representation and optimizes an energy-based scoring objective to directly learn the conditional predictive distribution without imposing parametric assumptions. This design enables EnTransformer to generate coherent multivariate forecast trajectories while preserving Transformers' capacity to effectively model long-range temporal dependencies and cross-series interactions. We evaluate our proposed EnTransformer on several widely used benchmarks for multivariate probabilistic forecasting, including Electricity, Traffic, Solar, Taxi, KDD-cup, and Wikipedia datasets. Experimental results demonstrate that EnTransformer produces well-calibrated probabilistic forecasts and consistently outperforms the benchmark models.",
+      "authors": [
+        "Rajdeep Pathak",
+        "Rahul Goswami",
+        "Madhurima Panja",
+        "Palash Ghosh",
+        "Tanujit Chakraborty"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "stat.ML"
+      ],
+      "published": "2026-03-12T13:25:21+00:00",
+      "link": "https://arxiv.org/pdf/2603.11909v1",
+      "tags": [
+        "keyword:HP PG",
+        "query:HP PG"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Multivariate probabilistic forecasting for energy systems",
+      "llm_evidence_cn": "能源系统的多变量概率预测",
+      "llm_evidence": "能源系统的多变量概率预测",
+      "canonical_evidence": "能源系统的多变量概率预测",
+      "llm_tldr_en": "Proposes a generative Transformer for multivariate time series forecasting in energy and transport domains.",
+      "llm_tldr_cn": "提出了一种用于能源和交通领域多变量时间序列预测的生成式Transformer框架。",
+      "llm_tldr": "提出了一种用于能源和交通领域多变量时间序列预测的生成式Transformer框架。",
+      "llm_tags": [
+        "query:hp-pg"
+      ],
+      "matched_query_tag": "query:hp-pg",
+      "matched_query_text": "electrical load forecasting with Hopfield models",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

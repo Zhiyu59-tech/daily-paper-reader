@@ -1,0 +1,327 @@
+Title: Risk-Based Dynamic Thermal Rating in Distribution Transformers via Probabilistic Forecasting
+
+URL Source: https://arxiv.org/pdf/2603.11905v1
+
+Published Time: Fri, 13 Mar 2026 01:23:27 GMT
+
+Number of Pages: 8
+
+Markdown Content:
+# Risk-Based Dynamic Thermal Rating in Distribution Transformers via Probabilistic Forecasting 
+
+Scott Angus ∗, Jethro Browell †, David Greenwood ∗ and Matthew Deakin ∗∗School of Engineering Newcastle University, Newcastle-upon-Tyne, UK 
+
+{s.angus2, david.greenwood, matthew.deakin }@newcastle.ac.uk 
+
+†School of Mathematics and Statistics University of Glasgow, Glasgow, UK jethro.browell@glasgow.ac.uk 
+
+Abstract —Low voltage (LV) distribution transformers face accelerating demand growth while replacement lead times and costs continue to rise, making improved utilisation of existing assets essential. Static and conservative protection devices (PDs) in distribution transformers are inflexible and limit the available headroom of the transformer. This paper presents a probabilistic framework for dynamically forecasting optimal thermal pro-tection settings. The proposed approach directly predicts the day-ahead scale factor which maximises the dynamic thermal rating of the transformer from historical load, temperature, and metadata using clustered quantile regression models trained on 644 UK LV transformers. Probabilistic forecasting quanti-fies overheating risk directly through the prediction percentile, enabling risk-informed operational decisions. Results show a10–12% additional capacity gain compared to static settings, with hotspot temperature risk matching the selected percentile, including under realistic temperature forecast errors. These results demonstrate a practical approach for distribution network operators to take advantage of PDs with adaptive settings to maximise capacity and manage risk on operational time scales. 
+
+Index Terms —Dynamic Thermal Rating, Risk-based Asset Management, Probabilistic Forecasting, Distribution Transform-ers 
+
+I. I NTRODUCTION 
+
+By 2050, low voltage (LV) demand is forecast to increase by 50–100% [1]. Transformer lead times [2] and costs are also increasing [3], limiting upgrades as a timely option. Static LV protection can be excessively conservative, constraining capacity even during safe conditions. As a result, transformer capacity is increasingly limited by protection policy rather than thermal limits. This motivates the need for more flexible use of existing transformers. Dynamic thermal rating (DTR) allows some relaxation of constraints by adjusting transformer loading limits based on real-time or forecasted conditions [4]. While DTR has been widely studied at higher voltage levels, LV transformers rarely benefit due to limited monitoring and simple protection devices (PDs). Numerical relays have adjustable tripping thresholds which could help facilitate DTR, however to be operationally viable, Distribution Network Operators (DNOs) need a controllable method to balance overheating risk and capacity gain. Increas-ing the relay’s scale factor increases its tripping threshold, enabling higher peak loads via DTR. Many innovation projects have focused on improving the flexibility of LV networks, making this a timely area of research as many of these require adaptable PDs. Meshing networks [5] and deploying smart transformers with advanced PDs [6] have been investigated as well as load sharing and solid-state switching initiatives [7], [8]. These projects all demonstrated the potential of advanced PDs to enhance LV network flexibility and the motivation of DNOs to explore protection upgrades, highlighting the likelihood of their in-creased deployment in future LV networks to help provide additional control over static protection such as fuses and miniature circuit breakers. Notably, numerical relays can of-ten be retrofitted without major substation modifications [9], making such upgrades practical. Existing research on relay setting optimisation focuses on applications such as microgrid protection [10], different network states [11], and coordinat-ing distributed energy resources [12]. This typically involves defining multiple setting groups and selecting the appropriate group based on network conditions. While effective for fault protection and coordination, this strategy lacks specificity to transformer thermal conditions and does not address the challenge of maximising transformer utilisation via DTR. In parallel, load forecasting has become a key tool in power systems, with methods studied for LV networks [13]. These are generally deterministic and aimed at supply-demand management. Forecasting has also been applied to transformer condition monitoring [14], however, using either of these ap-proaches to derive relay settings introduces error propagation. Reference [15] used deterministic, single transformer mod-els to coordinate relays directly. We instead propose a proba-bilistic approach using clustered models aiming to maximise LV transformer capacity under hotspot constraints. Overall, existing methods either focus on fault protection or rely on deterministic forecasts, limiting their ability to robustly optimise relay settings for thermal protection. Using deterministic approaches for DTR propagates uncertainty. This motivates the need for a probabilistic, risk-based approach that can directly forecast optimal relay settings to maximise DTR while quantifying the risk of transformer overheating. This work fills a literature gap by proposing a probabilistic, scalable method for directly forecasting optimal relay scale 
+
+24th Power Systems Computation Conference 
+
+PSCC 2026 Limassol, Cyprus — June 8-12, 2026 
+
+> arXiv:2603.11905v1 [eess.SY] 12 Mar 2026
+
+factors for LV transformers. This scale factor controls the tripping threshold of modern numerical relays, allowing for greater loading in advantageous conditions. The contribution of this work is a novel risk-based method-ology for assigning day-ahead relay settings that maximise transformer capacity for DTR whilst controlling the level of risk of unacceptable hotspot development. We show that the trade-off between capacity gain and overload risk can be accurately controlled by the DNO via the choice of prediction percentile. This gives DNOs a practical tool to set protection policies in line with their risk appetite. The paper is organised as follows. Section II discusses the requirements for using adaptable PDs to apply DTR to transformers, before Sections III and IV review the thermal and protection models to present the physical and engineering basis underpinning the proposed forecasting approach. Sec-tion V details the methodology, including clustering, feature engineering, and model training, to show how fleet-wide information can be incorporated into a scalable and effective forecasting approach. Section VI presents the results and discussion to demonstrate the accuracy of the proposed models and compares clustering approaches. Section VII concludes with implications for practice and directions for future re-search. II. A UTOMATED DYNAMIC THERMAL RATING 
+
+Current DTR approaches rely on SCADA systems and operator intervention when assets are excessively overloaded. It is not practical to assume operator intervention can be transferred to distribution transformer DTR due to the number of assets, with utilities often managing hundreds of thousands of transformers. To facilitate the widespread uptake of DTR to distribution transformers, a more automated approach is therefore required. We propose that a DNO will want to take action to mitigate overload when the winding temperature reaches some thresh-old (rather than, for example, tripping at an instantaneous power or current value). Most distribution transformers (as analysed in this work) lack direct hotspot or top-oil temper-ature measurements, therefore, a thermal model is required to estimate the impact of a transformer’s load and thermal parameters, covered fully in Section III-A. Adaptable PDs, such as numerical relays, have the function-ality to then automate the management of these transformers. An example implementation is shown in Fig. 1, where the relay is located on the secondary side of the transformer as this is more suitable for DTR applications due to the preventative actions (such as feeder disconnects) being applied to the secondary side rather than the primary side as in fault protection approaches. This thermal protection (denoted as ANSI 49 in [16]) can be provided via a dual time constant model (described in Section IV-A), which calculates the trip-ping current from the load and thermal parameters of the transformer, and is independent of the fault protection settings. The tripping current can be adjusted via the scale factor , k,to allow greater loading in advantageous conditions whilst         
+
+> 11 / 0.4 kV
+> Transformer,
+> Iphase rated Adjustable Scale Factor, k
+> Signal to Circuit
+> Breaker or Alarm
+> Adaptable PD e.g., Numerical Relay
+> Per-phase current
+> measurements, IA, I B, I C
+> Fig. 1. The proposed adaptive transformer protection scheme considered to enable automated DTR. By choosing the PD’s scale factor, k, the current at which measured phase currents IA, I B, I Ctrip can be adjusted, accounting for the impact of variable ambient temperature and off-peak load conditions on winding hotspot temperatures.
+
+controlling the risk of unacceptable hotspot temperatures. As the ANSI 49 function responds to current magnitudes rather than direction, reverse power flows from distributed energy resources do not affect the thermal protection settings. A threshold temperature is required to determine the optimal scale factor which maximises the capacity gains from DTR whilst still providing sufficient protection from overheating (full details of this assignment is described in Section IV-B). We choose a temperature threshold of 140°C, as above this, there is increased likelihood of bubbles forming in the insu-lation, severely weakening the winding’s dielectric strength. It is used as the hotspot temperature limit for distribution transformers under normal cyclic loading in the IEC loading guide [17], and is frequently used as the hotspot limit in both academic works [18], [19] and industrial reports [4]. The relay’s true optimal scale factor can only be calcu-lated retrospectively once the exact temperature and loads are known. Therefore, to enable the day-ahead transformer management, either implicit or explicit forecasting of an appropriate scale factor is required. To enable a DNO to have confidence in these forecasts at scale, we propose to use probabilistic forecasting approaches, which, if well-calibrated, enable effective and understandable risk-based asset man-agement (selecting the pth percentile corresponds to a p%probability of exceeding the hotspot limit). In this work, we suggest to avoid the assignment of the scale factor indirectly from load forecasts, which has two issues. Firstly, load forecasts are usually deterministic; probabilistic load forecasting remains an emerging topic [13]. Deterministic methods require additional uncertainty quantification to enable risk-based decision-making. Secondly, calculating a scale fac-tor from six forecasted quantities (three per-phase currents; peak and off peak conditions) compounds forecast errors, reducing accuracy (Section VI). Instead, probabilistic forecasting is used to predicting the optimal relay scale factor directly (Section V). By developing forecasting models trained using optimal scale factors calcu-lated retrospectively, we can remove the reliance on interme-diate load predictions, reducing the compounding errors, and provide interpretable risk metrics. 
+
+> 24th Power Systems Computation Conference
+> PSCC 2026 Limassol, Cyprus — June 8-12, 2026
+
+III. T HERMAL MODELLING 
+
+A. Basic Thermal Model 
+
+The thermal model selected for our work is the IEEE thermal model [20] which estimates the maximum hotspot temperature, θH , during the peak loading period as the sum of the ambient temperature, θA, top-oil rise above ambient, 
+
+∆θO , and hotspot rise above top oil, ∆θH ,
+
+θH = θA + ∆ θO + ∆ θH . (1) The full derivation of the model can be found in the IEEE standard [20], but the key parameter is the load factor ( K), which is the ratio of the actual load to the rated load of the transformer, all other parameters being known or estimated from the transformer’s nameplate data. This model uses a two-step equivalent load profile to estimate the top-oil and hotspot temperature rises. This is calculated using the RMS of the load during the 12 hours prior to the peak period, Ii, and during the peak period itself, Ip. The equivalent peak load is additionally constrained as a minimum of 90% of the maximum half-hourly demand. The generic load factor, Kμ, is used to denote either 
+
+Ki or Kp depending on the loading period. 
+
+1) Accounting for Unbalanced Phase Loading: The IEEE thermal model’s assumption of a balanced load is not appro-priate for distribution transformers with LV feeders connected at the secondary due to high levels of phase current unbalance. This is an important consideration as unbalanced phase loading with total equivalent power throughput can lead to significantly different hotspot temperatures [21], [22]. To account for this and to coordinate better with the protection device models, the load factor, Kμ, was split into a winding and top-oil component. The symbol μ is used as a placeholder referring to either peak ( p) or off-peak ( i)quantities; e.g., Kμ refers to either the off-peak load factor 
+
+Ki or peak load factor Kp. The winding load factor, Kw, μ ,was calculated as the maximum per-phase load divided by the rated load, 
+
+Kw,μ = max( IA,μ , I B,μ , I C,μ )
+
+Iphase rated 
+
+, (2) while the top-oil load factor ( Ko, μ ) was calculated as the average per-phase load divided by the rated phase load, 
+
+Ko,μ = Imean ,μ 
+
+Iphase rated 
+
+. (3) This follows the approach used in [23] and accounts for the localized nature of hotspot formation. The overall hotspot temperature, θH , can be described as a function of the peak and off-peak load factors as well as the ambient temperature, θA, and thermal parameters, ρ, of the transformer. This can be expressed as: 
+
+θH = fIEEE (Ko,i , K o,p , K w,i , K w,p , θ A, ρ ) (4) where Eq. (2) and Eq. (3) are used to calculate the winding and top-oil load factors, respectively. Although we have used the IEEE model in this work for its optimisation simplicity and speed of implementation across a fleet of transformers, the proposed forecasting approach and scale factor optimisation method themselves are model agnostic and could be replaced by a black-box model or other models if desired. Lower temperature values or ageing models could also be used as alternative thresholds depending on the application and requirements of the DNO. The selection of thermal model is a trade-off between accuracy and complexity, and the best choice will depend on the specific application and available data. Comparison of these different models is beyond the scope of this work. IV. P ROTECTION MODELLING 
+
+A. Dual Time Constant Model 
+
+The scale factor, k, scales the transformer rated phase current, Iphase rated , to give a scaled rated phase current, ˆI,
+
+ˆI = k × Iphase rated . (5) The dual time constant model used in the relay uses this scaled phase rating, ˆI, to calculate the tripping current, Itrip . This is based on the time constant of the winding, τw, and the insulation oil, τo, and is given by [24]: 
+
+Itrip =
+
+s
+
+0.4I2 
+
+> i
+
+e(−t/τ w ) + 0 .6I2 
+
+> i
+
+e(−t/τ o) − ˆI2
+
+0.4e(−t/τ w ) + 0 .6e(−t/τ o) − 1 , (6) where t is the time to trip, and the off-peak load is Ii.
+
+B. Retrospective Scale Factor Calculation 
+
+The optimal scale factor allows the greatest tripping current, 
+
+Itrip , such that the hotspot temperature, θH , does not exceed 140°C. In order to find the maximum hotspot temperature for a given relay scale factor, the tripping current, Itrip , is used as the maximum per-phase load, with the other phase loads scaled proportionally to the peak phase increase. The hotspot temperature is then calculated using the thermal model described in Section III. An iterative line-search algorithm (the bounded Brent method) was then used to find the value of k
+
+which gave the 140°C hotspot condition accurate to 0.01°C. For each day and transformer, the ambient temperature was found using historical weather data and the optimal scale factor calculated retrospectively using the load monitoring data. This scale factor which maximises the loading without breaking the temperature threshold was used as the target function for the forecasting models described in Section V. The scale factor is set once per day as sub-daily variation in loading is inherently captured through the dual-time constant model. By selecting a scale factor sufficiently conservative for the peak loading, we ensure that the transformer is also protected during lower off-peak loading periods. Note that this optimal scale factor also provides an upper bound on the unlockable capacity for DTR without allowing any overheating events, as it assumes perfect knowledge of the load and temperature during the peak period. 
+
+> 24th Power Systems Computation Conference
+> PSCC 2026 Limassol, Cyprus — June 8-12, 2026
+
+V. P ROBABILISTIC FORECASTING METHODOLOGY 
+
+To realise well-calibrated probabilistic forecasts, we propose a three-step process: clustering, training, and forecasting. Clustering is beneficial as it overcomes the issue of data scarcity. In particular, long-term demand changes mean that monitoring data at a given transformer will become stale, so it is likely to be unrealistic that there would be more than a few hundred valid datapoints per transformer. A single forecasting model per-transformer would therefore lead to a high risk of overfitting and poor generalization; in contrast, a single global forecasting model for all transformers would not capture the variability between the transformers within the fleet. Clustering allows a DNO to aggregate the data of similar transformers based on their features, improving the generalization of the models while still capturing the specific characteristics of each group. 
+
+A. Clustering Approaches 
+
+The raw features used for clustering are historic load and transformer metadata (see Section V-B1). This raw data is pre-processed, then the K-means algorithm is used to determine the clusters from the pre-processed data. The optimal number of clusters is determined using combined silhouette and Bayes Information Criterion scores. To ensure good clustering performance, four pre-processing approaches were studied. One of two algorithms first processed the data (ridge regression or normalisation), then the resul-tant parameter weights or features (respectively), were either passed directly to the K-means function, or, via a principal component analysis (PCA) algorithm using the component weights. For the ridge regression approach, a separate model was trained for each transformer, whilst the normalisation approach scaled each feature to zero mean and unit variance across all transformers. For PCA, components which explained 90% of the variance were used as features for clustering. To determine the best performing clustering approach, mod-els were trained on each cluster for each approach (Sec-tion V-B) and evaluated on a holdout dataset. The clustering approach resulting in the best performance on the holdout set (Section V-C1) was selected for the final model. 
+
+B. Training 
+
+After assigning each transformer to a cluster, their ag-gregated data were used for feature engineering and model training. The dataset included load, calendar, and metadata features. Random noise was added initially, and features with lower importance were removed to reduce over-fitting. 
+
+1) Feature engineering: The load data consisted of the mean per-phase loads during the peak and off-peak periods lagged by both a day and a week. An unbalance metric (the ratio of the range of phase currents to the mean) during the same periods was included as well as the daily and weekly lagged optimal scale factor. The calendar data included the day of the week, weekend and holiday flags, and the temperature during the peak period. An exponential weighted moving average of the temperature was also included to give some inertia to the change in demand due to temperature changes. A smoothing factor of 0.05 was used after testing values between 0.01 and 0.8 to find the best performing value when tested on the validation set. The metadata used in the training dataset included the trans-former rated power, the number of customers connected, and the transformer ID. This was included as a categorical variable to enable any unique characteristics of each transformer that may not be captured by other features to be learned. 
+
+2) Single- and Multi-Temperature Training: To investigate the impact of accurate temperature training data, two scenarios were considered. The first assumed that the exact temperature at the site of the transformer was known retrospectively, e.g. via a temperature sensor, and therefore a single temperature value was used for each day in the training period. The second scenario used multiple temperature values within 2°C of the true value for each day in the training period. This was done in an attempt to reduce overfitting to the exact temperature values seen during training and make the model more resilient to weather forecast errors in the prediction stage. 
+
+C. Probabilistic Forecasting 
+
+The forecasting algorithm selected was LightGBM [25] due to its support of quantile regression and efficiency. Quantile regression produces probabilistic outputs that map naturally to operational risk levels. The model parameters were optimised via Bayesian optimisation using Optuna [26] to minimise the pinball loss on the validation set. A learning rate of 0.026 and 19 leaves were found to be optimal, with feature and bagging fractions of 0.93 and 0.87 respectively. For each cluster, a separate LightGBM model was trained for each percentile investigated using the training dataset, and then incrementally retrained after each prediction. 
+
+1) Quantifying Probabilistic Forecast Performance: To as-sess the reliability of the probabilistic forecast to support risk-based calculations, we assess forecast performance with the 5% to 95% coverage rate, i.e., the model’s calibration. The coverage returns the percentage of days when the true scale factor was within the 5th and 95th percentile predictions. A perfect model would have a coverage of 90%, whereas an under-confident model would have greater coverage and an over-confident model would have less coverage. 
+
+2) Clean and Noisy Temperature Prediction: Two test datasets were used in the prediction stage, one assumed perfect weather forecasts and one used realistic weather forecasts. This was done to investigate the effect of forecast errors on the prediction accuracy. In the UK, 92.5% of temperature forecasts are within 2°C [27] of the true temperature. To simulate this, normally distributed noise with a standard deviation of 1.12°C was added to the temperature values before making each prediction in a day-ahead fashion. 
+
+3) Scale Factor Forecasting via Load Forecasting: Fig. 2a summarises the three steps for the proposed risk-based scale factor selection. As shown, this approach bypasses load fore-casting, and directly forecasts the scale factor for the numerical relays using the retrospective optimal scale factors.  
+
+> 24th Power Systems Computation Conference
+> PSCC 2026 Limassol, Cyprus — June 8-12, 2026 Engineered features and chosen risk level
+> Select percentile corresponding to risk level (simple)
+> Predict scale factor
+> (a) Direct (proposed) Engineered features and chosen risk level Calculate load percentile aligning with risk level (complex) Predict per-phase peak loads Predict per-phase off-peak loads Calculate scale factor from predicted loads (b) Multi-stage (via load forecasting) Fig. 2. Flowcharts summarising the direct prediction of scale factors (a) and the calculation from load predictions (b).
+
+However, a DNO may already have some load forecasting capabilities and so may wish to adapt those load forecasts to achieve the same functionality as the proposed direct approach (as discussed in Section II). This would require additional steps to capture the impact of the load on the scale factor. An approach to achieve this is shown in Fig. 2b. To realise this multi-stage model, a collection of load prediction models were also trained using the same features and clustering as the direct approach. Each model was trained to predict the per-phase load during the peak or off-peak periods, resulting in six models per cluster. Using these predicted loads, the optimal scale factor was calculated using the method described in Section IV. Note that the increased number of models per cluster and calculations of correlations between phases increases the computational complexity. This multi-stage approach becomes more complex for per-centile predictions since per-phase loads are not independent. When calculating the scale factor from predicted loads, the 5th percentile factor was derived from the 95th percentile load predictions, and vice versa (as in Section IV). This yields a conservative estimate, as simultaneous 95th percentile loads across phases are unlikely. Although assuming perfect phase correlation is unrealistic, it offers a practical counterfactual and illustrates the method’s relative simplicity. VI. R ESULTS 
+
+The following section presents validation of the proposed method using per-phase current magnitude data from a fleet of 644 utility owned distribution transformers in the UK with ca-pacities ranging from 25–1000 kVA, for 183 days through the winter of 2024/25 [28]. The data was then split into training and validation (September to January, 152 days) and holdout sets (February to early March, 31 days), capturing the winter peak period when capacity gains from DTR are greatest (due to correlated low ambient temperatures and peak demand). Weather data at the transformer sites was obtained from [29] and transformer thermal parameters from [4] and [17]. 
+
+A. Model Validation and Robustness 
+
+The clustering methods discussed in Section V were evalu-ated to ensure transformer diversity was captured without over-                  
+
+> −12 −8−404812
+> −6
+> −3
+> 0
+> 3
+> 6
+> 9
+> 12
+> 1st Principal Component
+> 2nd Principal Component
+> 123456
+> Fig. 3. Clustering results using PCA weighted scaled features. Axes show the magnitude of the first two principal components.
+> 40 60 80 100
+> 0
+> 20
+> 40
+> 60
+> 80
+> 100
+> Coverage (%) Percentage of Transformers (%) ST, CP ST, NP MT, CP MT, NP
+
+# 40 60 80 100 
+
+# 0
+
+# 20 
+
+# 40 
+
+# 60 
+
+# 80 
+
+# 100 
+
+# Coverage (%) Percentage of Transformers (%) ST, CP ST, NP MT, CP MT, NP Fig. 4. Coverage of true scale factor by predicted percentiles per transformer (n = 644 ) for different training and test temperature scenarios. ST and MT represent Single Temperature and Multiple Temperature training respectively, while CP and NP represent Clean and Noisy temperature Predictions respec-tively. The vertical axis gives the percentage of transformers where coverage of the 90% prediction interval is less than Coverage . An inset shows the similarity of the coverage distribution for the single temperature training approach under clean and noisy temperature forecasts as well as the multiple temperature training approach under clean forecasts. 
+
+fragmentation. The scaled-feature approach with PCA weights (Fig. 3) achieved the best holdout percentile calibration and was used for subsequent analysis. Figure 4 shows model calibration results for the two training and forecasting approaches as cumulative coverage distribu-tions for the 90% prediction interval. A perfectly calibrated model would transition sharply from 0% to 100% of trans-formers at 90% coverage (see Section V-C1); points to the left indicate over-confident predictions, and those to the right under-confident ones. Some deviation from ideal calibration is expected given the dataset’s limited time span. The model trained on a single temperature value achieved 90% mean coverage across all transformers, even in the pres-ence of noisy temperature forecasts. Training with multiple perturbed temperature values led to significantly poorer cali-bration, 82%, when the noisy forecasts were used, suggesting the model overfit to artificial variability and failed to learn the true mapping between temperature and scale factor. This 
+
+24th Power Systems Computation Conference 
+
+PSCC 2026 Limassol, Cyprus — June 8-12, 2026 02-01 02-05 02-09 02-13 02-17 02-21 02-25 03-01                 
+
+> 1.15
+> 1.20
+> 1.25
+> Date
+> Scale Factor (k)
+> 5th-95th Percentile True k Predicted k (50th Percentile)
+> (a) 02-01 02-05 02-09 02-13 02-17 02-21 02-25 03-01
+> 1.10
+> 1.15
+> 1.20
+> 1.25
+> Date Scale Factor (k) 5th-95th Percentile True k Predicted k (50th Percentile) (b) Fig. 5. Scale factor kprobabilistic predictions for the transformers with the best (a) and worst (b) coverage (across the full sample of n= 644
+> transformers) during the holdout period.
+
+highlights the importance of site-specific temperature accuracy rather than synthetic data augmentation. The predicted scale factors are compared to the true scale factors in the transformers with the best and worst coverage in Figs. 5a and 5b respectively. From these figures, we can see that in the worst case scenario from our sample, the optimal scale factor falls outside the 90% confidence interval on six occasions, leading to a coverage of 74%. Despite this, using the 5th percentile of the predicted scale factor would only lead to a maximum hotspot temperature of 140.8°C, suggesting that even in this worst case scenario, there is limited practical risk. In the best case scenario, the coverage is 100% suggesting the model should actually be more confident in its predictions, leading to an even greater capacity increase. A sensitivity analysis was performed to quantify the impact of temperature forecast errors on the scale factor prediction. Across all transformers, the mean sensitivity of the scale factor to ambient temperature ranged from -0.0085°C −1 to -0.015°C −1 for temperatures between -20°C and 40°C. This would lead to a maximum error in the scale factor of between 0.017 and 0.03 based on temperature forecast deviations within 2°C, which 92.5% of UK forecasts achieve [27]. Operators             
+
+> 010 20 30 40 50 60 70 80 90 100
+> 0
+> 50
+> 100
+> 150
+> 200
+> 250
+> Coverage (%)
+> Transformer Count
+> Load Approach Direct Approach
+> Fig. 6. Comparison of coverage of true scale factor by multi-stage and direct approaches for each transformer. Nominal coverage is 90% with mean coverages of the two approaches 17% and 90% respectively.
+
+can mitigate this by selecting lower percentiles, effectively absorbing forecast error into the risk margin. Overall, the selected model demonstrates robust perfor-mance and well-calibrated outputs suitable for applying DTR under realistic forecast uncertainty. 
+
+B. Comparison with Load-Based Multi-Stage Methods 
+
+To benchmark the proposed direct approach against the load-based multi-stage method (Section V), additional models were trained to predict the per-phase load during peak and off-peak periods and subsequent predicted scale factor. As shown in Fig. 6 and previously, the direct scale factor pre-diction achieves 90% mean coverage across the transformer population, whereas load based approaches achieve only 17% coverage. This poor performance is due to the compounding of errors from multiple load predictions and the inability to capture phase interactions when calculating the scale factor from independent phase load forecasts. The load prediction method is at a disadvantage due to the assumptions made when calculating the scale factor from the predicted loads, and future works could explore more so-phisticated approaches that could yield improved performance. Nevertheless, the benefits of simplicity and effectiveness of the proposed direct approach are unambiguous versus the load-based multi-stage approach. 
+
+C. Risk and Capacity Trade-off 
+
+The key benefit of the proposed approach is the control of the trade-off between transformer capacity and overheating risk through the chosen prediction percentile. Fig. 7 shows the cumulative distribution of daily maximum transformer capacity for several percentile-based methods, and Fig. 8 shows the corresponding hotspot temperatures. As seen in Table I, even conservative policies yield sig-nificant capacity gains. The 2nd percentile setting increases mean capacity by over 10% compared to a fixed scale factor of 1.05 while the risk of hotspot exceedance remains at 2%. This significant increase in capacity would allow DNOs to take advantage of DTR techniques during peak loading periods, 
+
+24th Power Systems Computation Conference 
+
+PSCC 2026 Limassol, Cyprus — June 8-12, 2026 0.4 0.6 0.8 1.0 1.2 1.4 1.6
+
+0
+
+10 
+
+20 
+
+30 
+
+40 
+
+50 
+
+60 
+
+70 
+
+80 
+
+90 
+
+100 
+
+Capacity (p.u.) 
+
+> Percentage of Peaks (%)
+
+Optimal k Standard (k=1.05) 2nd PCT 
+
+5th PCT 50th PCT 95th PCT 
+
+Fig. 7. Maximum daily capacity of transformers using various percentiles of predicted scale factor compared to standard scale factor of 1.05. Vertical axis shows the percentage of peak periods with a capacity below Capacity .TABLE I MEAN MAXIMUM CAPACITY AND HOTSPOT TEMPERATURE OF TRANSFORMERS USING PREDICTED AND STANDARD SCALE FACTOR 
+
+Percentile Mean Capacity (S.D) (p.u.) Mean Hotspot Temp. (°C) % Hotspots 
+
+>140 °C
+
+Fixed (1.05) 1.020 (0.135) 124.9 0.0% 2% 1.127 (0.137) 134.6 2.0% 5% 1.138 (0.135) 135.7 4.8% 50% 1.181 (0.129) 139.9 49.2% 95% 1.230 (0.137) 144.7 94.8% 
+
+and the consistent mapping between percentile and risk can be seen in Fig 8, validating the probabilistic calibration. This relationship between prediction percentile and overheat-ing probability lets DNOs manage DTR risk intuitively by choosing a percentile that matches their tolerance to gaining extra capacity with increased hotspot risk. VII. C ONCLUSIONS 
+
+This paper introduced a probabilistic forecasting framework to assign relay scale factors, enable the automated application of DTR for distribution transformers. The approach uses clustering to enable improved forecast accuracy across the fleet of transformers, using retrospective optimal scale factors as training labels for the forecasting model. This direct prediction of scale factors achieves reliable risk quantification, whilst it is shown that an alternative load prediction-based approach severely underestimates the risk. This result was shown to be robust even in the presence of realistic temperature forecast errors. Future works could study multi-year datasets and explore more frequent relay setting updates, which could further increase the capacity that can be released. The techno-economic implications of implementing and maintaining this approach across a fleet of transformers and the cumulative ageing effects of more frequent operation of transformers near their thermal limits could also be explored. In summary, direct prediction of the scale factor of Adaptive PDs is shown to provide an effective, automated approach that could be used to achieve risk-aware DTR. It is concluded that 
+
+110 120 130 140 150 160 170 
+
+0
+
+10 
+
+20 
+
+30 
+
+40 
+
+50 
+
+60 
+
+70 
+
+80 
+
+90 
+
+100 
+
+Maximum Hotspot (°C) 
+
+> Percentage of Peaks (%)
+
+Optimal k Standard (k=1.05) 2nd PCT 
+
+5th PCT 50th PCT 95th PCT 
+
+Fig. 8. Maximum daily hotspot temperature of transformers using various percentiles of predicted scale factor compared to standard scale factor of 1.05. Vertical axis shows the percentage of peak periods with a hotspot temperature below Maximum Hotspot .
+
+the proposed approach shows strong promise to enable DNOs to provide a fleet-wide automation approach that navigates the trade-off between capacity gain from DTR and asset risk. REFERENCES [1] SP Energy Networks, “2023 Distribution Future Energy Scenarios,” Tech. Rep., Mar. 2024. [2] H. Dempsey, “World’s largest transformer maker warns of supply crunch,” Financial Times , Nov. 2024. [3] Z. Skidmore, “Hitachi Energy CEO warns of transformer supply short-age,” https://www.datacenterdynamics.com/en/news/hitachi-energy-ceo-warns-of-transformer-supply-shortage/, Nov. 2024. [4] Y. Gao and Z. Wang, “Thermal Monitoring and Thermodynamic Mod-elling of Distribution Transformers,” Tech. Rep., May 2016. [5] Northern Ireland Electricity Networks, “LV active network management innovation project,” Tech. Rep., Sep. 2022. [6] SP Energy Networks, “LV Engine,” Tech. Rep., 2018. [7] UK Power Networks, “Flexible Urban Networks - Low Voltage,” Tech. Rep., Dec. 2016. [8] UK Power Networks, “Smart Urban LV Network,” Tech. Rep., Oct. 2014. [9] G. Lloyd, R. Duffy, C. Fisher, M. Hasheem, P. Shen, D. Lau, K. M. Tsang, and T. C. Chiu, “A modern retrofit solution for induction disc overcurrent relays,” IET Conference Proceedings , vol. 2025, no. 1, pp. 316–321, May 2025. [10] H. Laaksonen, D. Ishchenko, and A. Oudalov, “Adaptive Protection and Microgrid Control Design for Hailuoto Island,” IEEE Transactions on Smart Grid , vol. 5, no. 3, pp. 1486–1493, May 2014. [11] A. Samadi and R. Mohammadi Chabanloo, “Adaptive coordination of overcurrent relays in active distribution networks based on independent change of relays’ setting groups,” International Journal of Electrical Power & Energy Systems , vol. 120, p. 106026, Sep. 2020. [12] W. El-khattam and T. Sidhu, “Resolving the impact of distributed renewable generation on directional overcurrent relay coordination: A case study,” IET Renewable Power Generation , vol. 3, no. 4, pp. 415– 425, Dec. 2009. [13] A. A. Mamun, Md. Sohel, N. Mohammad, M. S. Haque Sunny, D. R. Dipta, and E. Hossain, “A Comprehensive Review of the Load Forecasting Techniques Using Single and Hybrid Predictive Models,” 
+
+IEEE Access , vol. 8, pp. 134 911–134 939, 2020. [14] A. Doolgindachbaporn, G. Callender, P. Lewin, E. Simonson, and G. Wilson, “Data Driven Transformer Thermal Model for Condition Monitoring,” IEEE Transactions on Power Delivery , vol. 37, no. 4, pp. 3133–3141, Aug. 2022. [15] A. Summers, T. Patel, R. Matthews, and M. J. Reno, “Prediction of Relay Settings in an Adaptive Protection System,” in 2022 IEEE Power & Energy Society Innovative Smart Grid Technologies Conference (ISGT) .New Orleans, LA, USA: IEEE, Apr. 2022, pp. 1–5. 
+
+24th Power Systems Computation Conference 
+
+PSCC 2026 Limassol, Cyprus — June 8-12, 2026 [16] IEEE Standard for Electrical Power System Device Function Numbers, Acronyms, and Contact Designations , Std. [Online]. Available: https://ieeexplore.ieee.org/document/9984140/ [17] IEC, “IEC 60076-7:2018 Loading Guide for Mineral-Oil-Immersed Power Transformers,” 2018. [18] S. Hajeforosh, A. Khatun, and M. Bollen, “Enhancing the hosting capacity of distribution transformers for using dynamic component rating,” International Journal of Electrical Power & Energy Systems ,vol. 142, p. 108130, Nov. 2022. [19] Y. Gao, B. Patel, Q. Liu, Z. Wang, and G. Bryson, “Methodology to assess distribution transformer thermal capacity for uptake of low carbon technologies,” IET Generation, Transmission & Distribution , vol. 11, no. 7, pp. 1645–1651, May 2017. [20] IEEE, “IEEE Guide for Loading Mineral-Oil-Immersed Transformers and Step-Voltage Regulators,” 2012. [21] A. Abdali, H. Masoumkhani, A. Abedi, K. Mazlumi, A. Rabiee, and J. M. Guerrero, “Liquid-Immersed Distribution Transformers’ Thermal Analysis With Consideration of Unbalanced Load Current Effect,” IEEE Transactions on Dielectrics and Electrical Insulation , vol. 31, no. 1, pp. 339–349, Feb. 2024. [22] G. Diao, H. Ni, W. Si, Y. Gu, and J. Yang, “Multi-Physics Numerical Research in Oil-Immersed Three-Phase Transformer Under Load Un-balance,” Energies , vol. 18, no. 5, p. 1217, Mar. 2025. [23] L. Kong, W. Mo, and S. Luo, “The Modified Thermal Circuit Model for Three-phase Unbalanced Operation of Distribution Transformers,” in 2020 IEEE 4th Conference on Energy Internet and Energy System Integration (EI2) . Wuhan, China: IEEE, Oct. 2020, pp. 3868–3872. [24] GE Grid Solutions, “Relay Technical Manual,” 2022. [25] G. Ke, Q. Meng, T. Finley, T. Wang, W. Chen, W. Ma, Q. Ye, and T.-Y. Liu, “Lightgbm: A highly efficient gradient boosting decision tree,” 
+
+Advances in neural information processing systems , vol. 30, pp. 3146– 3154, 2017. [26] T. Akiba, S. Sano, T. Yanase, T. Ohta, and M. Koyama, “Optuna: A Next-generation Hyperparameter Optimization Framework,” in Proceed-ings of the 25th ACM SIGKDD International Conference on Knowledge Discovery & Data Mining . Anchorage AK USA: ACM, Jul. 2019, pp. 2623–2631. [27] Met Office, “About Our Forecasts,” https://weather.metoffice.gov.uk/ guides/about-forecasts, 2025, Accessed: 2025-09-01. [28] National Grid, “LV Load Monitor Data,” 05/09/2024 - 31/03/2025. [29] Open-Meteo, “Historical Weather API,” 2025. 
+
+24th Power Systems Computation Conference 
+
+PSCC 2026 Limassol, Cyprus — June 8-12, 2026

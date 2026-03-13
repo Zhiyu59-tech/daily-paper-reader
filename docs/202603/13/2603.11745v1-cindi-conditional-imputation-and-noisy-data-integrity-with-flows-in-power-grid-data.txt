@@ -1,0 +1,2114 @@
+Title: CINDI: Conditional Imputation and Noisy Data Integrity with Flows in Power Grid Data
+
+URL Source: https://arxiv.org/pdf/2603.11745v1
+
+Published Time: Fri, 13 Mar 2026 00:43:08 GMT
+
+Number of Pages: 32
+
+Markdown Content:
+## CINDI: Conditional Imputation and Noisy Data Integrity with Flows in Power Grid Data 
+
+David Baumgartner ∗, Helge Langseth, Heri Ramampiaro 
+
+> Department of Computer Science, Norwegian University of Science and Technology, Trondheim, Norway
+
+Abstract 
+
+Real-world multivariate time series, particularly in critical infrastructure such as electrical power grids, are often corrupted by noise and anomalies that degrade the performance of downstream tasks. Standard data cleaning ap-proaches often rely on disjoint strategies, which involve detecting errors with one model and imputing them with another. Such approaches can fail to capture the full joint distribution of the data and ignore prediction uncer-tainty. This work introduces Conditional Imputation and Noisy Data In-tegrity (CINDI), an unsupervised probabilistic framework designed to restore data integrity in complex time series. Unlike fragmented approaches, CINDI unifies anomaly detection and imputation into a single end-to-end system built on conditional normalizing flows. By modeling the exact conditional likelihood of the data, the framework identifies low-probability segments and iteratively samples statistically consistent replacements. This allows CINDI to efficiently reuse learned information while preserving the underlying phys-ical and statistical properties of the system. We evaluate the framework using real-world grid loss data from a Norwegian power distribution oper-ator, though the methodology is designed to generalize to any multivariate time series domain. The results demonstrate that CINDI yields robust per-formance compared to competitive baselines, offering a scalable solution for maintaining reliability in noisy environments. 
+
+Keywords: 
+
+Conditional Normalizing Flows, Probabilistic Imputation, Multivariate   
+
+> ∗Corresponding author
+> Email address: david.baumgartner@ntnu.no (David Baumgartner)
+> arXiv:2603.11745v1 [cs.AI] 12 Mar 2026
+
+Time Series, Anomaly Detection, Smart Grids 
+
+1. Introduction 
+
+Accurately forecasting key values in modern electrical power grids, such as grid loss, is a growing challenge with direct financial implications. In mar-kets like the Nord Pool exchange, power distribution operators must report precise loss estimates to determine pricing and manage risk. 1 Grid losses are well understood and can be calculated with precision when the grid’s configuration is known. However, the grid configuration is often unclear or evolving, making it a difficult task to compute losses. Further complications exist from stochasticity, the increasing share of renewable energy, changes in consumer demand, and inherent issues with data quality [1, 2]. Consequently, power distribution operators increasingly rely on machine learning models to predict these values. However, the reliability of these predictive models is strictly bound by the quality of their training data. This creates a significant bottleneck, as real-world time series data is frequently corrupted by sensor malfunctions, transmission errors, and noise. These result from equipment malfunctions or data processing issues [3, 4]. Crucially, this data should not be cleaned using rudimentary, interpolation-based approaches. To be useful for downstream tasks, any cleaning process should preserve the underlying physical and statistical properties hidden in the data. This must be achieved while correcting corrupted observations. Standard approaches often treat anomaly detection and data imputation as separate, disjoint tasks [5, 6]. These methods typically rely on distinct models, limiting their ability to capture the full joint distribution of the data. This fragmentation limits the model’s ability to distinguish between genuine system anomalies and mere data errors [7, 8, 3]. To address this, we propose Conditional Imputation and Noisy Data In-tegrity (CINDI), a unified framework that integrates detection, correction, and training into a single end-to-end system. Unlike methods that rely on fragmented architectures, CINDI utilizes a single conditional normalizing flow to model the data distribution of expected grid behavior [9, 10]. By learning the exact likelihoods of the data, CINDI can identify low-probability segments (anomalies) and generate plausible, statistically consistent replace- 
+
+> 1See www.nordpoolgroup.com
+
+2ments (imputation) in an iterative process. Fig. 1 provides a high-level overview of our iterative approach. By treating the tasks of detection and correction as intrinsic parts of the probability modeling process, rather than external preprocessing steps, CINDI reuses learned information efficiently [11, 12, 13]. This yields a cleaner, more stable dataset that retains the statistical integrity required for high-stakes forecasting. Our experiments demonstrate that this unified, flow-based approach provides a competitive and robust solution for maintaining data integrity in complex, multivariate time series. In summary, our main Train on current data 
+
+> Fix relevant data
+> if possible
+> Improved data
+> Generative Model
+
+Figure 1: Overview of our CINDI framework based on normalizing flows. The framework alternates between the two states (green and blue), indicated by the orange path, of training and data improvement until convergence. At this point, no further changes are made, and an improved dataset is available, as indicated by the black dotted path. In the green state, CINDI uses the current dataset and outputs a normalizing flow model. The following blue state uses this model to identify data points that deviate from the expected behavior and then corrects them by generating plausible replacements. This process leads to convergence away from detecting unexpected behavior, resulting in improved data for another task. 
+
+contributions are as follows: 
+
+• CINDI, a novel end-to-end probabilistic framework that detects and removes dataset errors by modeling temporal dependencies in multi-3variate time series data, utilizing a single conditional normalizing flow model for different tasks. 
+
+• We apply CINDI to a real-world dataset from a Norwegian power dis-tribution operator to demonstrate its practical applicability, and it is not limited to this dataset. 
+
+• We conduct extensive experiments and compare our results with those of standard methods, including recent model-based approaches. The remainder of the paper is organized as follows: Section 2 reviews related work, followed by Section 3, which details the proposed framework and the necessary background. Next, Section 4 describes the datasets, while Section 5 presents the experimental setup and results. Finally, Section 6 reflects on the findings, and Section 7 concludes the paper. 
+
+2. Related Work 
+
+2.1. Learning from noisy data 
+
+Our work is related to learning from data with noise (we use noise equal to error and anomalies in this context), which is an issue in any machine learning task [14, 15, 16]. These works consider supervised learning and as-sume relatively balanced label classes. This differs significantly from anomaly detection, where errors are rare occurrences that create heavily unbalanced datasets. Several studies [17, 18, 19] show that noisy labels give rise to hard-to-learn examples and seek to improve classification performance by explicitly constraining the model on such difficult data. These approaches need to be tested and verified for anomaly detection, as anomalies are rare occurrences, which gives them less weight in the overall contribution to a model, but requires labeled data. 
+
+2.2. Multivariate Time Series Imputation 
+
+Motivated by the intuition that imputing time series adds valuable knowl-edge to a dataset, recent works have investigated using diffusion models, transformers, and attention mechanisms [4]. Xiao et al. [20] and Chen et al. [21] both follow a diffusion approach. The former utilizes a multi-scale tem-poral state-space layer, while the latter restricts imputation diversity through 4negative entropy regularization. Extensions to transformer models are pre-sented by Gudla and Chang [22], Wang et al. [23], and Liu et al. [24]. Com-mon strategies include fusing transformers with different local and global pathways, incorporating spectral information, and adding graph neural net-works to model interconnections. Attention-based methods from Zhang et al. [25], Oh et al. [26], and Islam et al. [27] incorporate contrastive properties, utilizing bi-directional generative adversarial networks, or combining various attention types. All of these unite a technical aspect in that they introduce different add-ons or regularization to the underlying base method. Hemmer and Durstewitz [28] builds on pre-training a mixture-of-experts model with a novel multivariate almost-linear RNN architecture for dynam-ical system reconstruction, yielding faithful forecasts and outperforming ex-isting foundation models, such as Chronos [29], in zero-shot performance. Seifner et al. [30] propose, on the other hand, a mathematical approach us-ing ordinary differential equations to construct functions for imputing data, showing promising zero-shot performance without fine-tuning. These pre-trained models can possess a solid abstraction from well-curated data, pro-viding stability, especially as error levels increase in the data. 
+
+3. CINDI: Conditional Imputation and Noisy Data Integrity 
+
+Building on the foundation presented in the introduction (Section 1), we propose CINDI, a probabilistic end-to-end framework designed to address the challenges discussed in that section by leveraging conditional normaliz-ing flows. CINDI systematically detects unusual or corrupted measurements and generates plausible replacements. Most prominently, we use one model per iteration for different tasks within our framework. This provides a good foundation for ensuring reliable learning and reusing learned expected behav-ior to improve a dataset. This section outlines the system’s core principles, emphasizing its adaptation to multivariate time series and its potential to enhance datasets, thereby improving downstream tasks such as anomaly de-tection and analysis. 
+
+3.1. Background 
+
+CINDI uses normalizing flows [9], a generative probabilistic model. Nor-malizing flows are density estimators that learn a data distribution by learn-ing a sequence of transformations that map the data to a known distribution. 5Normalizing flows can both calculate the log-likelihood ( log p(x), normaliz-ing) and sample ( x ∼ p, generate) efficiently. They are bijective transformers and require a tractable Jacobian determinant per transformation. We denote the normalizing and likelihood of a data point x as pZ (z = F (x)) and the generation of a data point x = F −1(z).With multivariate time series data, we utilize conditioned normalizing flows [31], based on RealNVP [32], which enables us to capture sequential behavior. We use RealNVP due to its efficiency in both operation modes and its extensibility. The inputs to the conditioned normalizing flow are the current observation and a temporal context as defined below. We refer to a multivariate time series as a sequence {xt}Tt=1 , where each 
+
+xt ∈ Rd is a d-dimensional vector of variables observed at time t, with d ≥ 2.Associated with the time series is a vector l = ( l1, l2, . . . , lT ), which is a sequence of binary values of the same length. For each t ∈ { 1, . . . , T },
+
+lt ∈ { 0, 1} indicates whether the observation at time t is a possible error or expected behavior; specifically, lt = 1 denotes a possible error (anomalous event), while lt = 0 indicates normal behavior. Given the multivariate time series, we define a windowed sequence with window length k (where k is a hy-perparameter) as X = {(xt, wt)}Tt=k = {(xt, xt−1, . . . , xt−k)}Tt=k, where each tuple contains the current observation at time t and the k preceding obser-vations as temporal context. We adopt the following short notation of the current observation as xt and the temporal context as wt. The inputs to the conditioned normalizing flow are the current observation and the temporal context, serving as the conditioning. We train the normalizing flow unsupervised using negative log-likelihood optimization via the loss function L(X) = − 1
+
+> T
+
+PTt=1 log( pX (xt|wt)) , where 
+
+xt depends on wt. Since pX (·) is an unknown data distribution, we resort to a normal distribution as the base distribution pZ (·) with μ = 0 and Σ = I,as the normalization target distribution for the normalizing flow. The full loss function with the change-of-variable formula is written as 
+
+L(X) = − 1
+
+T
+
+> T
+
+X
+
+> t=1
+
+"
+
+log pZ (Fθ(xt|wt)) + 
+
+> N
+
+X
+
+> i=1
+
+log | det J(Fθ,i )( xt,i |wt)|
+
+#
+
+, (1) where N F θ is a conditional normalizing flow with parameters θ and temporal context as additional condition wt. N denotes the number of transformation layers with Fθ,i being the ith transformation layer. The Jacobian of one such layer is with respect to the input xt,i and the temporal context wt.6CINDI is independent of downstream tasks and focuses on improving data quality. The improved data can then be further utilized for different downstream tasks with or without reapplying parts of CINDI. The following sections introduce the various building blocks and their inner workings that comprise CINDI. 
+
+3.2. CINDI: Detection 
+
+Given that CINDI is built around conditional normalizing flows, we utilize its probabilistic capabilities to calculate the likelihoods of any data point. Therefore, we compare the negative log-likelihood of data points to an average obtained from known expected data points. If the negative log-likelihood is significantly higher than expected, then these data points get flagged. Hence, we define the threshold τ as the average likelihood plus twice the standard deviation of J expected data points with X(J, 0) := {(xt, wt) : lt = 0 ∈
+
+l} ⊂ X. At test time, a data point or a collection of data points gets flagged as detected and therefore marked for imputation if the expectation or the expected average over multiple data points exceeds the threshold τ > 
+
+E(xt|wt).
+
+3.3. CINDI: Imputation 
+
+CINDI uses the generative functionality of the conditional normalizing flow at its core to generate plausible replacements. It enables us to generate new data points by sampling from the base distribution or by selecting a point in the latent space and applying the inverse conditional normalizing flow, referred to as F −1.We obtain data point by ˆxt = F −1(zt, wt), with zt being the center of the base distribution pZ (zt = μ, Σ) . To impute a sequence of data points, the generation process is the same as for a single data point, but the tem-poral context wt needs to be updated. The first temporal context is sourced from the original data and should contain only expected behavior. Every subsequent imputation step requires updating the temporal context with the current generated data point ˆxt, as wt+1 = (ˆ xt, xt−1, . . . , xt−k+1 ) for the next step. This results in a self-regressive chain and the generation of an alterna-tive sub-sequence for a flagged section. We sample from zt = μ, because it is the most likely point in the distribution, and with the temporal context, it should produce the most likely expected observation in the data space. 73.4. CINDI: Model Selection 
+
+The model selection process in CINDI is responsible for training multi-ple models and selecting the one that best fits the given requirements. To automatically find a suitable model for a training set X(train ), we use CMA-ES [33], an evolutionary algorithm, to search the hyperparameter space to find a fitting candidate. Based on the available data, the model selection process needs a function to rank all the candidates. We provide two func-tions tailored to the datasets in Section 4. The primary objective function is 
+
+ϕ, see Eq. 2, and is used for the real-world dataset. It requires an evaluation set X(eval ) = {(xu, wu)}Uu with labels l(eval ) = {lu ∈ { 0, 1}} Uu , which is inde-pendent or non-overlapping with the training data. The objective function evaluates a candidate on a balance between detecting the labeled areas via the AUC-ROC (AUC) and VUS-ROC [34] (VUS) metrics, and in being able to reconstruct expected behavior where lt = 0 ∈ l(eval ). We define it as 
+
+ϕ(X(eval ), l(eval ), M, S ) = 0 .3 · (1 − AUC (l(eval ), F θ(X(eval )))) + 0 .7 · (1 − VUS (l(eval ), F θ(X(eval )))) + ∆( X(eval ,0) , M, S ),
+
+(2) where the model performance is based on the evaluation set and is lower bounded by 0, which would imply a perfect detection and reconstruction. The VUS score receives more weight in the scoring because of its strong capability in scoring range detections compared to point detection in AUC. We refer to clean data for the reconstruction metric as X(eval ,0) := {(xt, wt) : 
+
+lt = 0 ∈ l(eval )} ⊂ X(eval ) and define the reconstruction metric as 
+
+∆( X(eval ,0) , M, S ) = 1
+
+|M | · S
+
+> M
+
+X
+
+> mS−1
+
+X
+
+> s=0
+
+xm+s − F −1 
+
+> θ
+
+(zm+s|wm+s) 2 , (3) where we calculate the mean reconstruction error from M := {u ∈ U } subsets of length S. The set M contains starting points and remains fixed for all candidates to ensure comparability. Next, the normalizing flow is run in inverse and generates new data points ˆxm+s from zm+s = μ starting with 
+
+wm+0 from X(eval ,0) as the initial temporal context. We update this temporal context wm+s for each s > 0 continuously with the previous predictions ˆxm+s,as in Section 3.3, and create a self-regressive chain. This allows us to calculate a reconstruction metric that is lower bounded by 0 and reflects the model’s 8understanding of expected behavior in a noisy environment, confirming that it remains stable over a period of steps. The second objective function ψ, see Eq. 4, is for cases when the evalua-tion set has no associated labels. The objective function uses, therefore, two negative log-likelihood scores and the reconstruction metric in Eq. 3 and is defined as 
+
+ψ(X(val ), X(eval ), M, S ) = λ · 1
+
+|X(val )|pZ (N F θ(X(val ))) + β · 1
+
+|X(eval )|pZ (Fθ(X(eval ))) + ∆( X(eval ), M, S ),
+
+(4) where X(val ) is a hold-out validation set from the training data X(train ) for early-stopping the training optimization and to prevent overfitting. This objective function calculates the average negative log-likelihoods from the validation and evaluation set, and weights them by λ and β, and includes the reconstruction score. The weighting factors in Eq. 4 are λ = 0 .1 and β = 0 .5
+
+for sequences with D ≤ 10 . This needs adjustment for sequences with higher dimensions and sequence lengths to weight and balance the different factors accordingly. 
+
+4. Dataset 
+
+4.1. Grid Loss Data 
+
+This work addresses the challenge of accurately predicting day-ahead grid loss, a critical task for power distribution operators. One important obsta-cle to reliable prediction is sometimes poor data quality. Our goal is to demonstrate, using CINDI, that improving the input data can enhance the performance of downstream tasks. To achieve this, we utilize an extended dataset of the grid loss prediction dataset [35], which covers hourly power consumption and grid loss measurements from May 2017 to August 2023. While technical grid losses from physical effects like ohmic and corona losses are understood [2], their practical prediction is often inaccurate, and accurate measurements are not available or delayed to be included for a prediction. This inaccuracy is not due to a lack of models, but rather due to deficiencies in the data itself. Faulty sensors, human error, and other 9unrecorded factors introduce significant errors, which undermine prediction performance. The severity of this data quality issue is evident in the grid loss mea-surements, as shown in Fig. 2 with the marked error sections. In contrast to the relatively clean power consumption data, the grid loss signal exhibits increased noise levels, particularly during the summer months following April 2020. These extended error periods, manually flagged by inspection, begin and end in alignment with daylight saving time changes, as visible in the two plots on the bottom right of Fig. 2. This systematic noise in the grid loss data is the central problem we aim to address, as cleaner data is essential for improving the accuracy of day-ahead loss predictions. We divide the dataset into three main sections to validate our approach. The first section acts as the training set where we apply CINDI to itera-tively detect and impute errors as detailed in Section 3. The second section functions as an evaluation set for ranking candidate solutions during model selection. After improving the data quality of the first section, we use the third section solely as a test set to measure downstream anomaly detection performance. This process fulfills the primary objective of CINDI by pro-ducing the clean data required to train robust downstream models [12, 36]. We create four different sets of training data D1, . . . , D4 with increasing levels of errors, starting at 0% and ending at 24 .19% , such that D1 ⊆ · · · ⊆ D4, where D4 is the largest training set and each smaller set is a subset of all subsequent larger sets. Table 1 summarizes the date ranges for each partition and shows the different levels of errors present in each set. 
+
+> Table 1: Overview of the dataset splits, detailing their time ranges and the percentage of data points flagged as errors.
+
+Name Start Date End Date Error % Length 
+
+D1 Train (0%) 2017-05-01 2019-03-17 0.00% 16461 
+
+D2 Train (1.04%) 2020-05-03 1.04% 26370 
+
+D3 Train (13.69%) 2020-10-15 13.69% 30330 
+
+D4 Train (24.19%) 2021-10-21 24.19% 39233 Evaluation 2022-01-06 2022-07-01 56.72% 4224 Test 2022-11-01 2023-08-25 52.25% 7149 10 2018 2019 2020 2021 2022 2023                  
+
+> 0
+> 20
+> 40
+> 60
+> 2018 2019 2020 2021 2022 2023
+> 0
+> 5
+> 10
+> 15
+> 20
+> Mar 17 2019
+> Mar 24 Mar 31 Apr 7
+> 10
+> 20
+> 30
+> 40
+> Mar 14 2021
+> Mar 21 Mar 28 Apr 4 Apr 11
+> 10
+> 20
+> 30
+> Mar 17 2019
+> Mar 24 Mar 31 Apr 7
+> 4
+> 5
+> 6
+> 7
+> 8
+> Mar 14 2021
+> Mar 21 Mar 28 Apr 4 Apr 11
+> 3
+> 4
+> 5
+> 6
+> Loss
+> Consumption
+> Errors
+> Summer/Winter time
+> Measured dynamics in power grid
+> Time (h) Time (h) Time (h)
+> MWh MWh MWh
+> MWh
+> MWh
+> MWh
+> Full dataset
+> Expected Unexpected
+> Summer time start
+> Winter time start
+
+Figure 2: Comparing expected (left) and unexpected (right) behavior in power grid mea-surements, showing both grid loss and power consumption. The top row displays the full time series, while the bottom row zooms in on specific sections for a closer look. The expected behavior on the left is mostly normal with a few unusual spikes. In contrast, the behavior on the right starts normally but then shifts to consistently unusual readings, a change that coincides with the start of daylight saving time. 
+
+4.2. Synthetic Evaluation Data 
+
+For a controlled validation of our approach, we use the Fully Synthetic Benchmark suite (FSB) from the mTADS repository [37]. The FSB provides a testbed of 70 synthetic sequences with a range of base signals and different types of anomalies. This setup allows us to evaluate the model’s performance on problems where the data and anomalies are fully defined and controlled. FSB contains per synthetic sequence a training sequence with and without anomalies, plus a sequence for testing with anomalies. Essentially, we are us-ing the training sequences with anomalies for training and the sequence with-out anomalies as the evaluation sequence. This means we have no anomaly labels for the evaluation sequence and can not utilize the main objective func-tion from Eq. 2. Instead, we use the objective in Eq. 4 for model selection. 11 5. Experiments 
+
+In this section, we present experiments to evaluate the performance of the proposed CINDI framework. The code and experiment results are available online 2. All experiments were conducted on a computing cluster equipped with various GPUs, ranging from P100 to H100. CINDI, described in Section 3, can be applied to improve a dataset. The enhanced dataset is subsequently employed in a specific downstream task, utilizing either CINDI’s conditional normalizing flow or an alternative method. Here, we focus on anomaly detection with CINDI, aiming to identify marked errors in the test set after enhancing the training dataset. We adopt the definition for anomaly detection from Chandola et al. [38], referring to it as “the problem of finding patterns in data that do not conform to expected or normal behavior” . This definition emphasizes the importance of understand-ing expected behavior to distinguish patterns that do not align with these expectations and is also relevant for error imputations. We report the results using F1, VUS, and AUC metrics on the test set. Both VUS and AUC are non-parametric, and the F1 threshold is set based on the intersection of the AUC-ROC curve with the diagonal. 
+
+5.1. Setup 
+
+The experiment setup for the results is as follows, and we test the impu-tation fulfillment indirectly via the anomaly detection downstream task. We normalize each set of data (train, evaluation, test) based on the training data from which we derive the normalization factors. The training data is divided into training and validation sets in a 80 : 20 split, where five random sections are selected and expanded to make up 20% for validation. CINDI is tested against several baseline methods for imputing the errors, which are treated as missing values in this case. We use the following methods 3: ’cubic’, ’cu-bicspline’, ’linear’, ’nearest’, ’quadratic’, and ’slinear’. We further test with and without errors in the training data, referred to as ’raw’ and ’skip’, re-spectively. In addition, we test with the following model-based imputation methods: ’dynamix’ [28] and ’knowimp’ [21]. With model-based methods, we   
+
+> 2See https://github.com/2er0/CINDI
+> 3See https://pandas.pydata.org/docs/reference/api/pandas.DataFrame. interpolate.html
+
+12 impute one error section at a time, providing each method with a temporal context of 150 days to predict an imputation of the required length. We use the conditional normalizing flow in CINDI for the anomaly de-tection task independently of the imputation method; therefore, we test the benefit of improving the training data indirectly. Using CINDI’s strategy for model selection in every scenario ensures fair anomaly detection capabilities, even with different versions of the imputed dataset. For the final down-stream task, we utilize the model selection function described in Section 3.4, omitting the reconstruction term to focus solely on anomaly detection. For the conditional normalizing flow, we test with three different encoder types to utilize the temporal context: ’base’, ’MLP’, and ’CNN’. The base version does no encoding and passes the temporal context information on without processing. The MLP and CNN versions utilize a single model to encode the temporal context before passing it on to all transformation layers, employing an amortized approach. Results in Tab. 2 are based on the model selection process. Fig. 3 fur-ther contains in the box plots the range of performances discovered during this search. The reported max performance is derived from all steps on the training dataset, including imputation and detection. 
+
+5.2. Results: Grid Loss Data 
+
+The analysis of the results highlighted that CINDI can improve a dataset up to a certain percentage of errors, in our case, up to 13 .69% , as shown in Table 2, which summarizes all downstream results. For CINDI, we show both final and maximum performance across iterations. This demonstrates that any model evaluated during the iterative process can be tested for its downstream performance, sometimes performing well even if not explicitly targeted for that task. For all other methods, the results reflect the best model identified through the model selection process. We do not report results on the training set D1 with 0% errors in Table 2, as no imputation is needed in this case and only the anomaly detection task is relevant. For these cases, we provide the average and standard deviation across all experiments. The average results are: F1 score of 89% ± 4% , VUS of 93% ± 5% , and AUC of 93% ± 5% .Fig. 3 shows the results at an error level of 1.04% . Further figures for higher error levels ( 13 .69% and 24 .19% ) and F1 scores are provided in Ap-pendix Appendix A and in our repository. In each plot, the solid lines (left) and scatter points (right) represent the anomaly detection performance using 13 the selected model. In contrast, the box plots show the performance ranges of all evaluated candidates. This demonstrates that the model selection process explores many options and that the chosen model achieves good performance on the evaluation set and the test set. 0 1 2 3 4 5 6 7 8 9 10 11     
+
+> Iteration
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> VUS value
+> CINDI framework with anomaly detection test scores
+> Model Type
+> Base CNN MLP
+> Nearest
+> Linear
+> SLinear
+> Quadratic
+> Cubic
+> Cubic Spline
+> Skip
+> Train
+> Dynamix
+> KnowImp
+> Method name
+> Alternative methods with anomaly detection test scores
+> Model Type
+> Base CNN MLP
+
+Figure 3: VUS performance results for CINDI and baselines with 1.04% errors in the training data. Points are the final model performance after model selection, and box plots show all the tested candidate solutions. 
+
+Fig. 4 and Fig. 5 show CINDI’s imputation in the second iteration on the training data. Fig. 4(a) and (b) show two flagged sections being im-puted. Where Fig. 4(a) results in natural-looking sequences, while plot (b) reveals some uncertainty, especially after the first few steps. In Fig. 4(a), the heatmap displays the most likely imputation path, which is less clear in Fig. 4(b) with the increased uncertainty. Fig. 5(a) shows the reconstruction of seven two-day long sections. Here, the model generally captures expected behavior, with only minor deviations, such as the omission of slight variations in complex regions. Overall, the reconstruction closely matches the data, therefore performing well in self-regression forecasting. Fig. 5(b) and (c) show the anomaly detection downstream task if this specific model had been chosen as the final one. While it performs well (F1 score 0.87 , VUS score 0.92 ), it does not outperform the best model found for this task (F1 score 0.93 , VUS score 0.97 ) in this end-to-end execution of CINDI. The collection in Fig. 6 tracks the process of one flagged section being imputed over four iterations. This demonstrates how CINDI refines its im-14 10 20 30  
+
+> 2020-04-15 18:00:00 2020-04-16 18:00:00 5678Before Generated
+> −20246NLL Prob.
+> −20246NLL Prob.
+> −20246NLL Prob.
+> −20246NLL Prob.
+> −20246NLL Prob.
+> −20246NLL Prob.
+> −20246NLL Prob.
+> −20246NLL Prob.
+> −20246NLL Prob.
+> −20246NLL Prob.
+> −20246NLL Prob.
+> −20246NLL Prob.
+> −20246NLL Prob.
+> −20246NLL Prob.
+> −20246NLL Prob.
+> −20246NLL Prob.
+> −20246NLL Prob.
+> −20246NLL Prob.
+> −20246NLL Prob.
+> −20246NLL Prob.
+> −20246NLL Prob.
+> −20246NLL Prob.
+> −20246NLL Prob.
+> −20246NLL Prob.
+> −20246NLL Prob.
+> −20246NLL Prob.
+> −20246NLL Prob.
+> −20246NLL Prob.
+> −20246NLL Prob.
+> −20246NLL Prob.
+> −20246NLL Prob.
+> −20246NLL Prob.
+> −20246NLL Prob.
+> −20246NLL Prob.
+> −20246NLL Prob.
+> −20246NLL Prob.
+> −20246NLL Prob.
+> −20246NLL Prob.
+> −20246NLL Prob.
+> −20246NLL Prob.
+
+Iteration: 1, Step: 19, Position: 2020-04-16 18:00:00 
+
+> Time Value Value
+
+Channel 0 Channel 1 20 40  
+
+> 2019-12-18 23:00:00 2019-12-19 23:00:00 010 20 Before Generated 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob.
+
+Iteration: 1, Step: 23, Position: 2019-12-19 23:00:00 
+
+> Time Value Value
+
+Channel 0 Channel 1 (a) Imputation example 1 (b) Imputation example 2 
+
+Figure 4: Results from the second iteration on the dataset with 1.04% noise. Fig. (a), (b) show self-regressing imputation of two flagged sections, where the heatmap indicates the negative log-likelihood of possible other samples. 
+
+putations until it settles on a final replacement, which is an improvement over the original sequence, though not always natural and intuitively desired by an observer. This highlights the system’s flexibility in continuing to up-date already imputed sections as needed. With Fig. 7, we show that CINDI can also handle longer error sections, imputing sequences beyond two days without introducing unexpected artifacts of this extended period. Table 2 further demonstrates the impact of increasing error levels in the training data. More errors reduce the benefits of imputing error sections with CINDI, resulting in decreased performance. It also shows that simply skip-ping error or marked sections generally does not harm the downstream per-formance and allows for solid performances. Further, the pretrained model ’dynamix’ [28] leads to solid performance with increasing level of errors in the training data and shows no performance degradation. This approach utilizes the pre-trained model to impute all error sections, meaning it has been pre-trained and therefore does not need to rely on unclean data to begin with. 
+
+5.3. Results: FSB 
+
+On the FSB datasets, CINDI imputes training data errors under spe-cific conditions: the data must contain noise, such as Gaussian noise, to a small percentage and a structure or pattern. In the case where the data do not fulfill these requirements, the conditional normalizing flow will learn a new manifold representation of the data, which will not follow the base 15 distribution. Examples of imputations on the FSB dataset are provided in Appendix Appendix B. 
+
+6. Limitations & Remarks 
+
+Our CINDI framework is designed as a single unified system that utilizes a single model per iteration while being capable of handling different tasks. This simplicity helps keep it efficient, while also encouraging exploration of the limits of a unified solution and the reuse of learned behavior in practical scenarios. When comparing CINDI to other methods, it is clear that the baselines are highly competitive and can be difficult to outperform in this context. For this reason, we ensured that the model selection capabilities of CINDI were utilized for every option involved in the experiments, thereby giving every option the best possible chance. One interesting finding is that simply skipping (’skip’) the error sections is a strong option. This means that avoiding imputation altogether for sec-tions with errors can still lead to solid results, and it should not be ignored as a baseline. This holds especially with increased levels of errors in the training data, since too many errors can lead to biased models. Standard imputation methods, such as nearest or linear interpolation, turn out to be reasonable choices, especially as the amount of noise increases. In these cases, conditional normalizing flows tend to map these input sections to the same position in the latent space, which limits what can be learned from those data points. A challenge emerges when there is no noise in the data, as observed with many sequences from the fully synthetic benchmark suite. In these cases, training the model results in new manifolds that are not useful for detection or imputation. This shows that some level of noise or imperfection is essential for guiding CINDI in practical data improvement and detection applications. 
+
+7. Conclusion 
+
+This work focused on the problem of predicting grid loss from the perspec-tive of anomaly detection, which heavily depends on the quality of available data. We introduced CINDI, an unsupervised probabilistic framework de-signed to enhance data quality by imputing errors in multivariate time series. By utilizing conditioned normalizing flows, our approach provides flexibility 16 and efficiency, supporting multiple tasks related to data improvement and anomaly detection. With the end-to-end training, we were able to provide a unified framework mainly for detecting and imputing, but not limited to these tasks. Our experiments demonstrate that the approach is robust and yields competitive results overall when compared to other methods. The framework is effective at denoising existing data, but it cannot reconstruct actual values when the underlying data is missing or severely corrupted. When the level of errors increases, it becomes difficult for any method to deliver reliable imputations, and as a result, produces less useful replacements, except for pre-trained models. Overall, the proposed framework represents a practical step toward en-hancing data quality for grid loss prediction, thanks to its unified and efficient design that supports multiple use cases. However, further work is required to overcome current limitations and make the approach even more useful. Future research directions include: 
+
+• Improving the conditioning mechanism: Develop more sophisti-cated strategies for conditioning, such as learning a conditional dis-tribution that better reflects the underlying signal on the distribution side. 
+
+• Selective imputation: Find ways to identify which components or channels need imputation, such that only affected areas are modified while preserving valid data. 
+
+• Adaptive imputation behavior: Investigate iterative and adaptive techniques that allow gradual improvements instead of full replacement, which should lead to more stable and reliable results over time. 
+
+• Exploring time embeddings: Examine time embedding methods to capture temporal patterns more effectively in real-world data, possibly using continuous or learned time features rather than separate static channels. 
+
+Acknowledgements 
+
+This work has been carried out at the Centre for Research-based Innova-tion, SFI NorwAI, funded by the Research Council of Norway under grant 17 no. 309834. The authors thank Are Løkken Ottesen and Nisha Dalal (Aneo, 
+
+www.aneo.com ) for their constructive feedback and support. We are espe-cially grateful for providing an extended version of the grid loss prediction dataset. 
+
+Declaration of generative AI and AI-assisted technologies in the manuscript preparation process. 
+
+During the preparation of the manuscript, the authors utilized Google Gemini to enhance the wording and writing. After using this tool/service, the authors reviewed and edited the content as needed and take full responsibility for the content of the published article. 18 Table 2: Overview of test results on the grid loss data with anomaly detection as a downstream task. With the CINDI methods, we present the final performance of the last iteration and, in brackets, the maximum performance reached during all iteration steps. Values in bold highlight the highest performing score on the given dataset with a specific metric. Not completed experiments are shown as ’-’. Dynamix as proposed by [28] and KnowIpm by [21]. 
+
+D2 Train 1.04 % D3 Train 13.69 % D4 Train 24.19 % F1 VUS AUC F1 VUS AUC F1 VUS AUC Method Encoder final final final final final final final final final (max) (max) (max) (max) (max) (max) (max) (max) (max) CINDI Base 0.93 0.97 0.97 0.92 0.97 0.96 0.81 0.82 0.81 
+
+(0.94) (0.97) (0.98 ) (0.92) (0.97) (0.96) (0.86) (0.89) (0.88) CINDI CNN 0.83 0.83 0.82 0.82 0.85 0.85 0.65 0.76 0.74 (0.91) (0.96) (0.95) (0.84) (0.88) (0.87) (0.81) (0.86) (0.85) CINDI MLP 0.90 0.94 0.96 0.75 0.83 0.82 0.80 0.74 0.72 (0.91) (0.96) (0.96) (0.86) (0.91) (0.91) (0.85) (0.88) (0.88) F1 VUS AUC F1 VUS AUC F1 VUS AUC Nearest Base 0.74 0.79 0.77 0.94 0.96 0.97 0.87 0.94 0.93 Nearest CNN 0.83 0.87 0.87 0.88 0.90 0.91 0.94 0.96 0.97 
+
+Nearest MLP 0.83 0.77 0.76 0.78 0.81 0.80 0.92 0.96 0.97 
+
+Linear Base 0.74 0.78 0.77 0.80 0.88 0.87 0.88 0.94 0.94 Linear CNN 0.78 0.84 0.83 0.91 0.94 0.96 0.89 0.94 0.94 Linear MLP 0.87 0.91 0.90 0.88 0.89 0.89 0.90 0.96 0.96 Slinear Base 0.89 0.86 0.90 0.87 0.93 0.92 0.81 0.88 0.88 Slinear CNN 0.92 0.91 0.95 0.92 0.88 0.96 0.92 0.96 0.96 Slinear MLP 0.85 0.89 0.88 0.87 0.86 0.86 0.90 0.96 0.96 Quadratic Base 0.89 0.93 0.94 0.80 0.85 0.84 0.87 0.93 0.93 Quadratic CNN 0.83 0.84 0.84 0.82 0.88 0.88 0.90 0.96 0.97 
+
+Quadratic MLP 0.76 0.84 0.83 0.89 0.85 0.84 0.88 0.94 0.94 Cubic Base 0.74 0.81 0.80 0.83 0.88 0.86 0.90 0.95 0.95 Cubic CNN 0.75 0.77 0.76 0.86 0.92 0.92 0.89 0.95 0.95 Cubic MLP 0.82 0.90 0.89 0.82 0.80 0.78 0.88 0.94 0.94 Cubicspline Base 0.78 0.73 0.71 0.00 0.51 0.50 0.00 0.51 0.50 Cubicspline CNN 0.80 0.77 0.76 0.00 0.49 0.46 0.00 0.52 0.54 Cubicspline MLP 0.85 0.91 0.91 0.00 0.51 0.50 0.00 0.52 0.54 Skip Base 0.93 0.97 0.97 0.91 0.96 0.95 0.86 0.94 0.93 Skip CNN 0.87 0.92 0.91 0.93 0.96 0.96 0.93 0.97 0.97 
+
+Skip MLP 0.84 0.91 0.90 0.83 0.90 0.89 0.90 0.96 0.96 Raw Base 0.93 0.98 0.98 0.88 0.90 0.90 0.84 0.83 0.82 Raw CNN 0.75 0.77 0.76 0.86 0.91 0.92 0.91 0.95 0.95 Raw MLP 0.88 0.90 0.90 0.81 0.82 0.80 0.78 0.68 0.66 Dynamix Base 0.77 0.74 0.72 0.87 0.93 0.93 0.91 0.92 0.96 Dynamix CNN 0.73 0.73 0.74 0.92 0.88 0.96 0.91 0.91 0.96 Dynamix MLP 0.91 0.96 0.95 0.90 0.94 0.94 0.91 0.91 0.96 KnowImp Base 0.92 0.87 0.96 0.88 0.92 0.92 - - -KnowImp CNN 0.85 0.85 0.85 0.86 0.86 0.85 - - -KnowImp MLP 0.83 0.68 0.66 0.80 0.81 0.80 - - -
+
+19 −0.5 
+
+0
+
+0 10 20 30 40 
+
+−3.6 
+
+−3.4 
+
+−3.2 
+
+−3 
+
+−2.8 
+
+0 10 20 30 40 0 10 20 30 40 0 10 20 30 40 0 10 20 30 40 0 10 20 30 40 0 10 20 30 40 
+
+Ground Truth 
+
+Generated 
+
+NLL Prob. 
+
+Reconstruction and Probability per Test-Subsection 
+
+Steps from section start 
+
+Section: 1 Section: 2 Section: 3 Section: 4 Section: 5 Section: 6 Section: 7 (a) Reconstruction performance −1
+
+−0.5 00.5 1Dec 2022 Jan 2023 Feb 2023 Mar 2023 Apr 2023 May 2023 Jun 2023 Jul 2023 Aug 2023 NLL Prob. Anomalies Channel 1 Channel 0 
+
+ANEO Grid 1, Noise: 1.04%, Iteration: 1, Model type: tcNF-base 
+
+Time Value Test sequence Detection as normalized NLL probability and flagged anomalies 
+
+(b) Test data and negative log-likelihood −1
+
+−0.5 00.5 11.5 
+
+−10 0 10 
+
+−3
+
+−2
+
+−1012
+
+−1 −0.5 0 0.5 1
+
+−1
+
+−0.5 00.5 11.5 
+
+Train data normal 
+
+Train data anomalies 
+
+Test data normal 
+
+Test data anomalies 
+
+Test data latent normal 
+
+Test data latent anomalies 
+
+Start End Sequence 
+
+ANEO Grid 1, Noise: 1.04%, Iteration: 1, Model type: tcNF-base 
+
+Latent dimension 1 Input dimension 1 Input dimension 2 Latent dimension 2 Input dimension 2 Normalized train data without time Test data latent space Normalized test data without time 
+
+(c) Input and latent space 
+
+Figure 5: Results from the second iteration on the dataset with 1.04% noise. Fig. (a), (b) show self-regressing imputation of two flagged sections, with a heatmap indicating the negative log-likelihood of possible options. Fig. (c) shows the reconstruction of expected data with its negative log-likelihood. Fig. (d) and (e) display test data, detected anomalies, and latent space. 
+
+20 20 30 40 50 
+
+2019-12-18 23:00:00 2019-12-19 23:00:00 10 20 30 Before Generated 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. 
+
+−4
+
+−20246NLL Prob. Iteration: 0, Step: 23, Position: 2019-12-19 23:00:00 
+
+Time Value Value Channel 0 Channel 1 20 40 
+
+2019-12-18 23:00:00 2019-12-19 23:00:00 010 20 Before Generated 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. 0510 NLL Prob. Iteration: 1, Step: 23, Position: 2019-12-19 23:00:00 
+
+Time Value Value Channel 0 Channel 1 (a) 1st iteration (b) 2nd iteration 10 20 30 40 
+
+2019-12-18 23:00:00 2019-12-19 23:00:00 010 20 30 Before Generated 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. 
+
+−4
+
+−202468NLL Prob. Iteration: 2, Step: 23, Position: 2019-12-19 23:00:00 
+
+Time Value Value Channel 0 Channel 1 020 40 
+
+2019-12-18 23:00:00 2019-12-19 23:00:00 020 40 Before Generated 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. 
+
+−202468NLL Prob. Iteration: 3, Step: 23, Position: 2019-12-19 23:00:00 
+
+Time Value Value Channel 0 Channel 1 
+
+(c) 3rd iteration (d) 4th iteration 
+
+Figure 6: Imputation of one section across the first four iterations with CINDI on the dataset with 1.04% noise. 
+
+21 510 15 20 25 
+
+2020-04-25 01:00:00 2020-04-26 01:00:00 3456Before Generated −4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+−4 −2 0246
+
+NLL Prob. 
+
+Iteration: 2, Step: 69, Position: 2020-04-26 01:00:00 
+
+Time Value Value 
+
+Channel 0 Channel 1 Figure 7: Imputation of an extended marked section in the third iteration with CINDI. 
+
+22 References 
+
+[1] Statnett, The Way forward - Solutions for a changing Nordic power system, 2018. URL: https://www.statnett.no/globalassets/ om-statnett/nyheter-og-pressemeldinger/with-appendices_ the-way-forward---solutions-for-a-changing-nordic-power-system_ lowres.pdf .[2] G. Grotmol, E. H. Furdal, N. Dalal, A. L. Ottesen, E.-L. H. Rørvik, M. Mølnå, G. Sizov, O. E. Gundersen, A Robust and Scalable Stacked Ensemble for Day-Ahead Forecasting of Distribution Network Losses, Proceedings of the AAAI Conference on Artificial Intelligence 37 (2023) 15503–15511. doi: 10.1609/aaai.v37i13.26838 .[3] N. Dalal, M. Mølna, M. Herrem, M. Røen, O. E. Gundersen, Day-Ahead Forecasting of Losses in the Distribution Network, AI Magazine 42 (2021) 38–49. doi: 10.1609/aimag.v42i2.15097 .[4] J. Wang, W. Du, Y. Yang, L. Qian, W. Cao, K. Zhang, W. Wang, Y. Liang, Q. Wen, Deep Learning for Multivariate Time Series Imputa-tion: A Survey, 2025. doi: 10.48550/arXiv.2402.04059 .[5] S. Kim, H. Kim, E. Yun, H. Lee, J. Lee, J. Lee, Probabilistic imputation for time-series classification with missing data, in: Proceedings of the 40th International Conference on Machine Learning, PMLR, 2023, pp. 16654–16667. URL: https://proceedings.mlr.press/v202/kim23m. html .[6] Z. Wang, L. Yang, L. Sun, Q. Wen, Y. Wang, Task-oriented Time Series Imputation Evaluation via Generalized Representers, Advances in Neural Information Processing Systems 37 (2024) 137403–137431. doi: 10.5555/3737916.3742281 .[7] X. Jiang, J. Liu, J. Wang, Q. Nie, K. WU, Y. Liu, C. Wang, F. Zheng, Softpatch: Unsupervised anomaly detection with noisy data, 2022. URL: 
+
+https://dl.acm.org/doi/abs/10.5555/3600270.3601393 .[8] S. Wu, J. Zhao, G. Tian, Understanding and Mitigating Data Con-tamination in Deep Anomaly Detection: A Kernel-based Approach, in: Proceedings of the Thirty-First International Joint Conference 23 on Artificial Intelligence, International Joint Conferences on Artifi-cial Intelligence Organization, Vienna, Austria, 2022, pp. 2319–2325. doi: 10.24963/ijcai.2022/322 .[9] G. Papamakarios, E. Nalisnick, D. J. Rezende, S. Mohamed, B. Lakshmi-narayanan, Normalizing Flows for Probabilistic Modeling and Inference, The Journal of Machine Learning Research 22 (2021) 57:2617–57:2680. URL: http://jmlr.org/papers/v22/19-1028.html .[10] I. Kobyzev, S. J. D. Prince, M. A. Brubaker, Normalizing Flows: An Introduction and Review of Current Methods, IEEE Transactions on Pattern Analysis and Machine Intelligence 43 (2021) 3964–3979. doi: 10. 1109/TPAMI.2020.2992934 , publisher: IEEE Computer Society. [11] S. N. Shukla, B. Marlin, Multi-time attention networks for irregularly sampled time series, in: International Conference on Learning Repre-sentations, 2021. doi: 10.48550/arXiv.2101.10318 .[12] F. Xiao, J. Fan, Unsupervised anomaly detection in the presence of missing values, Advances in Neural Information Processing Systems 37 (2024) 138130–138162. doi: 10.52202/079017-4385 .[13] Y. Luo, Y. Zhang, X. Cai, X. Yuan, E²GAN: end-to-end generative adversarial network for multivariate time series imputation (2019) 3094– 3100. URL: https://www.ijcai.org/proceedings/2019/429 .[14] D. Hendrycks, M. Mazeika, D. Wilson, K. Gimpel, Using trusted data to train deep networks on labels corrupted by severe noise, 2018. URL: 
+
+https://dl.acm.org/doi/10.5555/3327546.3327707 .[15] I. Diakonikolas, T. Gouleakis, C. Tzamos, Distribution-Independent PAC Learning of Halfspaces with Massart Noise, 2019. URL: https: //dl.acm.org/doi/abs/10.5555/3454287.3454714 .[16] Z. Zhang, H. Zhang, S. O. Arik, H. Lee, T. Pfister, Distilling Effective Supervision From Severe Label Noise, in: 2020 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR), 2020, pp. 9291– 9300. doi: 10.1109/CVPR42600.2020.00931 .24 [17] B. Han, Q. Yao, X. Yu, G. Niu, M. Xu, W. Hu, I. Tsang, M. Sugiyama, Co-teaching: Robust training of deep neural networks with ex-tremely noisy labels, 2018. URL: https://dl.acm.org/doi/abs/10. 5555/3327757.3327944 .[18] Y. Shen, S. Sanghavi, Learning with Bad Training Data via Iterative Trimmed Loss Minimization, 2019. URL: https://proceedings.mlr. press/v97/shen19e.html .[19] M. Li, M. Soltanolkotabi, S. Oymak, Gradient Descent with Early Stop-ping is Provably Robust to Label Noise for Overparameterized Neu-ral Networks, 2020. URL: https://proceedings.mlr.press/v108/ li20j.html .[20] C. Xiao, X. Jiang, X. Du, W. Yang, W. Lu, X. Wang, K. Chetty, Boundary-enhanced time series data imputation with long-term depen-dency diffusion models, Knowledge-Based Systems 310 (2025) 112917. doi: 10.1016/j.knosys.2024.112917 .[21] Z. Chen, H. Li, F. Wang, O. Zhang, H. Xu, X. Jiang, Z. Song, H. Wang, Rethinking the Diffusion Models for Missing Data Imputation: A Gra-dient Flow Perspective, Advances in Neural Information Processing Systems 37 (2024) 112050–112103. doi: 10.52202/079017-3558 .[22] R. Gudla, N.-B. Chang, Multi-sensor data fusion via a cortical gap net-work for time series large data gap filling under uncertainties, Informa-tion Fusion 126 (2026) 103618. doi: 10.1016/j.inffus.2025.103618 .[23] M. Wang, K. Yang, J. He, J. Qi, Y. Chen, H. Gu, R. Liu, S. Wu, Z. Du, Enhanced buoy-based water quality time series imputation in coastal waters, Journal of Hydrology 663 (2025) 134071. doi: 10.1016/ j.jhydrol.2025.134071 .[24] J. Liu, M. Cao, S. Chen, Timecheat: A channel harmony strategy for irregularly sampled multivariate time series analysis, in: Proceedings of the AAAI Conference on Artificial Intelligence, volume 39, 2025, pp. 18861–18869. doi: 10.1609/aaai.v39i18.34076 , issue: 18. [25] M. Zhang, R. Zhao, C. Wang, L. Jing, D. Li, Real-Time Imputation Model for Missing Sensor Data Based on Alternating Attention Mecha-25 nism, IEEE Sensors Journal 25 (2025) 8962–8974. doi: 10.1109/JSEN. 2024.3519370 .[26] E. Oh, T. Kim, Y. Ji, S. Khyalia, STING: Self-attention based Time-series Imputation Networks using GAN, in: 2021 IEEE International Conference on Data Mining (ICDM), 2021, pp. 1264–1269. doi: 10.1109/ ICDM51629.2021.00155 .[27] M. R. U. Islam, P. Tadepalli, A. Fern, Self-attention-based Diffusion Model for Time-series Imputation, Proceedings of the AAAI Symposium Series 4 (2024) 424–431. doi: 10.1609/aaaiss.v4i1.31827 , number: 1. [28] C. J. Hemmer, D. Durstewitz, True Zero-Shot Inference of Dynamical Systems Preserving Long-Term Statistics, 2025. doi: 10.48550/arXiv. 2505.13192 , arXiv:2505.13192 [cs]. [29] A. F. Ansari, L. Stella, A. C. Turkmen, X. Zhang, P. Mercado, H. Shen, O. Shchur, S. S. Rangapuram, S. P. Arango, S. Kapoor, J. Zschiegner, D. C. Maddix, H. Wang, M. W. Mahoney, K. Torkkola, A. G. Wilson, M. Bohlke-Schneider, B. Wang, Chronos: Learning the Language of Time Series, Transactions on Machine Learning Research (2024). URL: 
+
+https://openreview.net/forum?id=gerNCVqqtR .[30] P. Seifner, K. Cvejoski, A. Körner, R. J. Sánchez, Zero-shot Imputation with Foundation Inference Models for Dynamical Systems, 2025. doi: 10. 48550/arXiv.2402.07594 .[31] K. Rasul, A.-S. Sheikh, I. Schuster, U. M. Bergmann, R. Vollgraf, Mul-tivariate Probabilistic Time Series Forecasting via Conditioned Normal-izing Flows, in: International Conference on Learning Representations, 2020. URL: https://openreview.net/forum?id=WiGQBFuVRv .[32] L. Dinh, J. Sohl-Dickstein, S. Bengio, Density estimation using Real NVP, in: International Conference on Learning Representations, 2017. URL: https://openreview.net/forum?id=HkpbnH9lx .[33] A. Auger, N. Hansen, A restart CMA evolution strategy with increasing population size, in: 2005 IEEE Congress on Evolutionary Computation, volume 2, 2005, pp. 1769–1776 Vol. 2. doi: 10.1109/CEC.2005.1554902 ,iSSN: 1941-0026. 26 [34] J. Paparrizos, P. Boniol, T. Palpanas, R. S. Tsay, A. Elmore, M. J. Franklin, Volume under the surface: a new accuracy evaluation measure for time-series anomaly detection, Proceedings of the VLDB Endowment 15 (2022) 2774–2787. doi: 10.14778/3551793.3551830 .[35] TrønderEnergi, Grid Loss Prediction Dataset, 2020. URL: 
+
+https://www.kaggle.com/datasets/trnderenergikraft/ grid-loss-time-series-dataset .[36] R. Riaz, G. Han, K. Shaukat, N. Ullah Khan, H. Zhu, A robust anomaly detector for imbalanced industrial internet of things data, Journal of Computational Design and Engineering 12 (2025) 46–60. doi: 10.1093/ jcde/qwaf085 .[37] D. Baumgartner, H. Langseth, H. Ramampiaro, K. Engø-Monsen, mTADS: Multivariate Time Series Anomaly Detection Benchmark Suites, 2023. doi: 10.1109/BigData59044.2023.10386980 .[38] V. Chandola, A. Banerjee, V. Kumar, Anomaly detection: A survey, ACM Computing Surveys 41 (2009) 15:1–15:58. doi: 10.1145/1541880. 1541882 .
+
+Appendix A. Additional Grid Loss Dataset Results 0 2 4 6 8 10 12     
+
+> Iteration
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> F1 value
+> CINDI framework with anomaly detection test scores
+> Model Type
+> Base CNN MLP
+> Nearest
+> Linear
+> SLinear
+> Quadratic
+> Cubic
+> Cubic Spline
+> Skip
+> Train
+> Dynamix
+> KnowImp
+> Method name
+> Alternative methods with anomaly detection test scores
+> Model Type
+> Base CNN MLP
+
+Figure A.8: F1 performance results on training dataset with 1.04% noise. 
+
+27 0 1 2 3 4 5 6
+
+Iteration 
+
+0.0 
+
+0.2 
+
+0.4 
+
+0.6 
+
+0.8 
+
+1.0 
+
+> VUS value
+
+CINDI framework with anomaly detection test scores 
+
+Model Type 
+
+Base CNN MLP 
+
+Nearest 
+
+Linear 
+
+SLinear 
+
+Quadratic 
+
+Cubic 
+
+Cubic Spline 
+
+Skip 
+
+Train 
+
+Dynamix 
+
+KnowImp 
+
+Method name 
+
+Alternative methods with anomaly detection test scores 
+
+Model Type 
+
+Base CNN MLP Figure A.9: VUS performance results on training dataset with 13 .69% noise. 0 2 4 6 8 10 12 
+
+Iteration 
+
+0.0 
+
+0.2 
+
+0.4 
+
+0.6 
+
+0.8 
+
+1.0 
+
+> F1 value
+
+CINDI framework with anomaly detection test scores 
+
+Model Type 
+
+Base CNN MLP 
+
+Nearest 
+
+Linear 
+
+SLinear 
+
+Quadratic 
+
+Cubic 
+
+Cubic Spline 
+
+Skip 
+
+Train 
+
+Dynamix 
+
+KnowImp 
+
+Method name 
+
+Alternative methods with anomaly detection test scores 
+
+Model Type 
+
+Base CNN MLP 
+
+Figure A.10: F1 performance results on training dataset with 13 .69% noise. 
+
+28 0 1 2 3 4 5 6
+
+Iteration 
+
+0.0 
+
+0.2 
+
+0.4 
+
+0.6 
+
+0.8 
+
+1.0 
+
+> VUS value
+
+CINDI framework with anomaly detection test scores 
+
+Model Type 
+
+Base CNN MLP 
+
+Nearest 
+
+Linear 
+
+SLinear 
+
+Quadratic 
+
+Cubic 
+
+Cubic Spline 
+
+Skip 
+
+Train 
+
+Dynamix 
+
+KnowImp 
+
+Method name 
+
+Alternative methods with anomaly detection test scores 
+
+Model Type 
+
+Base CNN MLP Figure A.11: VUS performance results on training dataset with 24 .19% noise. 0 2 4 6 8 10 12 
+
+Iteration 
+
+0.0 
+
+0.2 
+
+0.4 
+
+0.6 
+
+0.8 
+
+1.0 
+
+> F1 value
+
+CINDI framework with anomaly detection test scores 
+
+Model Type 
+
+Base CNN MLP 
+
+Nearest 
+
+Linear 
+
+SLinear 
+
+Quadratic 
+
+Cubic 
+
+Cubic Spline 
+
+Skip 
+
+Train 
+
+Dynamix 
+
+KnowImp 
+
+Method name 
+
+Alternative methods with anomaly detection test scores 
+
+Model Type 
+
+Base CNN MLP 
+
+Figure A.12: F1 performance results on training dataset with 24 .19% noise. 
+
+29 Appendix B. FSB Results 
+
+Appendix B.1. CINDI CNN on 2-sine-all-channel-anomaly Sequence 
+
+30 −2 −1 01
+
+502 526 −1 −0.5 00.5 1Before Generated −2 0246
+
+NLL Prob. 
+
+−2 0246
+
+NLL Prob. 
+
+−2 0246
+
+NLL Prob. 
+
+−2 0246
+
+NLL Prob. 
+
+−2 0246
+
+NLL Prob. 
+
+−2 0246
+
+NLL Prob. 
+
+−2 0246
+
+NLL Prob. 
+
+−2 0246
+
+NLL Prob. 
+
+−2 0246
+
+NLL Prob. 
+
+−2 0246
+
+NLL Prob. 
+
+−2 0246
+
+NLL Prob. 
+
+−2 0246
+
+NLL Prob. 
+
+−2 0246
+
+NLL Prob. 
+
+−2 0246
+
+NLL Prob. 
+
+−2 0246
+
+NLL Prob. 
+
+−2 0246
+
+NLL Prob. 
+
+−2 0246
+
+NLL Prob. 
+
+−2 0246
+
+NLL Prob. 
+
+−2 0246
+
+NLL Prob. 
+
+−2 0246
+
+NLL Prob. 
+
+Iteration: 0, Step: 9 
+
+Time Value Value 
+
+Channel 0 Channel 1 −5 05
+
+322 346 −1.5 −1 −0.5 0Before Generated −2 02468
+
+NLL Prob. 
+
+−2 02468
+
+NLL Prob. 
+
+−2 02468
+
+NLL Prob. 
+
+−2 02468
+
+NLL Prob. 
+
+−2 02468
+
+NLL Prob. 
+
+−2 02468
+
+NLL Prob. 
+
+−2 02468
+
+NLL Prob. 
+
+−2 02468
+
+NLL Prob. 
+
+−2 02468
+
+NLL Prob. 
+
+−2 02468
+
+NLL Prob. 
+
+−2 02468
+
+NLL Prob. 
+
+−2 02468
+
+NLL Prob. 
+
+−2 02468
+
+NLL Prob. 
+
+−2 02468
+
+NLL Prob. 
+
+−2 02468
+
+NLL Prob. 
+
+−2 02468
+
+NLL Prob. 
+
+−2 02468
+
+NLL Prob. 
+
+−2 02468
+
+NLL Prob. 
+
+−2 02468
+
+NLL Prob. 
+
+−2 02468
+
+NLL Prob. 
+
+Iteration: 0, Step: 9 
+
+Time Value Value 
+
+Channel 0 Channel 1 (a) 1st iteration section 302 to 311 (b) 1st iteration section 122 to 131 −2 −1 01
+
+502 526 −1 −0.5 00.5 
+
+Before 
+
+Generated 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+Iteration: 1, Step: 9 
+
+Time Value Value 
+
+Channel 0 Channel 1 −3 −2 −1 012
+
+322 346 −1 −0.5 0Before Generated −2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+Iteration: 1, Step: 9 
+
+Time Value Value 
+
+Channel 0 Channel 1 
+
+(c) 2nd iteration section 302 to 311 (d) 2nd iteration section 122 to 131 −2 −1 01
+
+502 526 −1 −0.5 00.5 Before Generated −2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+−2 024
+
+NLL Prob. 
+
+Iteration: 2, Step: 9 
+
+Time Value Value 
+
+Channel 0 Channel 1 −1
+
+−0.5 00.5 1
+
+−5 0 5 10 
+
+−10 
+
+−505
+
+−1 −0.5 0 0.5 1
+
+−1
+
+−0.5 00.5 1Train data normal 
+
+Train data anomalies 
+
+Test data normal 
+
+Test data anomalies 
+
+Test data latent normal 
+
+Test data latent anomalies 
+
+Start End Sequence 
+
+2-sine-all-channel-anomaly, Iteration: 2, Model type: tcNF-cnn 
+
+Latent dimension 1 Input dimension 1 Input dimension 2 Latent dimension 2 Input dimension 2 Normalized train data without time Test data latent space Normalized test data without time 
+
+(e) 3rd iteration section 302 to 311 (f) 3rd iteration input and latent space 
+
+Figure B.13: Imputation of two errors in the training data using CINDI with model type CNN over three iterations, shown in Fig. (a)–(e). The anomaly detection performance on the test set across iterations yields F1 scores of 0.33 , 0.69 , 0.33 , 0.44 , and VUS scores of 
+
+0.90 , 0.96 , 0.97 , 0.98 . Fig. (f) shows the input and latent spaces where the error regions have moved into the main data range. The latent space (right) shows that the error sections in the test set are shifted into lower density areas. 
+
+31 Appendix B.2. CINDI CNN on 2-sine-one-channel-anomaly-noise-10% Se-quence −1      
+
+> −0.5
+> 0
+> 0.5
+> 1
+> −1
+> −0.5
+> 0
+> 0.5
+> 1
+> 300 400 500 600 700 800 900
+> Channel 0
+> Channel 1
+> Anomalies
+> NLL prob.
+
+2-sine-one-channel-anomaly-noise-10%, Iteration: 0, Model type: tcNF-cnn 
+
+Time 
+
+> Value Value
+
+Normalized sequence before imputation 
+
+Normalized NLL probability before imputation 
+
+Normalized sequence after imputation 
+
+Normalized NLL probability after imputation 
+
+Figure B.14: Original and imputed training data with negative log-likelihoods, showing CINDI’s long term prediction capabilities and denoising effect. 
+
+32
