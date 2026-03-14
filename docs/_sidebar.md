@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-03-14 <!--dpr-date:20260314-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202603/14/2603.09062v1-dynamic-multi-period-experts-for-online-time-series-forecasting" data-sidebar-item="{&quot;title&quot;: &quot;Dynamic Multi-period Experts for Online Time Series Forecasting&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2603.09062v1-dynamic-multi-period-experts-for-online-time-series-forecasting&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;hp-pg&quot;}], &quot;evidence&quot;: &quot;针对循环和突发模式的在线时间序列预测&quot;}">Dynamic Multi-period Experts for Online Time Series Forecasting</a>
   * 2026-03-13 <!--dpr-date:20260313-->
     * 精读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202603/13/2603.11745v1-cindi-conditional-imputation-and-noisy-data-integrity-with-flows-in-power-grid-data" data-sidebar-item="{&quot;title&quot;: &quot;CINDI: Conditional Imputation and Noisy Data Integrity with Flows in Power Grid Data&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2603.11745v1-cindi-conditional-imputation-and-noisy-data-integrity-with-flows-in-power-grid-data&quot;, &quot;score&quot;: &quot;8.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;hp-pg&quot;}], &quot;evidence&quot;: &quot;电力电网中的异常检测与数据完整性&quot;}">CINDI: Conditional Imputation and Noisy Data Integrity with Flows in Power Grid Data</a>

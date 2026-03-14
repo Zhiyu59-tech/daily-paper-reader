@@ -1,0 +1,55 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-03-14T20:28:43.893749+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2603.09062v1",
+      "title": "Dynamic Multi-period Experts for Online Time Series Forecasting",
+      "abstract": "Online Time Series Forecasting (OTSF) requires models to continuously adapt to concept drift. However, existing methods often treat concept drift as a monolithic phenomenon. To address this limitation, we first redefine concept drift by categorizing it into two distinct types: Recurring Drift, where previously seen patterns reappear, and Emergent Drift, where entirely new patterns emerge. We then propose DynaME (Dynamic Multi-period Experts), a novel hybrid framework designed to effectively address this dual nature of drift. For Recurring Drift, DynaME employs a committee of specialized experts that are dynamically fitted to the most relevant historical periodic patterns at each time step. For Emergent Drift, the framework detects high-uncertainty scenarios and shifts reliance to a stable, general expert. Extensive experiments on several benchmark datasets and backbones demonstrate that DynaME effectively adapts to both concept drifts and significantly outperforms existing baselines.",
+      "authors": [
+        "Seungha Hong",
+        "Sukang Chae",
+        "Suyeon Kim",
+        "Sanghwan Jang",
+        "Hwanjo Yu"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-03-10T01:09:30+00:00",
+      "link": "https://arxiv.org/pdf/2603.09062v1",
+      "tags": [
+        "keyword:HP PG",
+        "query:HP PG"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "online time series forecasting for recurring and emergent patterns",
+      "llm_evidence_cn": "针对循环和突发模式的在线时间序列预测",
+      "llm_evidence": "针对循环和突发模式的在线时间序列预测",
+      "canonical_evidence": "针对循环和突发模式的在线时间序列预测",
+      "llm_tldr_en": "Proposes DynaME for online time series forecasting to handle recurring and emergent concept drifts.",
+      "llm_tldr_cn": "提出DynaME框架，用于处理在线时间序列预测中的循环和突发概念漂移。",
+      "llm_tldr": "提出DynaME框架，用于处理在线时间序列预测中的循环和突发概念漂移。",
+      "llm_tags": [
+        "query:hp-pg"
+      ],
+      "matched_query_tag": "query:hp-pg",
+      "matched_query_text": "Hopfield network based load forecasting for electrical grids",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
